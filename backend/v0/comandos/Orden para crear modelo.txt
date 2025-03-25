@@ -1,0 +1,15 @@
+1. Crear modelo profes
+
+2. Declararlo en models/__init__.py
+
+3. Declarar la ruta en routes/__init__.py
+
+4. Generar revision
+
+5. Ejecutar migracion
+
+Comandos migracion:
+alembic revision --autogenerate -m "initial migration"
+alembic upgrade head
+
+alembic revision --autogenerate -m "create table user_type"

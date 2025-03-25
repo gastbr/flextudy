@@ -1,0 +1,13 @@
+
+
+Como esta relacionado el script con docker? 
+porque si al estar desplegado no tengo que volver a desplegarlo? 
+Lo mismo con las migraciones en el servidor
+
+
+Para que quiero las migraciones si ya se hacen con los modelos?
+
+En user_type:
+# Tuve que usar esta linea para eliminar las comillas en (users: List["User"]) y me funciono?
+
+pep8 para autodentado

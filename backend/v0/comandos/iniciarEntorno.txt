@@ -1,0 +1,6 @@
+
+Iniciar Entorno:
+.\venv\Scripts\Activate.ps1
+
+Iniciar App:
+ uvicorn app.main:app --reload

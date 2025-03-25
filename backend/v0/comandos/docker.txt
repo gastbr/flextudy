@@ -1,0 +1,8 @@
+
+Ver contenedores
+docker ps
+
+Conectarte a la bd de un docker:
+docker exec -it nombre_del_contenedor psql -U tu_usuario -d nombre_de_la_base_de_datos
+docker exec -it mi-postgres psql -U root -d pythonblog
+docker exec -it fastlayers-db-1 psql -U postgres -d test

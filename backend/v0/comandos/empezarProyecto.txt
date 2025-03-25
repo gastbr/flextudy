@@ -1,0 +1,12 @@
+
+Entorno Virtual:
+    python -m venv venv
+
+Activar el entorno virtua:
+    CMD:
+        venv\Scripts\activate
+    PowerShell:
+    .\venv\Scripts\Activate.ps1
+
+Instalar los paquetes:
+    pip install -r requirements.txt
