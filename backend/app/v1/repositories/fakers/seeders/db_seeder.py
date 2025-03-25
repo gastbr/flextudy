@@ -1,30 +1,18 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from faker import Faker
-from models import Base, User, Post
-
-DATABASE_URL = "sqlite:///./test.db"
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
+from app.config.db import engine, SessionLocal
+from app.v1.repositories.fakers.seeders.usertype_seeder import usertype_seeder
+from app.v1.repositories.fakers.seeders.user_seeder import user_seeder
 
 # Create tables
 Base.metadata.create_all(engine)
 
 # Create a session
-db = Session()
+db = SessionLocal()
 
-# Generate users and posts
-users = [UserFactory() for _ in range(10)]
-db.add_all(users)
-db.flush()  # Assign user IDs without committing
+# Call seeders
+seed_user_types(db)
+seed_users(db)
 
-posts = []
-for user in users:
-    for _ in range(5):
-        post = PostFactory(author=user)
-        posts.append(post)
-
-db.add_all(posts)
+# Commit the changes
 db.commit()
 db.close()
 
