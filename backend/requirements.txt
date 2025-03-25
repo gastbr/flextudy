@@ -1,0 +1,19 @@
+# Framework
+fastapi
+sqlmodel
+uvicorn
+alembic
+
+# Environment variables 
+python-dotenv
+
+# Database drivers
+psycopg[binary]
+faker
+factory_boy
+
+# API client
+httpx
+
+# Others
+python-multipart

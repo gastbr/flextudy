@@ -1,7 +1,0 @@
-# Personal documentation
-docs/
-
-# Files unnecessary for the container
-docker-compose.yml
-Dockerfile
-README.md
