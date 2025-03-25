@@ -7,9 +7,9 @@ if TYPE_CHECKING:
 if TYPE_CHECKING:
     from app.v1.models.user import User
 if TYPE_CHECKING:
-    from app.v1.models.lesson import Attent 
+    from app.v1.models.lesson import Attend 
 
-from app.v1.models.attent import Attent 
+from app.v1.models.attend import Attend 
 
 class BaseLesson(SQLModel):
     max_capacity: int
@@ -25,7 +25,7 @@ class Lesson(BaseLesson, table=True):
     topic: Optional["Topic"] = Relationship(back_populates="lessons")
     
     #Many to Many
-    students: list["User"] = Relationship(back_populates="lessons", link_model=Attent)
+    students: list["User"] = Relationship(back_populates="lessons", link_model=Attend)
 
 class CreateLesson(BaseLesson):
     max_capacity: Optional[int] = None
