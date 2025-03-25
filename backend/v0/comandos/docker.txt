@@ -2,6 +2,10 @@
 Ver contenedores
 docker ps
 
+Docker Compose
+docker-compose up --build
+docker-compose down
+
 Conectarte a la bd de un docker:
 docker exec -it nombre_del_contenedor psql -U tu_usuario -d nombre_de_la_base_de_datos
 docker exec -it mi-postgres psql -U root -d pythonblog
