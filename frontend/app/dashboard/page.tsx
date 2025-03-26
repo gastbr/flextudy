@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight, Plus, List, Grid3X3 } from "lucide-react"
@@ -11,6 +11,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function CalendarView() {
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
+
+  const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
+
+  // Fetch lessons from the API
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/v1/lessons")
+        const data = await response.json()
+        setLessons(data) // Guardar las lecciones en el estado
+      } catch (error) {
+        console.error("Error fetching lessons:", error)
+      }
+    }
+
+    fetchLessons()
+  }, [])
 
   // Function to format date as Month YYYY
   const formatMonth = (date: Date) => {

@@ -3,13 +3,16 @@ from app.config.routes import include_route
 
 # Import specific routes
 # Example: from app.v1.routes.file import file
-from app.v1.routes.example_route import router as example_router
+from app.v1.routes.custom_lesson import router as custom_lesson
 
 router = APIRouter()
 
 # Custom routes
 # Example: include_route(router, file_route, prefix="/file", tags=["file"])
-include_route(router, example_router, prefix="/example", tags=["example"])
+# include_route(router, example_router, prefix="/example", tags=["example"])
+
+include_route(router, custom_lesson, prefix="/lessons", tags=["Lessons"])
+
 
 # Generic routes
 
