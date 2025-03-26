@@ -192,16 +192,23 @@ interface MonthCalendarViewProps {
 function MonthCalendarView({ month }: MonthCalendarViewProps) {
   // Generate calendar days
   const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
-  const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 1).getDay()
+  const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 0).getDay()
 
   // Sample class data
   const events = [
-    { id: 1, title: "Math 101", date: 15, time: "09:00 - 10:30", status: "enrolled" },
-    { id: 2, title: "Physics", date: 16, time: "11:00 - 12:30", status: "available" },
-    { id: 3, title: "Spanish", date: 17, time: "14:00 - 15:30", status: "full" },
-    { id: 4, title: "History", date: 15, time: "13:00 - 14:30", status: "enrolled" },
-    { id: 5, title: "Chemistry", date: 22, time: "10:00 - 11:30", status: "available" },
+    { id: 1, title: "Math 101", date: new Date(2025, 2, 15), time: "09:00 - 10:30", status: "enrolled" },
+    { id: 2, title: "Physics", date: new Date(2025, 2, 16), time: "11:00 - 12:30", status: "available" },
+    { id: 3, title: "Spanish", date: new Date(2025, 2, 17), time: "14:00 - 15:30", status: "full" },
+    { id: 4, title: "History", date: new Date(2025, 2, 15), time: "13:00 - 14:30", status: "enrolled" },
+    { id: 5, title: "Chemistry", date: new Date(2025, 2, 22), time: "10:00 - 11:30", status: "available" },
   ]
+
+  // Filter events for the current month
+  const filteredEvents = events.filter(
+    (event) =>
+      event.date.getFullYear() === month.getFullYear() &&
+      event.date.getMonth() === month.getMonth()
+  )
 
   // Create calendar grid
   const days = Array.from({ length: 42 }, (_, i) => {
@@ -209,7 +216,9 @@ function MonthCalendarView({ month }: MonthCalendarViewProps) {
     const isCurrentMonth = dayNumber > 0 && dayNumber <= daysInMonth
 
     // Get events for this day
-    const dayEvents = isCurrentMonth ? events.filter((event) => event.date === dayNumber) : []
+    const dayEvents = isCurrentMonth
+      ? filteredEvents.filter((event) => event.date.getDate() === dayNumber)
+      : []
 
     return {
       number: isCurrentMonth ? dayNumber : null,
@@ -217,7 +226,7 @@ function MonthCalendarView({ month }: MonthCalendarViewProps) {
     }
   })
 
-  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const weekdays = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
   return (
     <div className="border rounded-lg overflow-hidden">
@@ -248,8 +257,8 @@ function MonthCalendarView({ month }: MonthCalendarViewProps) {
                         event.status === "enrolled"
                           ? "bg-primary/10 text-primary"
                           : event.status === "available"
-                            ? "bg-muted hover:bg-muted/80 cursor-pointer"
-                            : "bg-muted/50 text-muted-foreground"
+                          ? "bg-muted hover:bg-muted/80 cursor-pointer"
+                          : "bg-muted/50 text-muted-foreground"
                       }`}
                     >
                       {event.time} {event.title}

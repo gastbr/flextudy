@@ -1,5 +1,5 @@
 
-Abrir consola postgres:
+Desde docker: Abrir consola postgres
 psql -U postgres -d postgres
 su postgres
 
