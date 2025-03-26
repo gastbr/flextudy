@@ -15,19 +15,33 @@ export default function CalendarView() {
   const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
 
   // Fetch lessons from the API
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/v1/lessons")
-        const data = await response.json()
-        setLessons(data) // Guardar las lecciones en el estado
-      } catch (error) {
-        console.error("Error fetching lessons:", error)
-      }
-    }
+useEffect(() => {
+  const fetchLessons = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/v1/lessons")
+      const data = await response.json()
 
-    fetchLessons()
-  }, [])
+      // Convertir los datos al formato deseado
+      const respuesta = data.map((item: any) => {
+        return {
+          id: item.lesson.id,
+          title: item.topic.name, // Usar el nombre del topic como título
+          date: item.lesson.start_time,
+          time: `${new Date(item.lesson.start_time).toLocaleTimeString()} - ${new Date(item.lesson.end_time).toLocaleTimeString()}`, // Formatear el tiempo
+          status: "available", // Puedes ajustar esto según tu lógica
+          teacher: "Dr. Smith",
+          spots: "12/15",
+        }
+      })
+
+      setLessons(respuesta) // Guardar las lecciones en el estado
+    } catch (error) {
+      console.error("Error fetching lessons:", error)
+    }
+  }
+
+  fetchLessons()
+}, [])
 
   // Function to format date as Month YYYY
   const formatMonth = (date: Date) => {
@@ -107,7 +121,7 @@ export default function CalendarView() {
         </div>
       </div>
 
-      {viewMode === "list" ? <ClassListView /> : <MonthCalendarView month={currentMonth} />}
+      {viewMode === "list" ? <ClassListView /> : <MonthCalendarView month={currentMonth} lessons={lessons} />}
     </div>
   )
 }
@@ -204,21 +218,45 @@ function StatusBadge({ status }: StatusBadgeProps) {
 
 interface MonthCalendarViewProps {
   month: Date
+  lessons: {
+    id: number
+    title: string
+    date: string
+    time: string
+    status: string
+    teacher: string
+    spots: string
+  }[]
 }
 
-function MonthCalendarView({ month }: MonthCalendarViewProps) {
+function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
+  console.log(lessons)
+
   // Generate calendar days
   const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
   const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 0).getDay()
 
+
   // Sample class data
-  const events = [
-    { id: 1, title: "Math 101", date: new Date(2025, 2, 15), time: "09:00 - 10:30", status: "enrolled" },
-    { id: 2, title: "Physics", date: new Date(2025, 2, 16), time: "11:00 - 12:30", status: "available" },
-    { id: 3, title: "Spanish", date: new Date(2025, 2, 17), time: "14:00 - 15:30", status: "full" },
-    { id: 4, title: "History", date: new Date(2025, 2, 15), time: "13:00 - 14:30", status: "enrolled" },
-    { id: 5, title: "Chemistry", date: new Date(2025, 2, 22), time: "10:00 - 11:30", status: "available" },
-  ]
+  // const events = [
+  //   { id: 1, title: "Math 101", date: new Date(2025, 2, 15), time: "09:00 - 10:30", status: "enrolled" },
+  //   { id: 2, title: "Physics", date: new Date(2025, 2, 16), time: "11:00 - 12:30", status: "available" },
+  //   { id: 3, title: "Spanish", date: new Date(2025, 2, 17), time: "14:00 - 15:30", status: "full" },
+  //   { id: 4, title: "History", date: new Date(2025, 2, 15), time: "13:00 - 14:30", status: "enrolled" },
+  //   { id: 5, title: "Chemistry", date: new Date(2025, 2, 22), time: "10:00 - 11:30", status: "available" },
+  // ]
+
+  const events = lessons.map((lesson) => {
+    return {
+      id: lesson.id,
+      title: lesson.title,
+      date: new Date(lesson.date),
+      time: lesson.time,
+      status: lesson.status,
+    }
+  })
+
+  
 
   // Filter events for the current month
   const filteredEvents = events.filter(
