@@ -23,4 +23,3 @@ app.add_middleware(
 )
 
 # Include all routes from the centralized router
-app.include_router(api_router, prefix="/v1")

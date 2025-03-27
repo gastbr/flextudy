@@ -22,7 +22,7 @@ include_route(router, "user", prefix="/user", tags=["User"])
 include_route(router, "lesson", prefix="/lesson", tags=["Lesson"])
 include_route(router, "subject", prefix="/subject", tags=["Subject"])
 include_route(router, "topic", prefix="/topic", tags=["Topic"])
-include_route(router, "attent", prefix="/attent", tags=["Attent"])
+include_route(router, "attend", prefix="/attend", tags=["Attend"])
 
 
 

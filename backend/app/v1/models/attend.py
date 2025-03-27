@@ -2,24 +2,24 @@ from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional
 
 
-class BaseAttent(SQLModel):
+class BaseAttend(SQLModel):
     assistance: bool
 
-class Attent(BaseAttent, table=True):
+class Attend(BaseAttend, table=True):
     student_id: Optional[int] | None = Field(default=None, foreign_key="user.id", primary_key=True)
     lesson_id: Optional[int] | None = Field(default=None, foreign_key="lesson.id", primary_key=True)
 
-class CreateAttent(BaseAttent):
+class CreateAttend(BaseAttend):
     assistance: Optional[bool] = False
     lesson_id: Optional[int] = None
     student_id: Optional[int] = None
 
-class UpdateAttent(BaseAttent):
+class UpdateAttend(BaseAttend):
     assistance: Optional[bool] = None
     lesson_id: Optional[int] = None
     student_id: Optional[int] = None
 
-class ReadAttent(BaseAttent):
+class ReadAttend(BaseAttend):
     assistance: Optional[bool] = None
     lesson_id: Optional[int] = None
     student_id: Optional[int] = None

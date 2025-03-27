@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 if TYPE_CHECKING:
     from app.v1.models.lesson import Lesson
 
-from app.v1.models.attent import Attent 
+from app.v1.models.attend import Attend 
 
 class BaseUser(SQLModel):
     name: str
@@ -25,7 +25,7 @@ class User(BaseUser, table=True):
     # List
     topics: List["Topic"] = Relationship(back_populates="teacher")
         #Many to Many
-    lessons: List["Lesson"] = Relationship(back_populates="students", link_model=Attent)
+    lessons: List["Lesson"] = Relationship(back_populates="students", link_model=Attend)
 
 
 class CreateUser(BaseUser):
