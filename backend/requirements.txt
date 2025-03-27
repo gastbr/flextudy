@@ -9,6 +9,8 @@ python-dotenv
 
 # Database drivers
 psycopg[binary]
+faker
+factory_boy
 
 # API client
 httpx
