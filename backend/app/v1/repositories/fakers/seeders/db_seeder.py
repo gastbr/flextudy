@@ -13,17 +13,17 @@ from sqlalchemy.sql.expression import func
 async def db_seeder(session):
     # usertype_seeder(session)
 
-    # admin_user_type = UserType(name="admin")
-    # session.add(admin_user_type)
-    # teacher_user_type = UserType(name="teacher")
-    # session.add(teacher_user_type)
-    # student_user_type = UserType(name="student")
-    # session.add(student_user_type)
-    # session.add_all([admin_user_type, teacher_user_type, student_user_type])
+    admin_user_type = UserType(name="admin")
+    session.add(admin_user_type)
+    teacher_user_type = UserType(name="teacher")
+    session.add(teacher_user_type)
+    student_user_type = UserType(name="student")
+    session.add(student_user_type)
+    session.add_all([admin_user_type, teacher_user_type, student_user_type])
 
-    # subject = Subject(name="Language")
-    # maths = Subject(name="Maths")
-    # session.add_all([subject, maths])
+    subject = Subject(name="Language")
+    maths = Subject(name="Maths")
+    session.add_all([subject, maths])
 
 
     # ADMIN

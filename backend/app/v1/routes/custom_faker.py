@@ -9,7 +9,7 @@ from app.config.db import get_session
 
 router = APIRouter()
 
-@router.get("", response_model=List[dict])
+@router.post("", response_model=List[dict])
 async def read_examples(session: AsyncSession = Depends(get_session)):
     return await db_seeder(session)
 
