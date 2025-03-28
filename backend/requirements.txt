@@ -1,5 +1,5 @@
 # Framework
-fastapi
+fastapi[standard]
 sqlmodel
 uvicorn
 alembic
@@ -14,6 +14,10 @@ factory_boy
 
 # API client
 httpx
+
+# Authentication
+pyjwt
+passlib[bcrypt]
 
 # Others
 python-multipart
