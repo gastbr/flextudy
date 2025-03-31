@@ -16,7 +16,7 @@ class BaseUser(SQLModel):
     name: str
     profile_pic: str
 
-class UserInDB(BaseUser):
+class AuthenticatedUser(BaseUser):
     is_active: bool = Field(default=True)
 
 class User(BaseUser, table=True):

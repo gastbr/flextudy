@@ -5,7 +5,7 @@ from app.config.routes import include_route
 # Example: from app.v1.routes.file import file
 from app.v1.routes.custom_lesson import router as custom_lesson
 from app.v1.routes.custom_faker import router as custom_faker
-from app.v1.routes.auth_route import router as auth_router
+from app.v1.routes.auth_router import router as auth_router
 
 router = APIRouter()
 
