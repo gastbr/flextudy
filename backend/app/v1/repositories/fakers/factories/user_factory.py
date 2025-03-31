@@ -15,6 +15,7 @@ class UserFactory(factory.Factory):
     name = factory.Faker('name')
     email = factory.Faker('email')
     profile_pic = factory.Faker('image_url')
+    hashed_password = factory.Faker('password')
     user_type_id = factory.Faker('random_int', min=1, max=3)
 
     # @staticmethod

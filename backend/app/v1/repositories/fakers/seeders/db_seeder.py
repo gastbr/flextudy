@@ -8,6 +8,7 @@ from app.v1.repositories.fakers.factories.topic_factory import TopicFactory
 from app.v1.models.subject import Subject
 from app.v1.models.topic import Topic
 from app.v1.models.lesson import Lesson
+from app.v1.services.auth_service import get_password_hash
 
 
 from sqlmodel import select
@@ -16,51 +17,67 @@ from sqlalchemy.sql.expression import func
 
 
 async def db_seeder(session):
-    # usertype_seeder(session)
+    usertype_seeder(session)
 
-    # admin_user_type = UserType(name="admin")
-    # session.add(admin_user_type)
-    # teacher_user_type = UserType(name="teacher")
-    # session.add(teacher_user_type)
-    # student_user_type = UserType(name="student")
-    # session.add(student_user_type)
-    # session.add_all([admin_user_type, teacher_user_type, student_user_type])
+    admin_user_type = UserType(name="admin")
+    session.add(admin_user_type)
+    teacher_user_type = UserType(name="teacher")
+    session.add(teacher_user_type)
+    student_user_type = UserType(name="student")
+    session.add(student_user_type)
+    session.add_all([admin_user_type, teacher_user_type, student_user_type])
 
-
-
-    # subject = Subject(name="Language")
-    # maths = Subject(name="Maths")
-    # session.add_all([subject, maths])
+    subject = Subject(name="Language")
+    maths = Subject(name="Maths")
+    session.add_all([subject, maths])
 
 
-    # # ADMIN
-    # user = UserFactory()
-    # session.add(User(
-    #     name=user.name,
-    #     email=user.email,
-    #     profile_pic=user.profile_pic,
-    #     user_type_id = 1
-    # ))
+    # ADMIN
+    user = UserFactory()
+    session.add(User(
+        name=user.name,
+        email=user.email,
+        username=user.email,
+        profile_pic=user.profile_pic,
+        user_type_id = 1,
+        hashed_password=user.hashed_password
+    ))
 
-    # # PROFESORES
-    # for _ in range(5):  # Cambia el rango para crear más usuarios
-    #     user = UserFactory()
-    #     session.add(User(
-    #         name=user.name,
-    #         email=user.email,
-    #         profile_pic=user.profile_pic,
-    #         user_type_id=2
-    #     ))
+    # CUSTOM ADMIN
+    user = UserFactory()
+    session.add(User(
+        name=user.name,
+        email=user.email,
+        username='admin',
+        profile_pic=user.profile_pic,
+        user_type_id = 1,
+        hashed_password=get_password_hash('admin')
+    ))
 
-    # # ALUMNOS
-    # for _ in range(50):  # Cambia el rango para crear más alumnos
-    #     user = UserFactory()
-    #     session.add(User(
-    #         name=user.name,
-    #         email=user.email,
-    #         profile_pic=user.profile_pic,
-    #         user_type_id=3
-    #     ))
+    # PROFESORES
+    for _ in range(5):  # Cambia el rango para crear más usuarios
+        user = UserFactory()
+        session.add(User(
+            name=user.name,
+            email=user.email,
+            username=user.email,
+            profile_pic=user.profile_pic,
+            user_type_id=2,
+            hashed_password=user.hashed_password
+
+        ))
+
+    # ALUMNOS
+    for _ in range(50):  # Cambia el rango para crear más alumnos
+        user = UserFactory()
+        session.add(User(
+            name=user.name,
+            email=user.email,
+            username=user.email,
+            profile_pic=user.profile_pic,
+            user_type_id=3,
+            hashed_password=user.hashed_password
+        ))
 
     
     # TOPICS
