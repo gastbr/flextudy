@@ -9,7 +9,7 @@ Ver tablas:
 Ver bases de datos:
 \l
 
-Entrar en una bd:
 
+Entrar en una bd: (Connect)
 \c nombre_de_la_base_de_datos
 \c test
