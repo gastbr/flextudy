@@ -9,18 +9,17 @@ from app.v1.repositories.fakers.factories.attendFactory import AttendFactory
 from app.v1.models.subject import Subject
 from app.v1.models.topic import Topic
 from app.v1.models.lesson import Lesson
+from app.v1.services.auth_service import get_password_hash
 from app.v1.models.attend import Attend
 
 from sqlalchemy.sql.expression import func
 
-
-
-
-
 async def db_seeder(session):
-    # # # usertype_seeder(session)
-    
-    
+    # usertype_seeder(session)
+
+    subject = Subject(name="Language")
+    maths = Subject(name="Maths")
+    session.add_all([subject, maths])
     
     # # # USER_TYPE
     admin_user_type = UserType(name="admin")
@@ -35,20 +34,32 @@ async def db_seeder(session):
     session.add_all([subject, maths])
     await session.commit()  # Guardar los Subjects
 
-    # # USERS
+    # # USERS    
     # ADMIN
     user = UserFactory()
-    admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
+        admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
     if not admin_user_type:
         raise ValueError("Admin UserType not found")
-
     session.add(User(
         name=user.name,
         email=user.email,
+        username=user.email,
         profile_pic=user.profile_pic,
         user_type_id=admin_user_type.id
+        hashed_password=user.hashed_password
     ))
 
+    # CUSTOM ADMIN
+    user = UserFactory()
+    session.add(User(
+        name=user.name,
+        email=user.email,
+        username='admin',
+        profile_pic=user.profile_pic,
+        user_type_id = 1,
+        hashed_password=get_password_hash('admin')
+    ))
+    
     # TEACHERS
     teacher_user_type = (await session.exec(select(UserType).where(UserType.name == "teacher"))).first()
     if not teacher_user_type:
@@ -175,8 +186,6 @@ async def db_seeder(session):
     # # results = await session.exec(statement)
     # # teacher = results.first()
     # # print(teacher)
-
-    
 
     await session.commit()
 

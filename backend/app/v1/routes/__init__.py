@@ -5,6 +5,7 @@ from app.config.routes import include_route
 # Example: from app.v1.routes.file import file
 from app.v1.routes.custom_lesson import router as custom_lesson
 from app.v1.routes.custom_faker import router as custom_faker
+from app.v1.routes.auth_router import router as auth_router
 
 router = APIRouter()
 
@@ -13,11 +14,8 @@ router = APIRouter()
 # include_route(router, example_router, prefix="/example", tags=["example"])
 
 include_route(router, custom_lesson, prefix="/lessons", tags=["Lessons"])
-
+include_route(router, auth_router, prefix="/auth", tags=["Auth"])
 include_route(router, custom_faker, prefix="/fakers/seed", tags=["Fakers"])
-
-
-
 
 # Generic routes
 
@@ -28,10 +26,6 @@ include_route(router, "lesson", prefix="/lesson", tags=["Lesson"])
 include_route(router, "subject", prefix="/subject", tags=["Subject"])
 include_route(router, "topic", prefix="/topic", tags=["Topic"])
 include_route(router, "attend", prefix="/attend", tags=["Attend"])
-
-
-
-
 
 __all__ = ["router"]
 
