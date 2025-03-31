@@ -3,13 +3,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.repositories.fakers.seeders.db_seeder import (
-    db_seeder
+    db_seeder,
+    db_seeder_deleter
 )
 from app.config.db import get_session
 
 router = APIRouter()
 
-@router.post("", response_model=List[dict])
+@router.post("/seed", response_model=List[dict])
 async def read_examples(session: AsyncSession = Depends(get_session)):
     return await db_seeder(session)
 
@@ -31,9 +32,6 @@ async def read_examples(session: AsyncSession = Depends(get_session)):
 #         raise HTTPException(status_code=404, detail="Example not found")
 #     return example
 
-# @router.delete("/examples/{example_id}")
-# async def delete_existing_example(example_id: int, session: AsyncSession = Depends(get_session)):
-#     success = await delete_example(session, example_id)
-#     if not success:
-#         raise HTTPException(status_code=404, detail="Example not found")
-#     return {"ok": True, "message": "Example deleted"}
+@router.delete("/delete")
+async def delete_db(session: AsyncSession = Depends(get_session)):
+    return await db_seeder_deleter(session)
