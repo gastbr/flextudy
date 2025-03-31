@@ -37,7 +37,7 @@ async def db_seeder(session):
     # # USERS    
     # ADMIN
     user = UserFactory()
-        admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
+    admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
     if not admin_user_type:
         raise ValueError("Admin UserType not found")
     session.add(User(
@@ -45,18 +45,21 @@ async def db_seeder(session):
         email=user.email,
         username=user.email,
         profile_pic=user.profile_pic,
-        user_type_id=admin_user_type.id
+        user_type_id=admin_user_type.id,
         hashed_password=user.hashed_password
     ))
 
     # CUSTOM ADMIN
     user = UserFactory()
+    admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
+    if not admin_user_type:
+        raise ValueError("Admin UserType not found")
     session.add(User(
         name=user.name,
         email=user.email,
         username='admin',
         profile_pic=user.profile_pic,
-        user_type_id = 1,
+        user_type_id = admin_user_type.id,
         hashed_password=get_password_hash('admin')
     ))
     
@@ -70,8 +73,10 @@ async def db_seeder(session):
         session.add(User(
             name=user.name,
             email=user.email,
+            username=user.email,
             profile_pic=user.profile_pic,
-            user_type_id=teacher_user_type.id
+            user_type_id=teacher_user_type.id,
+            hashed_password=user.hashed_password
         ))
 
     # STUDENTS
@@ -84,8 +89,10 @@ async def db_seeder(session):
         session.add(User(
             name=user.name,
             email=user.email,
+            username=user.email,
             profile_pic=user.profile_pic,
-            user_type_id=student_user_type.id
+            user_type_id=student_user_type.id,
+            hashed_password=user.hashed_password
         ))
 
     await session.commit()  # Guardar todos los usuarios
