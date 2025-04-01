@@ -1,0 +1,3 @@
+
+Actualizar Ramas Remotas:
+git remote update origin --prune
