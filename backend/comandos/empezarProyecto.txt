@@ -10,3 +10,7 @@ Activar el entorno virtua:
 
 Instalar los paquetes:
     pip install -r requirements.txt
+
+Crear key .env SECRET_KEY:
+https://www.cryptool.org/en/cto/openssl/
+openssl rand -hex 32
