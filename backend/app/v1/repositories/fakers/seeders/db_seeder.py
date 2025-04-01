@@ -17,9 +17,6 @@ from sqlalchemy.sql.expression import func
 async def db_seeder(session):
     # usertype_seeder(session)
 
-    subject = Subject(name="Language")
-    maths = Subject(name="Maths")
-    session.add_all([subject, maths])
     
     # # # USER_TYPE
     admin_user_type = UserType(name="admin")
