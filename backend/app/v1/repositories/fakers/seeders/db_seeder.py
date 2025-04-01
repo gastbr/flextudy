@@ -9,13 +9,13 @@ from app.v1.repositories.fakers.factories.attendFactory import AttendFactory
 from app.v1.models.subject import Subject
 from app.v1.models.topic import Topic
 from app.v1.models.lesson import Lesson
-from app.v1.services.auth_service import get_password_hash
+from app.v1.services.auth.auth_service import get_password_hash
 from app.v1.models.attend import Attend
 
 from sqlalchemy.sql.expression import func
 
 async def db_seeder(session):
-    # usertype_seeder(session)
+    usertype_seeder(session)
 
     subject = Subject(name="Language")
     maths = Subject(name="Maths")

@@ -4,10 +4,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.v1.models.user import User
-from app.v1.services.auth_service import (
-    get_current_user,
+from app.v1.services.auth.login_service import (
     login_for_access_token
 )
+from app.v1.services.auth.auth_service import get_current_user
 from app.config.db import get_session
 
 router = APIRouter()
