@@ -34,7 +34,49 @@ async def db_seeder(session):
     session.add_all([subject, maths])
     await session.commit()  # Guardar los Subjects
 
-    # # USERS    
+    # # USERS
+    # CUSTOM USERS FOR TESTING
+    # ADMIN
+    user = UserFactory()
+    admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
+    if not admin_user_type:
+        raise ValueError("Admin UserType not found")
+    session.add(User(
+        name=user.name,
+        email=user.email,
+        username='admintest',
+        profile_pic=user.profile_pic,
+        user_type_id = admin_user_type.id,
+        hashed_password=get_password_hash('pass')
+    ))
+    # TEACHER
+    user = UserFactory()
+    teacher_user_type = (await session.exec(select(UserType).where(UserType.name == "teacher"))).first()
+    if not teacher_user_type:
+        raise ValueError("Teacher UserType not found")
+    session.add(User(
+        name=user.name,
+        email=user.email,
+        username='teachertest',
+        profile_pic=user.profile_pic,
+        user_type_id = teacher_user_type.id,
+        hashed_password=get_password_hash('pass')
+    ))
+    # STUDENT
+    user = UserFactory()
+    student_user_type = (await session.exec(select(UserType).where(UserType.name == "student"))).first()
+    if not student_user_type:
+        raise ValueError("Student UserType not found")
+    session.add(User(
+        name=user.name,
+        email=user.email,
+        username='studenttest',
+        profile_pic=user.profile_pic,
+        user_type_id = student_user_type.id,
+        hashed_password=get_password_hash('pass')
+    ))
+
+    # MOCK USERS
     # ADMIN
     user = UserFactory()
     admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
@@ -47,20 +89,6 @@ async def db_seeder(session):
         profile_pic=user.profile_pic,
         user_type_id=admin_user_type.id,
         hashed_password=user.hashed_password
-    ))
-
-    # CUSTOM ADMIN
-    user = UserFactory()
-    admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
-    if not admin_user_type:
-        raise ValueError("Admin UserType not found")
-    session.add(User(
-        name=user.name,
-        email=user.email,
-        username='admin',
-        profile_pic=user.profile_pic,
-        user_type_id = admin_user_type.id,
-        hashed_password=get_password_hash('admin')
     ))
     
     # TEACHERS
