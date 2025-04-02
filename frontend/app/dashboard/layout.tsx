@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { logout } from "../login/actions"
+import { useCallback } from "react"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -116,6 +118,11 @@ function MobileSidebar() {
 }
 
 function DashboardSidebar() {
+
+  /*   const handleLogout = () => {
+      logout()
+    } */
+
   return (
     <aside className="hidden md:flex w-64 border-r flex-col">
       <nav className="flex flex-col gap-1 p-2 flex-1">
@@ -132,14 +139,19 @@ function DashboardSidebar() {
           <NavItem href="/dashboard/admin/settings" icon={<Settings className="h-4 w-4" />} label="Platform Settings" />
         </div>
 
-        <div className="mt-auto pt-2">
-          <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground">
+        <div
+          className="mt-auto pt-2"
+          onClick={logout}>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-muted-foreground hover:text-foreground"
+          >
             <LogOut className="h-4 w-4 mr-2" />
             Sign out
           </Button>
         </div>
       </nav>
-    </aside>
+    </aside >
   )
 }
 
