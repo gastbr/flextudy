@@ -7,7 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.v1.models.user import User, Token
 from app.config.db import get_session
-from app.v1.services.auth.auth_service import get_user, verify_password, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.v1.services.auth.auth_service import get_user, pwd_context, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
 
 async def authenticate_user(db: AsyncSession, username: str, password: str) -> User | None:
     user = await get_user(db, username)
@@ -27,7 +30,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def login_for_access_token(
+async def auth_login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[AsyncSession, Depends(get_session)]
 ) -> Token:
@@ -44,11 +47,11 @@ async def login_for_access_token(
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires    
     )
-    return Token(access_token=access_token, token_type="bearer")
+    return Token(access_token=access_token, token_type="bearer", expires_in=access_token_expires)
 
 """ async def get_current_active_user(
-        current_user: Annotated[User, Depends(get_current_user)]
-):
+    current_user: Annotated[User, Depends(get_current_user)]
+    ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user """

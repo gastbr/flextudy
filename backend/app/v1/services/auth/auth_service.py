@@ -13,17 +13,12 @@ from app.config.db import get_session
 from app.v1.models.user import User, TokenData
 
 load_dotenv()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/auth/token")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 15))
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/auth/token")
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password):
     return pwd_context.hash(password)
@@ -33,7 +28,7 @@ async def get_user(db: AsyncSession, username: str) -> User | None:
     result = await db.execute(statement)
     return result.scalar_one_or_none()
 
-async def get_current_user(
+async def authorize(
         token: Annotated[str, Depends(oauth2_scheme)],
         db: Annotated[AsyncSession, Depends(get_session)]
         ):
