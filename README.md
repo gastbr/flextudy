@@ -57,52 +57,50 @@ Platform for managing educational classes (in-person/virtual) that connects stud
 
 ## 📂 Application Structure
 
-### Root Level
+### 🌐 Project Structure
 
+```text
 project-root/
 │
-├── backend
-├── frontend
-├── docker-compose.yml # Global container setup
-└── menu.py # Management CLI
-
-### Backend Structure
-
-backend/
+├── backend/                      # Servidor API principal (FastAPI + PostgreSQL)
+│   │
+│   ├── app/                      # Lógica principal de la aplicación
+│   │   │
+│   │   ├── v1/                   # Versión 1 de la API (puede escalar a v2, v3)
+│   │   │   │
+│   │   │   ├── routes/           # Controladores de endpoints API
+│   │   │   │   ├── __init__.py   # Registro central de todas las rutas
+│   │   │   │   └── base_route.py # Plantilla para rutas comunes (CRUD base)
+│   │   │   │
+│   │   │   ├── services/         # Lógica de negocio (validaciones, procesamiento)
+│   │   │   ├── repositories/     # Comunicación directa con la base de datos
+│   │   │   ├── integrations/     # Conexiones con APIs externas (pagos, auth, etc)
+│   │    │   └── models/          # Modelos de datos (SQLModel) para DB y schemas
+│   │   │
+│   │   ├── config/               # Configuraciones (variables de entorno seguras)
+│   │   └── main.py              # Punto de entrada de FastAPI (app principal)
+│   │
+│   ├── alembic/                 # Migraciones de base de datos (control de versiones)
+│   ├── .env                     # Variables de entorno locales (no committear)
+│   ├── Dockerfile               # Configuración del contenedor Docker
+│   ├── docker-compose.yml       # Orquestación de servicios (API + DB)
+│   ├── requirements.txt         # Dependencias de Python (pip)
+│   └── README.md                # Documentación específica del backend
 │
-├── app/ # Core application
-│ ├── v1/ # API version namespace
-│ │ ├── routes/ # Endpoint controllers
-│ │ │ ├── init.py # Route aggregator
-│ │ │ └── base_route.py # Shared route logic
-│ │ ├── services/ # Business logic layer
-│ │ ├── repositories/ # Database operations
-│ │ ├── integrations/ # Third-party integrations
-│ │ └── models/ # Data models (SQLModel)
-│ │
-│ ├── config/ # Configuration files
-│ └── main.py # FastAPI entrypoint
+├── frontend/                    # Aplicación Next.js (React)
+│   │
+│   ├── src/                     # Código fuente principal
+│   │   │
+│   │   ├── app/                 # Enrutamiento (Next.js App Router)
+│   │   ├── components/          # Componentes UI reutilizables
+│   ️  │   ├── lib/              # Utilidades/helpers (lógica compartida)
+│   │   └── styles/             # Estilos globales/CSS modules
+│   │
+│   ├── Dockerfile              # Configuración del contenedor Docker
+│   └── next.config.js         # Configuración avanzada de Next.js
 │
-├── alembic/ # Database migrations
-├── .env # Environment variables
-├── Dockerfile # Container configuration
-├── docker-compose.yml # Service orchestration
-├── requirements.txt # Python dependencies
-└── README.md # Backend documentation
-
-### Frontend Structure
-
-frontend/
-│
-├── src/ # Next.js application
-│ ├── app/ # App router
-│ ├── components/ # UI components
-│ ├── lib/ # Utilities
-│ └── styles/ # Global CSS
-│
-├── Dockerfile # Frontend container
-└── (Other config files)
-
+├── docker-compose.yml          # Orquestación global (frontend + backend + DB)
+└── menu.py                    # CLI para gestión (build,
 
 ## ⚡ Quick Start
 
