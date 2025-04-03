@@ -17,6 +17,13 @@ export async function login(formData: FormData) {
     password: password,
   });
 
+  const token = await getToken(request);
+  getUser(token);
+
+  redirect(callbackUrl);
+}
+
+async function getToken(request: URLSearchParams) {
   try {
     const response = await axios.post("/auth/login", request.toString(), {
       headers: {
@@ -25,28 +32,41 @@ export async function login(formData: FormData) {
     });
 
     (await cookies()).set({
-      name: "access_token",
+      name: "accessToken",
       value: response.data.access_token,
       maxAge: response.data.expires_in,
     });
-
-    (await cookies()).set({
-      name: "current_user",
-      value: JSON.stringify(response.data.user),
-      maxAge: response.data.expires_in,
-    });
-
-    console.log(response.data);
+    return response.data.access_token;
 
   } catch (error) {
     console.error("Login failed:", error);
-    return { error: "Invalid credentials" };
+    throw error;
   }
-  redirect(callbackUrl);
+}
+
+async function getUser(token: Promise<string>) {
+  try {
+    const resolvedToken = await token;
+    const response = await axios.get("/auth/me",
+      {
+        headers: {
+          Authorization: `Bearer ${resolvedToken}`,
+        },
+      });
+    (await cookies()).set({
+      name: "currentUser",
+      value: JSON.stringify(response.data),
+      maxAge: response.data.expires_in,
+    });
+  } catch (error) {
+    console.error("Login user fetch failed:", error);
+    throw error;
+  }
 }
 
 export async function logout() {
-  (await cookies()).delete("access_token")
-  redirect("/")
+  (await cookies()).delete("accessToken");
+  (await cookies()).delete("currentUser");
+  redirect("/");
 }
 
