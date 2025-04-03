@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.v1.models.user import User
+from app.v1.models.user import User, ReadUser
 from app.v1.services.auth.auth_service import authorize
 from app.v1.services.auth.login_service import auth_login
 from app.v1.services.auth.register_service import auth_register
@@ -44,9 +44,9 @@ async def login(
     ):
     return await auth_login(form_data, db)
 
-@router.get("/users/me", response_model=User)
+@router.get("/me", response_model=ReadUser)
 async def read_users_me(
-    current_user: Annotated[User, Depends(authorize)]
+    current_user: Annotated[ReadUser, Depends(authorize)]
 ):
     return current_user
 
