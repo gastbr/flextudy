@@ -13,7 +13,7 @@ from app.config.db import get_session
 from app.v1.models.user import User, TokenData
 
 load_dotenv()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./auth/login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
