@@ -52,6 +52,7 @@ def show_menu() -> None:
     os.system("cls" if os.name == "nt" else "clear")
     print_color("=== Gestor Docker - FastAPI + PostgreSQL ===", Color.BLUE)
     print_color("1. 🏗️  Construir y levantar contenedores", Color.GREEN)
+    print_color("11. Iniciar front en local", Color.GREEN)
     print_color("2. 🛑 Detener contenedores", Color.YELLOW)
     print_color("3. 🐘 Ejecutar migraciones (Alembic)", Color.GREEN)
     print_color("4. 📜 Ver logs del backend", Color.GREEN)
@@ -99,6 +100,13 @@ def main() -> None:
         
         if choice == "1":
             run_command("docker-compose up -d --build", shell=True)
+            
+            frontend_path = os.path.join(os.getcwd(), "frontend")
+            subprocess.run("npm install", shell=True, cwd=frontend_path)
+            subprocess.run("pnpm install", shell=True, cwd=frontend_path)
+        elif choice == "11":
+            frontend_path = os.path.join(os.getcwd(), "frontend")
+            subprocess.run("pnpm run dev", shell=True, cwd=frontend_path)
         elif choice == "2":
             run_command("docker-compose stop", shell=True)
         elif choice == "3":
