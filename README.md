@@ -117,7 +117,7 @@ project-root/
    git clone https://github.com/yourusername/educational-platform.git
    cd educational-platform
 
-2. Rename .env.example to .evn (backend)
+2. Copy and fill the file .env.example to .evn
 
 3. Launch the management interface:
 
