@@ -17,6 +17,7 @@ export default function CalendarView() {
   // Fetch lessons from the API
 useEffect(() => {
   const fetchLessons = async () => {
+    
     try {
       const response = await fetch("http://localhost:8000/v1/lessons")
       const data = await response.json()
@@ -121,13 +122,43 @@ useEffect(() => {
         </div>
       </div>
 
-      {viewMode === "list" ? <ClassListView /> : <MonthCalendarView month={currentMonth} lessons={lessons} />}
+      {viewMode === "list" ? <ClassListView lessons={lessons} /> : <MonthCalendarView month={currentMonth} lessons={lessons} />}
     </div>
   )
 }
 
-function ClassListView() {
+
+
+interface LessonModel {
+  lessons: {
+    id: number;
+    title: string;
+    date: string;
+    time: string;
+    teacher: string;
+    status: 'available' | 'enrolled' | 'full'; // puedes añadir más estados si necesitas
+    spots: string;
+  }[]
+}
+
+function ClassListView({ lessons }: LessonModel) {
   // Sample class data
+
+  console.log(lessons)
+
+
+
+  // const classes = lessons.map((lesson) => {
+  //   return {
+  //     id: lesson.id,
+  //     title: lesson.title,
+  //     date: new Date(lesson.date),
+  //     time: lesson.time,
+  //     status: lesson.status,
+  //   }
+  // })
+
+
   const classes = [
     {
       id: 1,
@@ -216,6 +247,7 @@ function StatusBadge({ status }: StatusBadgeProps) {
   return <Badge variant={variant}>{label}</Badge>
 }
 
+
 interface MonthCalendarViewProps {
   month: Date
   lessons: {
@@ -230,7 +262,6 @@ interface MonthCalendarViewProps {
 }
 
 function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
-  console.log(lessons)
 
   // Generate calendar days
   const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
