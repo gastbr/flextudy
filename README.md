@@ -117,7 +117,21 @@ project-root/
    git clone https://github.com/yourusername/educational-platform.git
    cd educational-platform
 
-2. Rename .env.example to .evn (backend)
+2. Copy and fill the file .env.example to .env with all the parameters:
+
+  DB_HOST=db
+  DB_PORT=5432
+  DB_USER=postgres
+  DB_PASSWORD=postgres
+  DB_NAME=test
+  
+  SECRET_KEY= (Generate your own at:
+  https://www.cryptool.org/en/cto/openssl/
+  by running the command:
+  openssl rand -hex 32
+  )
+  ALGORITHM=HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES=(Number of minits will expire the key)
 
 3. Launch the management interface:
 
