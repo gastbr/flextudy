@@ -13,6 +13,7 @@ A comprehensive platform connecting students, teachers, and administrators in an
 - [Quick Start](#-quick-start)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Environment Configuration](#environment-configuration)
 - [System Workflow](#-system-workflow)
 - [API Documentation](#-api-documentation)
 - [License](#-license)
@@ -57,7 +58,7 @@ Platform for managing educational classes (in-person/virtual) that connects stud
 
 ## 📂 Application Structure
 
-## 🏗️ Project Structure
+## � Project Structure
 
 ```text
 project-root/
@@ -116,49 +117,79 @@ project-root/
    ```bash
    git clone https://github.com/yourusername/educational-platform.git
    cd educational-platform
+   ```
 
-2. Copy and fill the file .env.example to .env with all the parameters:
+### Environment Configuration
 
-  DB_HOST=db
-  DB_PORT=5432
-  DB_USER=postgres
-  DB_PASSWORD=postgres
-  DB_NAME=test
-  
-  SECRET_KEY= (Generate your own at:
-  https://www.cryptool.org/en/cto/openssl/
-  by running the command:
-  openssl rand -hex 32
-  )
-  ALGORITHM=HS256
-  ACCESS_TOKEN_EXPIRE_MINUTES=(Number of minits will expire the key)
+1. **Create your environment file**:
+   ```bash
+   cp .env.example .env
+   ```
 
-3. Launch the management interface:
+2. **Configure the database settings**:
+   ```ini
+   # PostgreSQL Configuration
+   DB_HOST=db
+   DB_PORT=5432
+   DB_USER=postgres          # Consider changing from default
+   DB_PASSWORD=postgres      # Change to a strong password
+   DB_NAME=test              # Or your preferred database name
+   ```
 
-    python menu.py
+3. **Generating a secure SECRET_KEY**:
+   - Linux/macOS:
+     ```bash
+     openssl rand -hex 32
+     ```
+   - Or use the same command in a cryptographic tool like [Cryptool](https://www.cryptool.org/en/cto/openssl/)
 
-    Management Menu Options:
+4. **Set up security parameters**:
+   ```ini
+   # API Configuration
+   API_URL=http://localhost:8000/v1  # Update if hosting elsewhere or using a different API version.
 
-        1. 🏗️  Build and start containers      # Initial deployment
-        2. 🐘 Run migrations (Alembic)        # Apply database changes
-        3. 📜 View backend logs               # Monitor service output
-        4. 🛑 Stop and remove containers      # Shutdown services
-        5. 🔄 Rebuild everything              # Full clean install
+   # Security Settings - DO NOT USE DEFAULTS IN PRODUCTION
+   SECRET_KEY=your_generated_key_here  # See generation instructions below
+   ALGORITHM=HS256
+   ACCESS_TOKEN_EXPIRE_MINUTES=30      # Recommended 15-60 for production
+   ```
 
-4. (menu.py)Build and start containers
+**Important Security Notes**:
+- Never commit `.env` to version control
+- In production:
+  - Use different credentials than these examples
+  - Consider using environment variables directly instead of .env files
+  - Set `ACCESS_TOKEN_EXPIRE_MINUTES` to a shorter duration (15-30 minutes)
 
-5. (menu.py)Run migrations (Alembic)
+3. **Launch the management interface**:
+   ```bash
+   python menu.py
+   ```
 
-6. Run de seeders:
-    
-    Use the endpoint faker/post to seed the db.
+   Management Menu Options:
+   ```
+   1. 🏗️  Build and start containers      # Initial deployment
+   2. 🐘 Run migrations (Alembic)        # Apply database changes
+   3. 📜 View backend logs               # Monitor service output
+   4. 🛑 Stop and remove containers      # Shutdown services
+   5. 🔄 Rebuild everything              # Full clean install
+   ```
 
-    http://localhost:8000/docs
+4. Run the seeders:
+   ```bash
+   # Use the endpoint faker/post to seed the db
+   # Accessible via Swagger UI: http://localhost:8000/docs
+   ```
 
-7. Ready!
+5. **Access the applications**:
+   - Frontend: http://localhost:3000/
+   - API Documentation (Swagger UI): http://localhost:8000/docs
 
+## 📜 System Workflow
+*(Your system workflow content here)*
 
-### 📜 Front
-Front: http://localhost:3000/
-### 📚 API Documentation
-Swagger UI: http://localhost:8000/docs
+## 📚 API Documentation
+*(Your API documentation details here)*
+
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
