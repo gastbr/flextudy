@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends
 from typing import List
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.v1.services.custom_lesson_service import (
+from app.v1.services.dashboard_service import (
     get_examples,
 )
 from app.config.db import get_session
