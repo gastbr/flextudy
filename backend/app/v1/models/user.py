@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 from app.v1.models.attend import Attend 
 
 class BaseUser(SQLModel):
-    email: str = Field(index=True, unique=True)
     username: str = Field(index=True, unique=True)
     name: str
+    email: str = Field(index=True, unique=True)
     profile_pic: str
 
 class AuthenticatedUser(BaseUser):
@@ -31,7 +31,6 @@ class User(BaseUser, table=True):
     topics: List["Topic"] = Relationship(back_populates="teacher")
     #Many to Many
     lessons: List["Lesson"] = Relationship(back_populates="students", link_model=Attend)
-
 
 class CreateUser(BaseUser):
     name: Optional[str] = None
@@ -51,7 +50,7 @@ class ReadUser(BaseUser):
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
-    user_type_id: Optional[int] = None
+    user_type: Optional[str] = None
 
 class Token(SQLModel):
     access_token: str

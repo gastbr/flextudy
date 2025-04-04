@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import os
 
 from app.config.db import get_session
-from app.v1.models.user import User, TokenData
+from app.v1.models.user import ReadUser, TokenData
 
 load_dotenv()
 
@@ -27,10 +27,15 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-async def get_user(db: AsyncSession, username: str) -> User | None:
-    statement = select(User).where(User.username == username)
+async def get_user(db: AsyncSession, username: str) -> ReadUser | None:
+    statement = select(ReadUser).where(ReadUser.username == username)
     result = await db.execute(statement)
-    return result.scalar_one_or_none()
+    user = result.scalar_one_or_none()
+
+    # if user and user.user_type.id:
+    #     await db.refresh(user, attribute_names=["user_type"])
+
+    return user
 
 async def authorize(
         token: Annotated[str, Depends(oauth2_scheme)],

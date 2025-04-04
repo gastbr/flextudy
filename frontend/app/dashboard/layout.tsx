@@ -1,17 +1,19 @@
 import type React from "react"
 import Link from "next/link"
+import { cookies } from "next/headers"
 import { Button } from "@/components/ui/button"
 import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { logout } from "../login/actions"
-import { useCallback } from "react"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+
+
   return (
     <div className="min-h-screen flex flex-col">
       <DashboardHeader />
@@ -23,7 +25,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   )
 }
 
-function DashboardHeader() {
+async function DashboardHeader() {
+
+  const cookiesStore = await cookies();
+  const user = cookiesStore.get("currentUser")?.value;
+  const userJSON = JSON.parse(user || "");
+  console.log(userJSON);
+
   return (
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">
       <div className="flex items-center justify-between w-full">
@@ -61,7 +69,7 @@ function DashboardHeader() {
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div className="hidden md:block">
-              <div className="text-sm font-medium">Jane Doe</div>
+              <div className="text-sm font-medium">{userJSON.name}</div>
               <div className="text-xs text-muted-foreground">Student</div>
             </div>
           </div>
