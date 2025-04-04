@@ -14,11 +14,10 @@ router = APIRouter()
 # include_route(router, example_router, prefix="/example", tags=["example"])
 
 include_route(router, auth_router, prefix="/auth", tags=["Auth"])
-include_route(router, custom_faker, prefix="/fakers/seed", tags=["Fakers"])
+include_route(router, custom_faker, prefix="/fakers", tags=["Fakers"])
 include_route(router, custom_lesson, prefix="/lessons", tags=["Lessons join"])
 
 # Generic routes
-
 # # Projects routes
 include_route(router, "user", prefix="/user", tags=["User"])
 include_route(router, "user_type", prefix="/user_type", tags=["User Type"])
