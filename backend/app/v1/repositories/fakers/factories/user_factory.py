@@ -14,7 +14,7 @@ class UserFactory(factory.Factory):
 
     name = factory.Faker('name')
     email = factory.Faker('email')
-    profile_pic = factory.Faker('image_url')
+    profile_pic = factory.LazyAttribute(lambda _: f'https://picsum.photos/id/{fake.random_int(min=0, max=29)}/5000/3333')
     hashed_password = factory.Faker('password')
     user_type_id = factory.Faker('random_int', min=1, max=3)
 
