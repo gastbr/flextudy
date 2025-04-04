@@ -11,10 +11,9 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
             <div className="flex-1 space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold text-white">Streamline Your Educational Experience</h1>
+              <h1 className="text-4xl md:text-6xl font-bold text-white">Your All-in-One Educational Hub.</h1>
               <p className="text-xl text-white/90 max-w-xl">
-                A comprehensive platform for schools and academies to manage classes, attendance, payments, and
-                communication in one place.
+              Effortlessly manage your classes (in-person or virtual), interact with teachers and students, and unlock a world of limitless learning.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button size="lg" asChild className="bg-white text-primary hover:bg-white/90">

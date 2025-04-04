@@ -2,21 +2,20 @@ import factory
 from faker import Faker
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
-from app.v1.models.user import User
 from app.v1.models.user_type import UserType
 from app.config.db import SessionLocal
 
 fake = Faker()
 
-class UserFactory(factory.Factory):
-    class Meta:
-        model = User
+# Define nameType como una variable (puedes asignarle un valor o dejarla como None)
+nameType = None  # Cambia esto según sea necesario
 
-    name = factory.Faker('name')
-    email = factory.Faker('email')
-    profile_pic = factory.LazyAttribute(lambda _: f'https://picsum.photos/id/{fake.random_int(min=0, max=29)}/5000/3333')
-    hashed_password = factory.Faker('password')
-    user_type_id = factory.Faker('random_int', min=1, max=3)
+class UserTypeFactory(factory.Factory):
+    class Meta:
+        model = UserType
+
+    # Usa un operador ternario para asignar el valor a name
+    name = nameType if nameType else factory.Faker('name')
 
     # @staticmethod
     # def get_random_user_type_id():

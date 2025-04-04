@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Calendar } from "lucide-react"
 import { login } from "./actions"
 import { useSearchParams } from "next/navigation"
@@ -30,17 +29,15 @@ export default function LoginPage() {
         <form action={login}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" placeholder="name@example.com" />
+              <Input id="username" name="username" type="text" placeholder="Username" />
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+              <Input id="password" name="password" type="password" placeholder="Password" />
+              <div className="flex items-center justify-end">
+                <Link href="/forgot-password" className="text-sm text-muted-foreground hover:underline">
                   Forgot password?
                 </Link>
               </div>
-              <Input id="password" name="password" type="password" />
             </div>
             <input type="hidden" name="callbackUrl" value={callbackUrl} />
           </CardContent>
@@ -59,11 +56,11 @@ export default function LoginPage() {
       </Card>
 
       <div className="mt-8 text-center text-sm text-muted-foreground">
-        <p>Demo Accounts (password: "password" for all)</p>
+        <p>Demo Accounts (password: "pass" for all)</p>
         <ul className="mt-2">
-          <li>Admin: admin@example.com</li>
-          <li>Teacher: teacher@example.com</li>
-          <li>Student: student@example.com</li>
+          <li>Admin: admintest</li>
+          <li>Teacher: teachertest</li>
+          <li>Student: studenttest</li>
         </ul>
       </div>
     </div>
