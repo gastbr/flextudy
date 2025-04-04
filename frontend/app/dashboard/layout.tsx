@@ -118,29 +118,26 @@ function MobileSidebar() {
 }
 
 function DashboardSidebar() {
-
-  /*   const handleLogout = () => {
-      logout()
-    } */
-
   return (
-    <aside className="hidden md:flex w-64 border-r flex-col">
-      <nav className="flex flex-col gap-1 p-2 flex-1">
-        <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
-        <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
-        <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
-        <NavItem href="/dashboard/profile" icon={<User className="h-4 w-4" />} label="Profile" />
-        <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
+    <aside className="hidden md:flex w-64 border-r flex-col sticky top-16 h-[calc(100vh-4rem)]">
+      <nav className="flex flex-col gap-1 p-2 flex-1 justify-between">
+        <div className="flex flex-col">
+          <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
+          <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
+          <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
+          <NavItem href="/dashboard/profile" icon={<User className="h-4 w-4" />} label="Profile" />
+          <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
 
-        {/* Admin-only items */}
-        <div className="mt-2 pt-2 border-t">
-          <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin</div>
-          <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
-          <NavItem href="/dashboard/admin/settings" icon={<Settings className="h-4 w-4" />} label="Platform Settings" />
+          {/* Admin-only items */}
+          <div className="mt-2 pt-2 border-t">
+            <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin</div>
+            <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
+            <NavItem href="/dashboard/admin/settings" icon={<Settings className="h-4 w-4" />} label="Platform Settings" />
+          </div>
         </div>
 
         <div
-          className="mt-auto pt-2"
+          className=""
           onClick={logout}>
           <Button
             variant="ghost"

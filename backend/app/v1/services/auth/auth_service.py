@@ -13,12 +13,16 @@ from app.config.db import get_session
 from app.v1.models.user import User, TokenData
 
 load_dotenv()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="./auth/login")
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+API_URL = os.getenv("API_URL")
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 15))
+
+TOKENURL = f"{API_URL}/auth/login"
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=TOKENURL, scheme_name="Bearer")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_password_hash(password):
     return pwd_context.hash(password)
