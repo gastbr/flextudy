@@ -10,51 +10,46 @@ from app.v1.models.attend import Attend
 import app.v1.repositories.example_repository as repo
 
 async def get_examples(session: AsyncSession) -> List[dict]:
-    # Necesitamos aliases para distinguir entre profesor y estudiante
     from sqlalchemy.orm import aliased
+    from sqlalchemy import func, select as sql_select
+    
     Student = aliased(User)
+    
+    # Subconsulta para contar estudiantes
+    student_count = (
+        sql_select(
+            Attend.lesson_id,
+            func.count(Attend.student_id).label("student_count")
+        )
+        .group_by(Attend.lesson_id)
+        .subquery()
+    )
     
     statement = (
         select(
             Lesson,
             Topic,
             User,  # Profesor
-            Attend,
-            Student  # Estudiante
+            student_count.c.student_count
         )
         .join(Topic, Lesson.topic_id == Topic.id)
         .join(User, Topic.teacher_id == User.id)
-        .join(Attend, Attend.lesson_id == Lesson.id, isouter=True)
-        .join(Student, Attend.student_id == Student.id, isouter=True)
+        .join(student_count, student_count.c.lesson_id == Lesson.id, isouter=True)
     )
     
     results = await session.exec(statement)
     
     lessons_dict = {}
-    for lesson, topic, teacher, attend, student in results:
-        if lesson.id not in lessons_dict:
-            lessons_dict[lesson.id] = {
-                "lesson": dict(lesson),
-                "topic": dict(topic),
-                "teacher": dict(teacher),
-                "students": []
-            }
-        if attend and student:
-            lessons_dict[lesson.id]["students"].append({
-                "student_info": dict(student),
-                "assistance": attend.assistance
-            })
+    for lesson, topic, teacher, student_count in results:
+        student_count = student_count or 0  # En caso de que sea None
+        lessons_dict[lesson.id] = {
+            "id": lesson.id,
+            "title": topic.name,
+            "start_time": lesson.start_time,
+            "end_time": lesson.end_time,
+            "teacher": teacher.name,
+            # "status": "enrolled", 
+            "spots": f"{student_count}/{lesson.max_capacity}",
+        }
     
     return list(lessons_dict.values())
-
-# async def get_example(session: AsyncSession, example_id: int) -> Optional[Example]:
-#     return await repo.get_example_by_id(session, example_id)
-
-# async def create_example(session: AsyncSession, example_in: CreateExample) -> Example:
-#     return await repo.create_example(session, example_in)
-
-# async def update_example(session: AsyncSession, example_id: int, example_in: UpdateExample) -> Optional[Example]:
-#     return await repo.update_example(session, example_id, example_in)
-
-# async def delete_example(session: AsyncSession, example_id: int) -> bool:
-#     return await repo.delete_example(session, example_id)

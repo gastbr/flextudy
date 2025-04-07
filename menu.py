@@ -129,7 +129,7 @@ def main() -> None:
             frontend_path = os.path.join(os.getcwd(), "frontend")
             subprocess.run("pnpm run dev", shell=True, cwd=frontend_path)
         elif choice == "5":
-            run_command("cd backend & docker-compose stop", shell=True)
+            run_command("cd backend && docker-compose stop", shell=True)
         elif choice == "6":
             run_command("cd backend & docker-compose exec fastapi alembic upgrade head", shell=True)
         elif choice == "7":
