@@ -42,7 +42,8 @@ class BaseRepository:
         Retrieves all records of the model in the database with optional eager loading.
         """
         statement = self._resolve_relationships(
-            select(self.model), self.eager_load
+            select(self.model),
+            self.eager_load
         )
         result = await self.db.execute(statement)
         return result.scalars().all()
@@ -52,7 +53,8 @@ class BaseRepository:
         Retrieves a specific record by ID with optional eager loading.
         """
         statement = self._resolve_relationships(
-            select(self.model), self.eager_load
+            select(self.model).where(self.model.id == item_id),
+            self.eager_load
         )
         result = await self.db.execute(statement)
         obj = result.scalar_one_or_none()
