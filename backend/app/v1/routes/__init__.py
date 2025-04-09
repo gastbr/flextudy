@@ -3,7 +3,7 @@ from app.config.routes import include_route
 
 # Import specific routes
 # Example: from app.v1.routes.file import file
-from app.v1.routes.lesson_route import router as lesson_route
+from app.v1.routes.dashboard_route import router as dashboard_route
 from app.v1.routes.faker_route import router as faker_route
 from app.v1.routes.auth_router import router as auth_router
 
@@ -15,8 +15,8 @@ router = APIRouter()
 
 include_route(router, auth_router, prefix="/auth", tags=["Auth"])
 include_route(router, faker_route, prefix="/fakers", tags=["Fakers"])
-include_route(router, lesson_route, prefix="/dashboard", tags=["Dashboard"])
-include_route(router, lesson_route, prefix="/classes", tags=["Classes"])
+include_route(router, dashboard_route, prefix="/dashboard", tags=["Dashboard"])
+include_route(router, dashboard_route, prefix="/classes", tags=["Classes"])
 
 
 
