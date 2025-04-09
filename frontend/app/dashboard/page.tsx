@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Plus, List, Grid3X3 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ClassListView from "@/components/organisms/ClassListView"
 import MonthCalendarView from "@/components/organisms/MonthCalendarView"
+import Link from "next/link"
 
 export default function CalendarView() {
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
@@ -58,10 +59,12 @@ useEffect(() => {
         </div>
 
         {/* This button would only be visible to teachers */}
-        <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          <span>Create Class</span>
-        </Button>
+        <Button asChild className="flex items-center gap-2">
+                    <Link href="/dashboard/classes/create">
+                        <Plus className="h-4 w-4" />
+                        <span>Create Class</span>
+                    </Link>
+                </Button>
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
