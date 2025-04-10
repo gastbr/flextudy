@@ -13,7 +13,6 @@ export default function CalendarView() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
 
   const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
-
   // Fetch lessons from the API
   useEffect(() => {
     const fetchLessons = async () => {
@@ -21,11 +20,12 @@ export default function CalendarView() {
         const response = await fetch("http://localhost:8000/v1/dashboard/lessons")
         const data = await response.json()
         setLessons(data) // Guardar las lecciones en el estado
+        console.log(data)
       } catch (error) {
         console.error("Error fetching lessons:", error)
       }
-      fetchLessons()
     }
+    fetchLessons()
   }, [])
 
   // Function to format date as Month YYYY
