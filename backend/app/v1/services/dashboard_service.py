@@ -9,7 +9,7 @@ from app.v1.models.attend import Attend
 
 import app.v1.repositories.example_repository as repo
 
-async def get_examples(session: AsyncSession) -> List[dict]:
+async def get_lessons(session: AsyncSession) -> List[dict]:
     from sqlalchemy.orm import aliased
     from sqlalchemy import func, select as sql_select
     

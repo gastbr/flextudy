@@ -14,18 +14,18 @@ class LessonFactory(factory.Factory):
     
     @factory.lazy_attribute
     def start_time(self):
-        # Genera un datetime con zona horaria UTC
         dt = fake.date_time_between(
             start_date='now', 
             end_date='+30d', 
-            tzinfo=timezone.utc  # Fuerza UTC
+            tzinfo=timezone.utc  
         )
-        return dt
+        return dt.isoformat()
     
     @factory.lazy_attribute
     def end_time(self):
-        # Añade 1 o 2 horas al start_time (ya en UTC)
         hours_to_add = random.randint(1, 2)
-        return self.start_time + timedelta(hours=hours_to_add)
+        start_dt = datetime.fromisoformat(self.start_time)
+        end_dt = start_dt + timedelta(hours=hours_to_add)
+        return end_dt.isoformat()
     
     lesson_url = factory.Faker('image_url')

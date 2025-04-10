@@ -3,12 +3,16 @@ from fastapi import APIRouter, Depends
 from typing import List
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.services.dashboard_service import (
-    get_examples,
+    get_lessons,
 )
 from app.config.db import get_session
 
 router = APIRouter()
 
-@router.get("", response_model=List[dict])
+@router.get("/lessons", response_model=List[dict])
 async def read_examples(session: AsyncSession = Depends(get_session)):
-    return await get_examples(session)
+    return await get_lessons(session)
+
+# @router.post("", response_model=List[dict])
+# async def create_new_example(example_in: CreateExample, session: AsyncSession = Depends(get_session)):
+#     return await create_example(session, example_in)
