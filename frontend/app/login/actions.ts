@@ -17,13 +17,11 @@ export async function login(formData: FormData) {
     password: password,
   });
 
-  const token = await getToken(request);
-  getUser(token);
-
+  await setToken(request);
   redirect(callbackUrl);
 }
 
-async function getToken(request: URLSearchParams) {
+async function setToken(request: URLSearchParams) {
   try {
     const response = await axios.post("/auth/login", request.toString(), {
       headers: {
@@ -32,10 +30,14 @@ async function getToken(request: URLSearchParams) {
     });
 
     (await cookies()).set({
-      name: "accessToken",
+      name: "token",
       value: response.data.access_token,
       maxAge: response.data.expires_in,
+      httpOnly: (process.env.HTTPONLY_COOKIE ?? "true") === "true",
+      secure: (process.env.SECURE_COOKIE ?? "true") === "true",
+      sameSite: (process.env.SAMESITE_COOKIE ?? "strict") as "lax" | "strict" | "none",
     });
+
     return response.data.access_token;
 
   } catch (error) {
@@ -44,28 +46,7 @@ async function getToken(request: URLSearchParams) {
   }
 }
 
-async function getUser(token: Promise<string>) {
-  try {
-    const resolvedToken = await token;
-    const response = await axios.get("/auth/me",
-      {
-        headers: {
-          Authorization: `Bearer ${resolvedToken}`,
-        },
-      });
-    (await cookies()).set({
-      name: "currentUser",
-      value: JSON.stringify(response.data),
-      maxAge: response.data.expires_in,
-    });
-  } catch (error) {
-    console.error("Login user fetch failed:", error);
-    throw error;
-  }
-}
-
 export async function logout() {
-  (await cookies()).delete("accessToken");
   (await cookies()).delete("currentUser");
   redirect("/");
 }

@@ -11,7 +11,7 @@ def pascal_to_snake(text):
     snake = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1)
     return snake.lower()
 
-def include_route(router, route_obj, prefix: str, tags: list):
+def include_route(router, route_obj, prefix: str, tags: list, eager_load: list[str] = None):
     """
     Add a route to the router. If `route_obj` is a string, it creates a generic route using BaseRoute.
     If it's an imported route, it adds it directly.
@@ -20,11 +20,12 @@ def include_route(router, route_obj, prefix: str, tags: list):
     :param route_obj: Either a string (model name) for generic routes or an imported route object.
     :param prefix: URL prefix for the route.
     :param tags: List of tags for the route.
+    :param eager_load: List of relationships to eager load (optional).
     """
     if isinstance(route_obj, str):
         # Create a generic route using BaseRoute
         route_obj = pascal_to_snake(route_obj)
-        generic_route = BaseRoute(model_name=route_obj)
+        generic_route = BaseRoute(model_name=route_obj, eager_load=eager_load)
         router.include_router(generic_route.router, prefix=prefix, tags=tags)
     else:
         # Include the imported route object

@@ -48,14 +48,14 @@ async def login(
 async def read_users_me(
     current_user: Annotated[ReadUser, Depends(authorize)]
 ):
-    return current_user
+    return current_user 
 
-@router.post("/register", response_model=User)
+""" @router.post("/register", response_model=User)
 async def register(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[AsyncSession, Depends(get_session)]
     ):
-    return await auth_register(form_data, db)
+    return await auth_register(form_data, db) """
 
 """ @router.get("/users/me/items")
 async def read_own_items(

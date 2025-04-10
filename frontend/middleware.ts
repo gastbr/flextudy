@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { getCurrentUser } from "./lib/auth"
+
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-  const currentUser = request.cookies.get("currentUser")?.value
+export async function middleware(request: NextRequest) {
+  const currentUser = await getCurrentUser(request)
   const isLoggedIn = !!currentUser
 
   // Define path patterns that require authentication
@@ -50,7 +52,7 @@ export function middleware(request: NextRequest) {
   let userRole = ""
   if (isLoggedIn) {
     try {
-      const userData = JSON.parse(currentUser)
+      const userData = currentUser
       userRole = userData.role
     } catch (e) {
       // If parsing fails, assume no role
