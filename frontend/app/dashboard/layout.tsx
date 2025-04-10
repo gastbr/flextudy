@@ -16,23 +16,23 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
-  const { data: user, error, loading } = useFetch('/auth/me');
-
-  useEffect(() => {
-    if (user) {
-      console.log('User data:', user);
-    }
-    if (error) {
-      console.error('Error fetching user:', error);
-    }
-  }, [user, error]);
-
-  console.log('-----------------> USER <----------------');
-  console.log(user);
-  console.log('-----------------> error <----------------');
-  console.log(error);
-  console.log('-----------------> loading <----------------');
-  console.log(loading);
+  /*   const { data: user, error, loading } = useFetch('/auth/me');
+  
+    useEffect(() => {
+      if (user) {
+        console.log('User data:', user);
+      }
+      if (error) {
+        console.error('Error fetching user:', error);
+      }
+    }, [user, error]);
+  
+    console.log('-----------------> USER <----------------');
+    console.log(user);
+    console.log('-----------------> error <----------------');
+    console.log(error);
+    console.log('-----------------> loading <----------------');
+    console.log(loading); */
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
 interface LessonProp {
-  month: Date
   lessons: {
     id: number,
     title: string,
@@ -43,14 +42,14 @@ export default function ClassListView({ lessons }: LessonProp) {
     const dateB = new Date(b.start_time).getTime();
     return dateA - dateB;
   });
-  
+
   const classes = lessons.map((lesson) => {
     const startDate = new Date(lesson.start_time);
     const endDate = new Date(lesson.end_time);
-    
+
     // Determinar el estado si no está proporcionado
-    const status = lesson.status || 
-    (parseInt(lesson.spots.split('/')[0]) < 0 ? 'full' : 'available');
+    const status = lesson.status ||
+      (parseInt(lesson.spots.split('/')[0]) < 0 ? 'full' : 'available');
 
     return {
       id: lesson.id,
