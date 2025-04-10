@@ -1,71 +1,48 @@
-import { cookies } from "next/headers"
+import { NextRequest } from "next/server";
+import * as jose from 'jose';
+import { logout } from "@/app/login/actions";
 
-export type UserRole = "student" | "teacher" | "admin"
+// Ensure this secret matches the one used to sign your JWT tokens
+const secret = process.env.SECRET_KEY as string;
 
-export interface User {
-  id: string
-  name: string
-  email: string
-  role: UserRole
-  avatar?: string
+export interface UserData {
+  username: string;
+  role: string;
+  name: string;
+  email: string;
+  // Add any other fields that are included in your JWT payload
 }
 
-// This is a mock function for demonstration purposes
-// In a real app, you would verify the session token with your auth provider
-export async function getCurrentUser(): Promise<User | null> {
-  const cookieStore = cookies()
-  const userCookie = cookieStore.get("currentUser")
-
-  if (!userCookie) {
-    return null
-  }
-
+export async function getCurrentUser(request: NextRequest): Promise<UserData | null> {
   try {
-    return JSON.parse(userCookie.value) as User
-  } catch (error) {
-    return null
+    const tokenCookie = request.cookies.get("token")?.value;
+    if (!tokenCookie) return null;
+
+    // Remove 'Bearer ' prefix if present
+    const token = tokenCookie.replace(/^Bearer\s+/i, "");
+
+    // Create a TextEncoder
+    const encoder = new TextEncoder();
+
+    // Verify and decode the token
+    const { payload } = await jose.jwtVerify(
+      token,
+      encoder.encode(secret)
+    );
+
+    return {
+      username: payload.sub ?? "",
+      role: payload.role as string,
+      name: payload.name as string,
+      email: payload.email as string,
+    };
+  } catch (error: any) {
+    if (error.code === 'ERR_JWT_EXPIRED') {
+      console.error("Token has expired. User needs to log in again.");
+      logout();
+    } else {
+      console.error("Token verification failed:", error);
+    }
+    return null;
   }
 }
-
-// Helper function to check if a user has a specific role
-export function hasRole(user: User | null, roles: UserRole | UserRole[]): boolean {
-  if (!user) return false
-
-  if (Array.isArray(roles)) {
-    return roles.includes(user.role)
-  }
-
-  return user.role === roles
-}
-
-// Example of a server component that redirects if not authenticated
-export async function requireAuth() {
-  const user = await getCurrentUser()
-
-  if (!user) {
-    // This should be handled by middleware, but as a fallback
-    redirect("/login")
-  }
-
-  return user
-}
-
-// Example of a server component that redirects if not authorized for a role
-export async function requireRole(roles: UserRole | UserRole[]) {
-  const user = await requireAuth()
-
-  if (!hasRole(user, roles)) {
-    // Redirect to dashboard if the user doesn't have the required role
-    redirect("/dashboard")
-  }
-
-  return user
-}
-
-// Helper function for redirects
-function redirect(path: string) {
-  // In a server component, you would use the redirect function from next/navigation
-  // This is a simplified version
-  throw new Error(`Redirect to ${path}`)
-}
-

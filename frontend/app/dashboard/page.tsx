@@ -15,34 +15,21 @@ export default function CalendarView() {
   const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
 
   // Fetch lessons from the API
-useEffect(() => {
-  const fetchLessons = async () => {
-    
-    try {
-      const response = await fetch("http://localhost:8000/v1/lessons")
-      const data = await response.json()
+  useEffect(() => {
+    const fetchLessons = async () => {
 
-      // Convertir los datos al formato deseado
-      const respuesta = data.map((item: any) => {
-        return {
-          id: item.lesson.id,
-          title: item.topic.name, // Usar el nombre del topic como título
-          date: item.lesson.start_time,
-          time: `${new Date(item.lesson.start_time).toLocaleTimeString()} - ${new Date(item.lesson.end_time).toLocaleTimeString()}`, // Formatear el tiempo
-          status: "available", // Puedes ajustar esto según tu lógica
-          teacher: "Dr. Smith",
-          spots: "12/15",
-        }
-      })
+      try {
+        const response = await fetch("http://localhost:8000/v1/lessons")
+        const data = await response.json()
 
-      setLessons(respuesta) // Guardar las lecciones en el estado
-    } catch (error) {
-      console.error("Error fetching lessons:", error)
+        setLessons(data) // Guardar las lecciones en el estado
+      } catch (error) {
+        console.error("Error fetching lessons:", error)
+      }
     }
-  }
 
-  fetchLessons()
-}, [])
+    fetchLessons()
+  }, []);
 
   // Function to format date as Month YYYY
   const formatMonth = (date: Date) => {
@@ -287,7 +274,7 @@ function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
     }
   })
 
-  
+
 
   // Filter events for the current month
   const filteredEvents = events.filter(
@@ -312,7 +299,7 @@ function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
     }
   })
 
-  const weekdays = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
   return (
     <div className="border rounded-lg overflow-hidden">
@@ -328,9 +315,8 @@ function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
         {days.map((day, i) => (
           <div
             key={i}
-            className={`min-h-[100px] border-t border-l p-1 ${
-              day.number ? "bg-background" : "bg-muted/50"
-            } ${i % 7 === 6 ? "border-r" : ""} ${Math.floor(i / 7) === 5 ? "border-b" : ""}`}
+            className={`min-h-[100px] border-t border-l p-1 ${day.number ? "bg-background" : "bg-muted/50"
+              } ${i % 7 === 6 ? "border-r" : ""} ${Math.floor(i / 7) === 5 ? "border-b" : ""}`}
           >
             {day.number && (
               <>
@@ -339,13 +325,12 @@ function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
                   {day.events.map((event) => (
                     <div
                       key={event.id}
-                      className={`text-xs p-1 rounded truncate ${
-                        event.status === "enrolled"
-                          ? "bg-primary/10 text-primary"
-                          : event.status === "available"
+                      className={`text-xs p-1 rounded truncate ${event.status === "enrolled"
+                        ? "bg-primary/10 text-primary"
+                        : event.status === "available"
                           ? "bg-muted hover:bg-muted/80 cursor-pointer"
                           : "bg-muted/50 text-muted-foreground"
-                      }`}
+                        }`}
                     >
                       {event.time} {event.title}
                     </div>

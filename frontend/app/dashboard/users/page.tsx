@@ -3,7 +3,7 @@ import UserManagementContent from "./user-management-content"
 
 export default async function UserManagementPage() {
   // This ensures only admins can access this page
-  await requireRole("admin")
+  // await requireRole("admin")
 
   return <UserManagementContent />
 }

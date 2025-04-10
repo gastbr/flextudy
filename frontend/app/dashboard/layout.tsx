@@ -1,11 +1,14 @@
+'use client'
+
 import type React from "react"
 import Link from "next/link"
-import { cookies } from "next/headers"
 import { Button } from "@/components/ui/button"
 import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { logout } from "../login/actions"
+import { useEffect } from "react"
+import useFetch from "@/lib/api"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -13,6 +16,23 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
+  const { data: user, error, loading } = useFetch('/auth/me');
+
+  useEffect(() => {
+    if (user) {
+      console.log('User data:', user);
+    }
+    if (error) {
+      console.error('Error fetching user:', error);
+    }
+  }, [user, error]);
+
+  console.log('-----------------> USER <----------------');
+  console.log(user);
+  console.log('-----------------> error <----------------');
+  console.log(error);
+  console.log('-----------------> loading <----------------');
+  console.log(loading);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -25,12 +45,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   )
 }
 
-async function DashboardHeader() {
-
-  const cookiesStore = await cookies();
-  const user = cookiesStore.get("currentUser")?.value;
-  const userJSON = JSON.parse(user || "");
-  console.log(userJSON);
+function DashboardHeader() {
 
   return (
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">
@@ -69,7 +84,7 @@ async function DashboardHeader() {
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div className="hidden md:block">
-              <div className="text-sm font-medium">{userJSON.name}</div>
+              <div className="text-sm font-medium">{'nombre'}</div>
               <div className="text-xs text-muted-foreground">Student</div>
             </div>
           </div>
