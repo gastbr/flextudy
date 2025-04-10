@@ -38,38 +38,38 @@ export default function CreateClassPage() {
 
 
 
-  function combineDateAndTimeToISO(dateString:string , timeString:string) {
-    // Parsear la fecha original
+  function combineDateAndTimeToISO(dateString: string, timeString: string) {
     const date = new Date(dateString);
-    
-    // Extraer horas y minutos del string de tiempo
     const [hours, minutes] = timeString.split(':').map(Number);
-    
-    // Aplicar la hora a la fecha, manteniendo el mismo offset de zona horaria
     date.setHours(hours);
     date.setMinutes(minutes);
     date.setSeconds(0);
     date.setMilliseconds(0);
-    
-    // Convertir a formato ISO 8601 (UTC)
     return date.toISOString();
-    
-    // Alternativa si prefieres mantener la zona horaria original:
-    // return date.toISOString().slice(0, -1) + dateString.slice(-6); // Mantiene el offset
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí puedes manejar el envío del formulario
     const classData = {
-      max_capacity : capacity,
-      start_time : combineDateAndTimeToISO(date, startTime),
-      end_time :  combineDateAndTimeToISO(date, endTime),
+      max_capacity: capacity,
+      start_time: combineDateAndTimeToISO(date, startTime),
+      end_time: combineDateAndTimeToISO(date, endTime),
       topic_id: selectedTopic,
       lesson_url: url,
     };
+
+    const response = await fetch('http://localhost:8000/v1/classes/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(classData)
+    });
+
+    const data = await response.json();
+    console.log(data);
+
     console.log('Datos de la clase:', classData);
-    // Lógica para enviar los datos al servidor
   };
 
 
@@ -187,7 +187,7 @@ export default function CreateClassPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="capacity">Maximum Number of Students</Label>
-              <Input id="capacity" type="number" min="1" value="15" onChange={(e) => setCapacity(e.target.value)}/>
+              <Input id="capacity" type="number" min="1" value="15" onChange={(e) => setCapacity(e.target.value)} />
             </div>
 
           </div>

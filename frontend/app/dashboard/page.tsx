@@ -19,7 +19,7 @@ useEffect(() => {
   const fetchLessons = async () => {
     
     try {
-      const response = await fetch("http://localhost:8000/v1/lessons")
+      const response = await fetch("http://localhost:8000/v1/dashboard/lessons")
       const data = await response.json()
 
       setLessons(data) // Guardar las lecciones en el estado
