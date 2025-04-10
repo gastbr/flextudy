@@ -6,6 +6,7 @@ from app.config.routes import include_route
 from app.v1.routes.custom_lesson import router as custom_lesson
 from app.v1.routes.custom_faker import router as custom_faker
 from app.v1.routes.auth_router import router as auth_router
+from app.v1.routes.users_route import router as users_router
 
 router = APIRouter()
 
@@ -16,11 +17,13 @@ router = APIRouter()
 include_route(router, auth_router, prefix="/auth", tags=["Auth"])
 include_route(router, custom_faker, prefix="/fakers/seed", tags=["Fakers"])
 include_route(router, custom_lesson, prefix="/lessons", tags=["Lessons join"])
+include_route(router, users_router, prefix="/users", tags=["User"])
+
 
 # Generic routes
 
 # # Projects routes
-include_route(router, "user", prefix="/user", tags=["User"])
+# include_route(router, "user", prefix="/user", tags=["User"], eager_load=["user_type"])
 include_route(router, "user_type", prefix="/user_type", tags=["User Type"])
 include_route(router, "lesson", prefix="/lesson", tags=["Lesson"])
 include_route(router, "subject", prefix="/subject", tags=["Subject"])
