@@ -1,22 +1,26 @@
 from typing import List, Optional
+from sqlalchemy.orm import selectinload
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.v1.models.user import User, CreateUser, UpdateUser
+from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
 
-async def get_all_users(session: AsyncSession) -> List[User]:
-    statement = select(User)
+async def get_all_users(session: AsyncSession) -> List[ReadUser]:
+    statement = select(User).options(selectinload(User.user_type))
     results = await session.exec(statement)
-    return results.all()
+    users = results.all()
+    return [ReadUser.from_orm(user) for user in users]
 
-async def get_user_by_id(session: AsyncSession, user_id: int) -> Optional[User]:
-    return await session.get(User, user_id)
+async def get_user_by_id(session: AsyncSession, user_id: int) -> Optional[ReadUser]:
+    statement = select(User).where(User.id == user_id).options(selectinload(User.user_type))
+    results = await session.exec(statement)
+    user = results.one_or_none()
+    return ReadUser.from_orm(user) if user else None
 
-async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
-    user = User.from_orm(user_in)
-    session.add(user)
+async def create_user(session: AsyncSession, user_in: User) -> User:
+    session.add(user_in)
     await session.commit()
-    await session.refresh(user)
-    return user
+    await session.refresh(user_in)
+    return user_in
 
 async def update_user(session: AsyncSession, user_id: int, user_in: UpdateUser) -> Optional[User]:
     db_user = await session.get(User, user_id)

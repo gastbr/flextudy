@@ -32,14 +32,19 @@ class User(BaseUser, table=True):
     #Many to Many
     lessons: List["Lesson"] = Relationship(back_populates="students", link_model=Attend)
 
+    @property
+    def user_type_name(self) -> Optional[str]:
+        return self.user_type.name if self.user_type else None
+
 class CreateUser(BaseUser):
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
-    user_type_id: Optional[int] = None
-    password: str
+    user_type_id: Optional[int] = 3
+    password: Optional[str] = None
 
 class UpdateUser(BaseUser):
+    username: Optional[str] = None
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
@@ -50,7 +55,7 @@ class ReadUser(BaseUser):
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
-    user_type: Optional[str] = None
+    user_type_name: Optional[str] = None
 
 class Token(SQLModel):
     access_token: str

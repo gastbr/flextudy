@@ -4,13 +4,14 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from dotenv import load_dotenv
 import os
 
 from app.config.db import get_session
-from app.v1.models.user import ReadUser, TokenData
+from app.v1.models.user import User, TokenData
 
 load_dotenv()
 
@@ -27,8 +28,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-async def get_user(db: AsyncSession, username: str) -> ReadUser | None:
-    statement = select(ReadUser).where(ReadUser.username == username)
+async def get_user(db: AsyncSession, username: str) -> User | None:
+    statement = select(User).where(User.username == username).options(selectinload(User.user_type))
     result = await db.execute(statement)
     user = result.scalar_one_or_none()
 
