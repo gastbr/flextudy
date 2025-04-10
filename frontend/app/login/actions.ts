@@ -47,7 +47,7 @@ async function setToken(request: URLSearchParams) {
 }
 
 export async function logout() {
-  (await cookies()).delete("currentUser");
+  (await cookies()).delete("token");
   redirect("/");
 }
 
