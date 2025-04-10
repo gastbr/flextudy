@@ -10,11 +10,11 @@ export async function middleware(request: NextRequest) {
 
   // Define path patterns that require authentication
   const authRequiredPaths = [
-    "/dashboard",
-    "/dashboard/classes",
-    "/dashboard/wallet",
-    "/dashboard/profile",
-    "/dashboard/settings",
+    // "/dashboard",
+    // "/dashboard/classes",
+    // "/dashboard/wallet",
+    // "/dashboard/profile",
+    // "/dashboard/settings",
   ]
 
   // Define admin-only paths

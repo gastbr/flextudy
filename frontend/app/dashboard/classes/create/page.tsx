@@ -187,7 +187,7 @@ export default function CreateClassPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="capacity">Maximum Number of Students</Label>
-              <Input id="capacity" type="number" min="1" value="15" onChange={(e) => setCapacity(e.target.value)} />
+              <Input id="capacity" type="number" min="1" placeholder="15"  onChange={(e) => setCapacity(e.target.value)} />
             </div>
 
           </div>
