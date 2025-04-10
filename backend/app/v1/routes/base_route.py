@@ -9,14 +9,16 @@ from typing import List, Type, Any
 from pydantic import BaseModel
 
 class BaseRoute:
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, eager_load: List[str] = None):
         """
         Base class for configuring CRUD endpoints dynamically.
 
         :param model_name: Name of the model in snake_case format.
+        :param eager_load: List of relationships to eager load.
         """
         self.router = APIRouter()
         self.model_name = model_name
+        self.eager_load = eager_load or []
         main_model = self._load_model_class(model_name)
         read_model = self._load_model_class(model_name, "Read")
         create_model = self._load_model_class(model_name, "Create")
@@ -27,6 +29,7 @@ class BaseRoute:
         self.router.get(f"/{model_name}/{{item_id}}", response_model=read_model)(self.read(main_model))
         self.router.post(f"/{model_name}", response_model=read_model)(self._typed_create(main_model, create_model))
         self.router.put(f"/{model_name}/{{item_id}}", response_model=read_model)(self._typed_update(main_model, update_model))
+        self.router.patch(f"/{model_name}/{{item_id}}", response_model=read_model)(self._typed_update(main_model, update_model))
         self.router.delete(f"/{model_name}/{{item_id}}", response_model=dict)(self.delete(main_model))
 
     def _load_model_class(self, model_name: str, suffix: str = "") -> Type[BaseModel]:
@@ -42,7 +45,7 @@ class BaseRoute:
         Returns a typed read_all endpoint for documentation and validation.
         """
         async def read_all_endpoint(db: AsyncSession = Depends(get_session)):
-            repository = BaseRepository(db, main_model)
+            repository = BaseRepository(db, main_model, eager_load=self.eager_load)
             return await repository.read_all()
         return read_all_endpoint
 
@@ -51,7 +54,7 @@ class BaseRoute:
         Returns a typed read endpoint for documentation and validation.
         """
         async def read_endpoint(item_id: int, db: AsyncSession = Depends(get_session)):
-            repository = BaseRepository(db, main_model)
+            repository = BaseRepository(db, main_model, eager_load=self.eager_load)
             return await repository.read(item_id)
         return read_endpoint
 
