@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight, Plus, List, Grid3X3 } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import ClassListView from "@/components/organisms/ClassListView"
+import MonthCalendarView from "@/components/organisms/MonthCalendarView"
 
 export default function CalendarView() {
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
@@ -15,19 +14,17 @@ export default function CalendarView() {
   const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
 
   // Fetch lessons from the API
-  useEffect(() => {
-    const fetchLessons = async () => {
+useEffect(() => {
+  const fetchLessons = async () => {
+    
+    try {
+      const response = await fetch("http://localhost:8000/v1/lessons")
+      const data = await response.json()
 
-      try {
-        const response = await fetch("http://localhost:8000/v1/lessons")
-        const data = await response.json()
-
-        setLessons(data) // Guardar las lecciones en el estado
-      } catch (error) {
-        console.error("Error fetching lessons:", error)
-      }
+      setLessons(data) // Guardar las lecciones en el estado
+    } catch (error) {
+      console.error("Error fetching lessons:", error)
     }
-
     fetchLessons()
   }, []);
 
@@ -113,8 +110,6 @@ export default function CalendarView() {
     </div>
   )
 }
-
-
 
 interface LessonModel {
   lessons: {
@@ -344,4 +339,3 @@ function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
     </div>
   )
 }
-

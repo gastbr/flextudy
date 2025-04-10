@@ -3,8 +3,8 @@ from app.config.routes import include_route
 
 # Import specific routes
 # Example: from app.v1.routes.file import file
-from app.v1.routes.custom_lesson import router as custom_lesson
-from app.v1.routes.custom_faker import router as custom_faker
+from app.v1.routes.lesson_route import router as lesson_route
+from app.v1.routes.faker_route import router as faker_route
 from app.v1.routes.auth_router import router as auth_router
 from app.v1.routes.users_route import router as users_router
 
@@ -19,9 +19,7 @@ include_route(router, custom_faker, prefix="/fakers/seed", tags=["Fakers"])
 include_route(router, custom_lesson, prefix="/lesson", tags=["Lessons join"])
 include_route(router, users_router, prefix="/user", tags=["User"])
 
-
 # Generic routes
-
 # # Projects routes
 # include_route(router, "user", prefix="/user", tags=["User"], eager_load=["user_type"])
 include_route(router, "user_type", prefix="/user_type", tags=["User Type"])
