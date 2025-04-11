@@ -20,7 +20,7 @@ export default function CalendarView() {
         const response = await fetch("http://localhost:8000/v1/dashboard/lessons")
         const data = await response.json()
         setLessons(data) // Guardar las lecciones en el estado
-        console.log(data)
+        //console.log(data)
       } catch (error) {
         console.error("Error fetching lessons:", error)
       }

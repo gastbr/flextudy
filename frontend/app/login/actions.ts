@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { NextResponse, NextRequest } from "next/server"
 import axios from "axios"
 
 axios.defaults.baseURL = process.env.API_URL;
@@ -46,8 +47,8 @@ async function setToken(request: URLSearchParams) {
   }
 }
 
-export async function logout() {
+export async function logout(request: NextRequest) {
   (await cookies()).delete("token");
-  redirect("/");
+  return NextResponse.redirect(new URL("/login", request.url));
 }
 
