@@ -1,4 +1,3 @@
-import os
 from fastapi import FastAPI
 from app.v1.routes import router as api_router
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,7 +10,6 @@ origins = [
     "http://localhost:8080",
     "http://localhost:8000",
     "http://localhost:3000",
-    
 ]
 
 app.add_middleware(
