@@ -3,12 +3,54 @@ from typing import List, Optional
 from sqlmodel import select, func
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.models.lesson import Lesson, CreateLesson
+from app.v1.models.user import User
+from app.v1.models.topic import Topic
+from app.v1.models.subject import Subject
+
+
 import app.v1.repositories.example_repository as repo
 
 async def create_class(session: AsyncSession, lesson_in: CreateLesson) -> Lesson:
-    lesson = Lesson.from_orm(lesson_in)
-    session.add(lesson)
-    await session.commit()
-    await session.refresh(lesson)
-    return lesson
     
+    lesson = Lesson.from_orm(lesson_in)
+    topic = (await session.exec(
+        select(Topic).where(Topic.id == lesson.topic_id)
+    )).first()# cheking if exists eventually checking user/teacger join
+    print("topic")
+    print(topic)
+    return topic
+
+    if(topic):
+        session.add(lesson)
+        await session.commit()
+        await session.refresh(lesson)
+        return lesson
+    else:
+        raise ValueError("Topic not found")
+    
+async def get_topics_by_teacher_id(session: AsyncSession) -> dict:
+
+    # HARCODED TEACHER
+    teacherName = "teachertest"
+    teacher = (await session.exec(
+        select(User).where(User.username == teacherName)
+    )).first()
+
+    if not teacher:
+        raise ValueError("Teacher not found")
+
+    # Get all topics
+    topics = (await session.exec(
+        select(Topic).where(Topic.teacher_id == teacher.id)
+    )).all()
+
+    response_data = {
+        # "teacher": {
+        #     "id": teacher.id,
+        #     "name": teacher.name,
+        #     "email": teacher.email,
+        # },
+        "topics": [topic.dict() for topic in topics],
+    }
+
+    return response_data

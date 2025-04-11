@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -31,10 +31,26 @@ export default function CreateClassPage() {
   const [selectedTopic, setSelectedTopic] = useState('');
   const [url, setUrl] = useState('');
   const [capacity, setCapacity] = useState(15);
+  const [subject, setSubject] = useState();
+  const [topics, setTopics] = useState();
 
-  console.log(date);
-  console.log(startTime);
-  // console.log(endTime);
+
+  console.log(selectedTopic)
+
+  useEffect(() => {
+    const fetchLessons = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/v1/classes/to_create")
+        const data = await response.json()
+        setTopics(data.topics)
+        console.log(data)
+      } catch (error) {
+        console.error("Error fetching lessons:", error)
+      }
+    }
+    fetchLessons()
+  }, [])
+
 
 
 
@@ -73,12 +89,12 @@ export default function CreateClassPage() {
   };
 
 
-  // Sample data for topics and subjects
-  const topics = [
-    { id: "1", title: "Introduction to Algebra", subject: "Mathematics" },
-    { id: "2", title: "Spanish Conversation", subject: "Languages" },
-    { id: "3", title: "Classical Mechanics", subject: "Physics" },
-  ]
+  // // Sample data for topics and subjects
+  // const topics = [
+  //   { id: "1", name: "Introduction to Algebra", subject: "Mathematics" },
+  //   { id: "2", name: "Spanish Conversation", subject: "Languages" },
+  //   { id: "3", name: "Classical Mechanics", subject: "Physics" },
+  // ]
 
   const subjects = [
     { id: "1", name: "Mathematics" },
@@ -155,13 +171,15 @@ export default function CreateClassPage() {
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a topic" />
                 </SelectTrigger>
-                <SelectContent>
-                  {topics.map((topic) => (
-                    <SelectItem key={topic.id} value={topic.id}>
-                      {topic.title} ({topic.subject})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {topics ? (
+                  <SelectContent>
+                    {topics.map((topic) => (
+                      <SelectItem key={topic.id} value={topic.id}>
+                        {topic.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                ) : null}
               </Select>
               <Button variant="outline" size="icon" onClick={() => setShowNewTopicDialog(true)}>
                 <Plus className="h-4 w-4" />
@@ -187,7 +205,7 @@ export default function CreateClassPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="capacity">Maximum Number of Students</Label>
-              <Input id="capacity" type="number" min="1" placeholder="15"  onChange={(e) => setCapacity(e.target.value)} />
+              <Input id="capacity" type="number" min="1" placeholder="15" onChange={(e) => setCapacity(e.target.value)} />
             </div>
 
           </div>
@@ -227,18 +245,6 @@ export default function CreateClassPage() {
                     ))}
                   </SelectContent>
                 </Select>
-
-                {/* <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {
-                    setShowNewTopicDialog(false)
-                    setShowNewSubjectDialog(true)
-                  }}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button> */}
-
               </div>
             </div>
             <div className="space-y-2">
@@ -255,44 +261,6 @@ export default function CreateClassPage() {
         </DialogContent>
       </Dialog>
 
-      {/* New Subject Dialog */}
-      {/* <Dialog open={showNewSubjectDialog} onOpenChange={setShowNewSubjectDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Subject</DialogTitle>
-            <DialogDescription>Add a new subject category</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="subjectName">Subject Name</Label>
-              <Input id="subjectName" placeholder="Enter subject name" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="subjectDescription">Description</Label>
-              <Textarea id="subjectDescription" placeholder="Provide a description of this subject" rows={3} />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowNewSubjectDialog(false)
-                setShowNewTopicDialog(true)
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                setShowNewSubjectDialog(false)
-                setShowNewTopicDialog(true)
-              }}
-            >
-              Create Subject
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog> */}
     </div>
   )
 }

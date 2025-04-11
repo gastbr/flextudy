@@ -95,7 +95,9 @@ def show_menu() -> None:
     print_color("5. 🛑 Detener contenedores", Color.YELLOW)
     print_color("6. 🐘 Ejecutar migraciones (Alembic)", Color.GREEN)
     print_color("7. 🛑 Detener y eliminar contenedores", Color.RED)
-    print_color("8. 🚪 Salir", Color.RED)
+    print_color("8. ✅ Visualstudio(front/back)", Color.GREEN)
+    print_color("9. 🚪 Salir", Color.RED)
+
 
 
 
@@ -135,6 +137,9 @@ def main() -> None:
         elif choice == "7":
             run_command("cd backend & docker-compose down", shell=True)
         elif choice == "8":
+            run_command("cd backend & code .", shell=True)
+            run_command("cd frontend & code .", shell=True)
+        elif choice == "9":
             print_color("¡Hasta luego! 👋", Color.BLUE)
             break
         else:

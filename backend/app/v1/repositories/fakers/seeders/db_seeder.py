@@ -164,7 +164,7 @@ async def db_seeder(session):
     await session.commit()
 
     # # ATTEND
-    for _ in range(10):
+    for _ in range(200):
         attend = AttendFactory()
         
         lesson = (await session.exec(select(Lesson).order_by(func.random()).limit(1))).first()
@@ -176,14 +176,19 @@ async def db_seeder(session):
             .limit(1)
         )).first()
 
-        if lesson and student:
+        already_attended = (await session.exec(
+            select(Attend)
+            .where(Attend.lesson_id == lesson.id, Attend.student_id == student.id)
+        )).first()
+
+        if not already_attended:
             session.add(Attend(
                 assistance=attend.assistance,
                 lesson_id=lesson.id,
                 student_id=student.id
             ))
-
-    await session.commit()  # Final commit
+        await session.commit()  # Commit inmediato
+        await session.flush()
 
 
     # # FUNCIONA (ejemplos):
