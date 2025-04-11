@@ -19,14 +19,14 @@ export async function middleware(request: NextRequest) {
 
   // Define admin-only paths
   const adminOnlyPaths = [
-    // "/dashboard/users",
-    //  "/dashboard/admin"
+    "/dashboard/users",
+    "/dashboard/admin"
   ]
 
   // Define teacher-only paths
   const teacherOnlyPaths = [
-    // "/dashboard/classes/create",
-    //  "/dashboard/classes/*/attendance"
+    "/dashboard/classes/create",
+    "/dashboard/classes/*/attendance"
   ]
 
   const url = request.nextUrl.clone()

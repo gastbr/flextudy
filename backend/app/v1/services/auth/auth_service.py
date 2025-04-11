@@ -1,7 +1,7 @@
 import jwt
 from jwt.exceptions import InvalidTokenError
-from typing import Annotated
-from fastapi import Depends, HTTPException, status
+from typing import Annotated, Optional
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import selectinload
@@ -22,7 +22,19 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 15))
 
 TOKENURL = f"{API_URL}/auth/login"
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=TOKENURL, scheme_name="Bearer")
+class OAuth2PasswordBearerCookie(OAuth2PasswordBearer):
+    async def __call__(self, request: Request) -> Optional[str]:
+        # Attempt to retrieve the token from the cookies using the key "token"
+        token_from_cookie = request.cookies.get("token")
+        if token_from_cookie:
+            return token_from_cookie
+        
+        # Fallback to the default mechanism (i.e., Authorization header)
+        token_from_header = await super().__call__(request)
+        return token_from_header
+
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl=TOKENURL, scheme_name="Bearer")
+oauth2_scheme = OAuth2PasswordBearerCookie(tokenUrl=TOKENURL, scheme_name="Bearer")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_password_hash(password):
