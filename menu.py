@@ -107,8 +107,8 @@ def main() -> None:
         choice = input("👉 Selecciona una opción: ")
         
         if choice == "0":
-            run_command("cd backend & docker-compose up -d --build", shell=True)
-            run_command("cd backend & docker-compose exec fastapi alembic upgrade head", shell=True)
+            run_command("cd backend && docker-compose up -d --build", shell=True)
+            run_command("cd backend && docker-compose exec fastapi alembic upgrade head", shell=True)
             try:
                 conn = http.client.HTTPConnection("localhost", 8000)  
                 conn.request("GET", "/v1/fakers/seed")  
@@ -117,11 +117,11 @@ def main() -> None:
                 conn.close()
             except Exception as e:
                 print(f"❌ Error en GET: {e}")
-            run_command("cd frontend & pnpm install", shell=True)
-            run_command("cd frontend & pnpm run dev", shell=True)
+            run_command("cd frontend && pnpm install", shell=True)
+            run_command("cd frontend && pnpm run dev", shell=True)
         elif choice == "1":
-            run_command("cd backend & docker-compose up -d --build", shell=True)
-            run_command("cd frontend & pnpm run dev", shell=True)
+            run_command("cd backend && docker-compose up -d --build", shell=True)
+            run_command("cd frontend && pnpm run dev", shell=True)
         elif choice == "2":
             print_color("Presiona Ctrl+C para salir de los logs...", Color.YELLOW)
             subprocess.run(["docker-compose", "logs", "-f", "fastapi"], cwd="backend")
@@ -131,14 +131,14 @@ def main() -> None:
             frontend_path = os.path.join(os.getcwd(), "frontend")
             subprocess.run("pnpm run dev", shell=True, cwd=frontend_path)
         elif choice == "5":
-            run_command("cd backend & docker-compose stop", shell=True)
+            run_command("cd backend && docker-compose stop", shell=True)
         elif choice == "6":
-            run_command("cd backend & docker-compose exec fastapi alembic upgrade head", shell=True)
+            run_command("cd backend && docker-compose exec fastapi alembic upgrade head", shell=True)
         elif choice == "7":
-            run_command("cd backend & docker-compose down", shell=True)
+            run_command("cd backend && docker-compose down", shell=True)
         elif choice == "8":
-            run_command("cd backend & code .", shell=True)
-            run_command("cd frontend & code .", shell=True)
+            run_command("cd backend && code .", shell=True)
+            run_command("cd frontend && code .", shell=True)
         elif choice == "9":
             print_color("¡Hasta luego! 👋", Color.BLUE)
             break

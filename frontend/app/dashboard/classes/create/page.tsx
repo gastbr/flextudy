@@ -96,14 +96,6 @@ export default function CreateClassPage() {
   //   { id: "3", name: "Classical Mechanics", subject: "Physics" },
   // ]
 
-  const subjects = [
-    { id: "1", name: "Mathematics" },
-    { id: "2", name: "Languages" },
-    { id: "3", name: "Physics" },
-    { id: "4", name: "Chemistry" },
-    { id: "5", name: "History" },
-  ]
-
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">

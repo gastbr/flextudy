@@ -11,22 +11,21 @@ from app.v1.models.subject import Subject
 import app.v1.repositories.example_repository as repo
 
 async def create_class(session: AsyncSession, lesson_in: CreateLesson) -> Lesson:
-    
     lesson = Lesson.from_orm(lesson_in)
+    
+    # Check if topic exists
     topic = (await session.exec(
         select(Topic).where(Topic.id == lesson.topic_id)
-    )).first()# cheking if exists eventually checking user/teacger join
-    print("topic")
-    print(topic)
-    return topic
-
-    if(topic):
-        session.add(lesson)
-        await session.commit()
-        await session.refresh(lesson)
-        return lesson
-    else:
+    )).first()
+    
+    if not topic:
         raise ValueError("Topic not found")
+    
+    # Create the lesson
+    session.add(lesson)
+    await session.commit()
+    await session.refresh(lesson)
+    return lesson
     
 async def get_topics_by_teacher_id(session: AsyncSession) -> dict:
 
