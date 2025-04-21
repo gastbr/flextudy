@@ -1,55 +1,87 @@
-'use client';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import type { AxiosRequestConfig, Method, AxiosError } from 'axios';
+import api from '../lib/axios';
 
-import { useEffect, useState } from 'react';
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-
-interface FetchResult<T> {
-  data: T | null;
-  error: string | null;
-  loading: boolean;
+interface UseFetchOptions<TBody> {
+  method: Method;
+  url: string;
+  body?: TBody;
+  config?: AxiosRequestConfig;
+  immediate?: boolean;
 }
 
-// Set up Axios defaults — these settings will apply to all requests made with Axios.
-axios.defaults.baseURL = process.env.API_URL ?? 'http://localhost:8000/v1';
-axios.defaults.withCredentials = true; // Ensures cookies (including your HttpOnly JWT cookie) are sent.
-axios.defaults.withXSRFToken = true // Ensures the XSRF token is sent.
-axios.defaults.headers.common['Content-Type'] = 'application/json';
-axios.defaults.headers.common['Accept'] = 'application/json';
+function useFetch<TResponse = any, TBody = any>({
+  method,
+  url,
+  body,
+  config,
+  immediate = false,
+}: UseFetchOptions<TBody>) {
+  const [data, setData] = useState<TResponse | null>(null);
+  const [error, setError] = useState<AxiosError | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-export default function useFetch<T = any>(routeURL: string): FetchResult<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const mounted = useRef(true);
+
+  const execute = useCallback(
+    async (overrideBody?: TBody) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await api.request<TResponse>({
+          method,
+          url,
+          data: overrideBody ?? body,
+          ...config,
+        });
+        if (mounted.current) setData(res.data);
+        return res.data;
+      } catch (err) {
+        const axiosErr = err as AxiosError;
+        if (mounted.current) setError(axiosErr);
+        throw axiosErr;
+      } finally {
+        if (mounted.current) setLoading(false);
+      }
+    },
+    [method, url, body, config]
+  );
 
   useEffect(() => {
-    let isMounted = true;
-    // Ensure the route starts with '/' so it joins correctly with the base URL.
-    const url = routeURL.startsWith('/') ? routeURL : `/${routeURL}`;
-
-    const fetchData = async () => {
-      try {
-        const response = await axios.get<T>(url);
-        if (isMounted) {
-          setData(response.data);
-        }
-      } catch (err: any) {
-        if (isMounted) {
-          console.error('❌ AXIOS ERROR ----------->', err);
-          setError(err.response?.data?.message || err.message);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-
+    mounted.current = true;
+    if (immediate && method.toLowerCase() === 'get') {
+      execute();
+    }
     return () => {
-      isMounted = false;
+      mounted.current = false;
     };
-  }, [routeURL]);
+  }, [execute, immediate, method]);
 
-  return { data, error, loading };
+  return { fetch: data, error, loading, execute };
+}
+
+
+export function useGet<TResponse = any>(
+  url: string,
+  config?: AxiosRequestConfig,
+  immediate: boolean = true
+) {
+  return useFetch<TResponse>({
+    method: 'GET',
+    url,
+    config,
+    immediate,
+  });
+}
+
+export function usePost<TResponse = any, TBody = any>(
+  url: string,
+  config?: AxiosRequestConfig
+) {
+  return useFetch<TResponse, TBody>({
+    method: 'POST',
+    url,
+    config,
+    immediate: false, // don't call on mount
+  });
 }
