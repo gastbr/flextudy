@@ -42,14 +42,14 @@ async def get_topics_by_teacher_id(session: AsyncSession) -> dict:
     topics = (await session.exec(
         select(Topic).where(Topic.teacher_id == teacher.id)
     )).all()
+    
+    subjecs = (await session.exec(
+        select(Subject)
+    )).all()
 
     response_data = {
-        # "teacher": {
-        #     "id": teacher.id,
-        #     "name": teacher.name,
-        #     "email": teacher.email,
-        # },
         "topics": [topic.dict() for topic in topics],
+        "subjects": [subject.dict() for subject in subjecs],
     }
 
     return response_data

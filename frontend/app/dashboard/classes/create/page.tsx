@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,38 +11,45 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { format, set } from "date-fns"
-import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import TopicEdit from "@/components/organisms/TopicEdit"
+import TopicCreate from "@/components/organisms/TopicCreate"
 
 export default function CreateClassPage() {
   const [date, setDate] = useState<Date>()
   const [startTime, setStartTime] = useState<string>("")
   const [endTime, setEndTime] = useState<string>("")
+  const [showNewTopicCreateDialog, setShowNewTopicCreateDialog] = useState(false)
+  const [showNewTopicEditDialog, setShowNewTopicEditDialog] = useState(false)
+
   const [showNewTopicDialog, setShowNewTopicDialog] = useState(false)
-  // const [showNewSubjectDialog, setShowNewSubjectDialog] = useState(false)
+
+  const [selectedTopicId, setSelectedTopicId] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('');
   const [url, setUrl] = useState('');
   const [capacity, setCapacity] = useState(15);
-  const [subject, setSubject] = useState();
+  const [subjects, setSubject] = useState();
   const [topics, setTopics] = useState();
 
 
-  console.log(selectedTopic)
+  useEffect(() => {
+    const selectedTopic = topics?.find((topic) => topic.id === selectedTopicId)
+    if (selectedTopic) {
+      setSelectedTopic(selectedTopic)
+    } else {
+      setSelectedTopic('')
+    }
+  }, [selectedTopicId])
 
+
+  
   useEffect(() => {
     const fetchLessons = async () => {
       try {
         const response = await fetch("http://localhost:8000/v1/classes/to_create")
         const data = await response.json()
         setTopics(data.topics)
+        setSubject(data.subjects)
         console.log(data)
       } catch (error) {
         console.error("Error fetching lessons:", error)
@@ -50,9 +57,6 @@ export default function CreateClassPage() {
     }
     fetchLessons()
   }, [])
-
-
-
 
   function combineDateAndTimeToISO(dateString: string, timeString: string) {
     const date = new Date(dateString);
@@ -70,7 +74,7 @@ export default function CreateClassPage() {
       max_capacity: capacity,
       start_time: combineDateAndTimeToISO(date, startTime),
       end_time: combineDateAndTimeToISO(date, endTime),
-      topic_id: selectedTopic,
+      topic_id: selectedTopicId,
       lesson_url: url,
     };
 
@@ -87,14 +91,6 @@ export default function CreateClassPage() {
 
     console.log('Datos de la clase:', classData);
   };
-
-
-  // // Sample data for topics and subjects
-  // const topics = [
-  //   { id: "1", name: "Introduction to Algebra", subject: "Mathematics" },
-  //   { id: "2", name: "Spanish Conversation", subject: "Languages" },
-  //   { id: "3", name: "Classical Mechanics", subject: "Physics" },
-  // ]
 
   return (
     <div className="space-y-6">
@@ -113,12 +109,6 @@ export default function CreateClassPage() {
           <CardDescription>Fill in the details to create a new class</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* <div className="space-y-2">
-              <Label htmlFor="title">Class Title</Label>
-              <Input id="title" placeholder="Enter class title" />
-            </div> */}
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
@@ -159,7 +149,7 @@ export default function CreateClassPage() {
           <div className="space-y-2">
             <Label htmlFor="topic">Topic</Label>
             <div className="flex gap-2">
-              <Select onValueChange={(value) => setSelectedTopic(value)}>
+              <Select onValueChange={(value) => setSelectedTopicId(value)}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a topic" />
                 </SelectTrigger>
@@ -173,22 +163,22 @@ export default function CreateClassPage() {
                   </SelectContent>
                 ) : null}
               </Select>
-              <Button variant="outline" size="icon" onClick={() => setShowNewTopicDialog(true)}>
+              <Button variant="outline" size="icon" onClick={() => setShowNewTopicCreateDialog(true)}>
                 <Plus className="h-4 w-4" />
               </Button>
 
-              <Button variant="outline" size="icon" onClick={() => setShowNewTopicDialog(true)}>
-                <Edit className="h-4 w-4" />
-              </Button>
+              {
+                selectedTopicId ? (
+                  <Button variant="outline" size="icon" onClick={() => setShowNewTopicEditDialog(true)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+                ) : null
+              }
+          
 
 
             </div>
           </div>
-
-          {/* <div className="space-y-2">
-            <Label htmlFor="description">Class Description</Label>
-            <Textarea id="description" placeholder="Provide a detailed description of the class" rows={4} />
-          </div> */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -199,7 +189,6 @@ export default function CreateClassPage() {
               <Label htmlFor="capacity">Maximum Number of Students</Label>
               <Input id="capacity" type="number" min="1" placeholder="15" onChange={(e) => setCapacity(e.target.value)} />
             </div>
-
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
@@ -210,48 +199,8 @@ export default function CreateClassPage() {
         </CardFooter>
       </Card>
 
-      {/* New Topic Dialog */}
-      <Dialog open={showNewTopicDialog} onOpenChange={setShowNewTopicDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Topic</DialogTitle>
-            <DialogDescription>Add a new topic for your classes</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="topicTitle">Topic Title</Label>
-              <Input id="topicTitle" placeholder="Enter topic title" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="topicSubject">Subject</Label>
-              <div className="flex gap-2">
-                <Select >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a subject" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subjects.map((subject) => (
-                      <SelectItem key={subject.id} value={subject.id}>
-                        {subject.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="topicDescription">Description</Label>
-              <Textarea id="topicDescription" placeholder="Provide a description of this topic" rows={3} />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNewTopicDialog(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setShowNewTopicDialog(false)}>Create Topic</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {TopicEdit ? <TopicEdit showNewTopicEditDialog={showNewTopicEditDialog} setShowNewTopicEditDialog={setShowNewTopicEditDialog} subjects={subjects} topic={selectedTopic} /> : null}
+      {TopicCreate ? <TopicCreate showNewTopicCreateDialog={showNewTopicCreateDialog} setShowNewTopicCreateDialog={setShowNewTopicCreateDialog} subjects={subjects}  /> : null}
 
     </div>
   )
