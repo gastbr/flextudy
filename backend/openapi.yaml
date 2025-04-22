@@ -1,0 +1,283 @@
+openapi: 3.0.4
+info:
+  title: Flextudy
+  description: |-
+    Role-based educational management system for class scheduling, attendance tracking, and student wallet management. Supports three user types (Admin, Teacher, Student) with granular permissions.
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  version: 1.0.0
+
+tags:
+  - name: Authentication
+    description: User login and registration
+  - name: Users
+    description: User management
+  - name: Classes
+    description: Class scheduling and management
+  - name: Wallet
+    description: Student payment management
+  - name: Settings
+    description: System configuration
+
+paths:
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: User registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /users:
+    get:
+      tags: [Users]
+      summary: List all users (Admin only)
+      security:
+        - bearerAuth: [admin]
+      responses:
+        '200':
+          description: User list retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Get user details
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /classes:
+    post:
+      tags: [Classes]
+      summary: Create new class (Teacher/Admin)
+      security:
+        - bearerAuth: [teacher, admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClassCreate'
+      responses:
+        '201':
+          description: Class created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+
+  /classes/{classId}:
+    get:
+      tags: [Classes]
+      summary: Get class details
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Class details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+
+  /wallet:
+    get:
+      tags: [Wallet]
+      summary: Get student wallet (Student only)
+      security:
+        - bearerAuth: [student]
+      responses:
+        '200':
+          description: Wallet details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required: [email, password]
+
+    RegisterRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [student, teacher]
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required: [role, name, email, password]
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          enum: [admin, teacher, student]
+        name:
+          type: string
+        email:
+          type: string
+        photoUrl:
+          type: string
+        classesTeaching:
+          type: array
+          items:
+            type: string
+          description: Teacher's classes (teacher role only)
+
+    ClassCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        schedule:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+        maxStudents:
+          type: integer
+      required: [title, schedule]
+
+    Class:
+      allOf:
+        - $ref: '#/components/schemas/ClassCreate'
+        - type: object
+          properties:
+            id:
+              type: string
+            teacherId:
+              type: string
+            studentsEnrolled:
+              type: array
+              items:
+                type: string
+
+    CalendarView:
+      type: object
+      properties:
+        viewType:
+          type: string
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/CalendarEvent'
+
+    CalendarEvent:
+      type: object
+      properties:
+        classId:
+          type: string
+        title:
+          type: string
+        start:
+          type: string
+          format: date-time
+        end:
+          type: string
+          format: date-time
+
+    Wallet:
+      type: object
+      properties:
+        balance:
+          type: number
+        purchases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Purchase'
+
+    Purchase:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [individual, weekly, monthly]
+        amount:
+          type: number
+        date:
+          type: string
+          format: date-time
