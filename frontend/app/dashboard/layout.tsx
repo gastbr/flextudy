@@ -6,19 +6,33 @@ import { Button } from "@/components/ui/button"
 import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { logout } from "../login/actions"
 import { useEffect } from "react"
-import { useGet } from "@/hooks/use-fetch"
+import useFetch from "@/lib/api"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
-export function handleLogout() {
-  document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  window.location.href = '/login';
-}
-
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+
+  /*   const { data: user, error, loading } = useFetch('/auth/me');
+  
+    useEffect(() => {
+      if (user) {
+        console.log('User data:', user);
+      }
+      if (error) {
+        console.error('Error fetching user:', error);
+      }
+    }, [user, error]);
+  
+    console.log('-----------------> USER <----------------');
+    console.log(user);
+    console.log('-----------------> error <----------------');
+    console.log(error);
+    console.log('-----------------> loading <----------------');
+    console.log(loading); */
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -32,18 +46,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 }
 
 function DashboardHeader() {
-
-  //const { fetch: user, error } = useFetch('/auth/me');
-  const { fetch: user, loading, error } = useGet('/auth/me');
-
-  useEffect(() => {
-    if (user) {
-      console.log('User data:', user);
-    }
-    if (error) {
-      console.error('Error fetching user:', error);
-    }
-  }, [user, error]);
 
   return (
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">
@@ -78,12 +80,12 @@ function DashboardHeader() {
 
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.profile_pic} alt="User" />
+              <AvatarImage src="/placeholder.svg" alt="User" />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div className="hidden md:block">
-              <div className="text-sm font-medium">{user?.name}</div>
-              <div className="text-xs text-muted-foreground">{user?.user_type_name.toUpperCase()}</div>
+              <div className="text-sm font-medium">{'nombre'}</div>
+              <div className="text-xs text-muted-foreground">Student</div>
             </div>
           </div>
         </div>
@@ -126,7 +128,7 @@ function MobileSidebar() {
             />
           </div>
 
-          <div className="mt-auto pt-2" onClick={handleLogout}>
+          <div className="mt-auto pt-2">
             <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground">
               <LogOut className="h-4 w-4 mr-2" />
               Sign out
@@ -159,7 +161,7 @@ function DashboardSidebar() {
 
         <div
           className=""
-          onClick={handleLogout}>
+          onClick={logout}>
           <Button
             variant="ghost"
             className="w-full justify-start text-muted-foreground hover:text-foreground"
@@ -181,12 +183,10 @@ interface NavItemProps {
 
 function NavItem({ href, icon, label }: NavItemProps) {
   return (
-
     <Link href={href} className="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-muted">
       {icon}
       <span>{label}</span>
     </Link>
-  
   )
 }
 
