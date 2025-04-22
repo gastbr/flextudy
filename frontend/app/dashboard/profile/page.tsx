@@ -55,7 +55,7 @@ export default function ProfilePage() {
         </div>
 
         <Link href="/dashboard/profile/edit">
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" variant={"ghost"}>
             <Edit className="h-4 w-4" />
             <span>Edit Profile</span>
           </Button>
@@ -71,7 +71,7 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-6">
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col justify-center items-center gap-4">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
@@ -82,17 +82,17 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <div className="text-sm text-muted-foreground">Full Name</div>
-                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.name}</div>
+                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.name}</div>
                   </div>
                   <div className="space-y-2">
                     <div className="text-sm text-muted-foreground">Email</div>
-                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.email}</div>
+                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.email}</div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="text-sm text-muted-foreground">Bio</div>
-                  <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.bio}</div>
+                  <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.bio}</div>
                 </div>
               </div>
             </div>
@@ -100,22 +100,22 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <div className="text-sm text-muted-foreground">Phone number</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.phone}</div>
+                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.phone}</div>
               </div>
               <div className="space-y-2">
                 <div className="text-sm text-muted-foreground">Location</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.location}</div>
+                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.location}</div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <div className="text-sm text-muted-foreground">Github</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.github}</div>
+                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.github}</div>
               </div>
               <div className="space-y-2">
                 <div className="text-sm text-muted-foreground">Twiiter</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.twitter}</div>
+                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.twitter}</div>
               </div>
             </div>
           </CardContent>
