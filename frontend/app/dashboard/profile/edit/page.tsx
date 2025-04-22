@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare } from "lucide-react"
+import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare, ListTodo } from "lucide-react"
 import { useGet } from "@/hooks/use-fetch"
 
 export default function ProfilePage() {
@@ -71,7 +71,7 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-6">
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col justify-center items-center gap-4">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
