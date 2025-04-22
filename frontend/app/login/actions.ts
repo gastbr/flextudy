@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { NextResponse, NextRequest } from "next/server"
 import axios from "axios"
 
-axios.defaults.baseURL = process.env.API_URL;
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function login(formData: FormData) {
   const username = formData.get("username") as string;

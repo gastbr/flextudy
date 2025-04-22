@@ -9,25 +9,12 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, Edit } from "lucide-react"
+import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare } from "lucide-react"
 import { useGet } from "@/hooks/use-fetch"
 
 export default function ProfilePage() {
 
   const { fetch: data, loading, error } = useGet('/auth/me');
-
-  useEffect(() => {
-    if (loading) {
-      console.log('Loading user data...');
-    } else {
-      if (data) {
-        console.log('User data:', data);
-      }
-      if (error) {
-        console.error('Error fetching user:', error);
-      }
-    }
-  }, [data, error, loading]);
 
   const user = {
     name: data?.name ?? '',
@@ -46,18 +33,31 @@ export default function ProfilePage() {
     },
   }
 
+  useEffect(() => {
+    if (loading) {
+      console.log('Loading user data...');
+    } else {
+      if (data) {
+        console.log('User data:', data);
+      }
+      if (error) {
+        console.error('Error fetching user:', error);
+      }
+    }
+  }, [data, error, loading]);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-          <p className="text-muted-foreground">View your profile information</p>
+          <h1 className="text-2xl font-bold tracking-tight">Edit profile</h1>
+          <p className="text-muted-foreground">Edit your profile information</p>
         </div>
 
-        <Link href="/dashboard/profile/edit">
+        <Link href="/dashboard/profile">
           <Button className="flex items-center gap-2">
-            <Edit className="h-4 w-4" />
-            <span>Edit Profile</span>
+            <CheckSquare className="h-4 w-4" />
+            <span>Confirm</span>
           </Button>
         </Link>
 
@@ -76,46 +76,49 @@ export default function ProfilePage() {
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
+                <Button variant="outline" size="sm">
+                  Change Photo
+                </Button>
               </div>
 
               <div className="flex-1 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <div className="text-sm text-muted-foreground">Full Name</div>
-                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.name}</div>
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" defaultValue={user.name} readOnly />
                   </div>
                   <div className="space-y-2">
-                    <div className="text-sm text-muted-foreground">Email</div>
-                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.email}</div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" defaultValue={user.email} readOnly />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-sm text-muted-foreground">Bio</div>
-                  <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.bio}</div>
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea id="bio" defaultValue={user.bio} readOnly rows={3} />
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">Phone number</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.phone}</div>
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input id="phone" defaultValue={user.phone} readOnly />
               </div>
               <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">Location</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.location}</div>
+                <Label htmlFor="location">Location</Label>
+                <Input id="location" defaultValue={user.location} readOnly />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">Github</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.github}</div>
+                <Label htmlFor="github">GitHub Username</Label>
+                <Input id="github" defaultValue={user.github} readOnly />
               </div>
               <div className="space-y-2">
-                <div className="text-sm text-muted-foreground">Twiiter</div>
-                <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_4px_6px_0px_rgba(0,_0,_0,_0.1)]">{user.twitter}</div>
+                <Label htmlFor="twitter">Twitter Username</Label>
+                <Input id="twitter" defaultValue={user.twitter} readOnly />
               </div>
             </div>
           </CardContent>
