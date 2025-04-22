@@ -57,19 +57,21 @@ useEffect(() => {
     };
 
     console.log('Datos de la clase:', editTopic);
+    // /v1/topic/edit/{topic_id}
+
+
+    const response = await fetch(`http://localhost:8000/v1/topic/edit/${topic_id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(editTopic)
+    });
   
-    // const response = await fetch('http://localhost:8000/v1/classes/create', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(classData)
-    // });
+    const data = await response.json();
+    console.log(data);
   
-    // const data = await response.json();
-    // console.log(data);
-  
-    // console.log('Datos de la clase:', classData);
+    console.log('Datos de la clase:', classData);
     setShowNewTopicEditDialog(false)
   };
 

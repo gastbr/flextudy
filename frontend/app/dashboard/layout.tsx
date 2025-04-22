@@ -183,10 +183,12 @@ interface NavItemProps {
 
 function NavItem({ href, icon, label }: NavItemProps) {
   return (
+
     <Link href={href} className="flex items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-muted">
       {icon}
       <span>{label}</span>
     </Link>
+  
   )
 }
 

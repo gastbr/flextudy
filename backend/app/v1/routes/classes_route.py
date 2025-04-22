@@ -1,7 +1,8 @@
 # routes/example_route.py
 from fastapi import APIRouter, Depends, Request, Body 
 from app.v1.models.lesson import Lesson, CreateLesson
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Annotated
+from app.v1.services.auth.auth_service import authorize
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.services.classes_service import (
     create_class,
@@ -20,7 +21,7 @@ router = APIRouter()
 # #     return "await get_lessons(session, request_data)"  # Asumiendo que modificas get_lesson
 
 @router.post("/create", response_model=Lesson, status_code=201)
-async def create_new_example(example_in: CreateLesson, session: AsyncSession = Depends(get_session)):
+async def create_new_example(_: Annotated[None, Depends(authorize)], example_in: CreateLesson, session: AsyncSession = Depends(get_session)):
     return await create_class(session, example_in)
 
 @router.get("/to_create", response_model=dict)
