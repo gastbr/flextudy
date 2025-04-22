@@ -45,36 +45,22 @@ export default function CreateClassPage() {
 
 
   const { fetch: data, loading, error } = useGet('/classes/to_create');
- 
+
   useEffect(() => {
     if (loading) {
       console.log('Loading user data...');
     } else {
       if (data) {
         console.log('User data:', data);
+        setTopics(data.topics)
+        setSubject(data.subjects)
       }
       if (error) {
         console.error('Error fetching user:', error);
       }
     }
   }, [data, error, loading]);
- 
 
-  
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/v1/classes/to_create")
-        const data = await response.json()
-        setTopics(data.topics)
-        setSubject(data.subjects)
-        console.log(data)
-      } catch (error) {
-        console.error("Error fetching lessons:", error)
-      }
-    }
-    fetchLessons()
-  }, [])
 
   function combineDateAndTimeToISO(dateString: string, timeString: string) {
     const date = new Date(dateString);

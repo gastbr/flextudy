@@ -2,15 +2,11 @@ from fastapi import FastAPI
 from app.v1.routes import router as api_router
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="ISSEC API")
+app = FastAPI(title="FLEXTUDY API")
 
 origins = [
-    "http://localhost",
-    "http://localhost:5432",
-    "http://localhost:8080",
     "http://localhost:8000",
     "http://localhost:3000",
-    "http://localhost:3001",
 ]
 
 app.add_middleware(
