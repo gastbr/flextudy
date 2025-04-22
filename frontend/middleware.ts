@@ -10,23 +10,23 @@ export async function middleware(request: NextRequest) {
 
   // Define path patterns that require authentication
   const authRequiredPaths = [
-    // "/dashboard",
-    // "/dashboard/classes",
-    // "/dashboard/wallet",
-    // "/dashboard/profile",
-    // "/dashboard/settings",
+    "/dashboard",
+    "/dashboard/classes",
+    "/dashboard/wallet",
+    "/dashboard/profile",
+    "/dashboard/settings",
   ]
 
   // Define admin-only paths
   const adminOnlyPaths = [
-    // "/dashboard/users",
-    // "/dashboard/admin"
+    "/dashboard/users",
+    "/dashboard/admin"
   ]
 
   // Define teacher-only paths
   const teacherOnlyPaths = [
-    // "/dashboard/classes/create",
-    // "/dashboard/classes/*/attendance"
+    "/dashboard/classes/create",
+    "/dashboard/classes/*/attendance"
   ]
 
   const url = request.nextUrl.clone()

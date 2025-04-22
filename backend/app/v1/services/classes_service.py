@@ -26,21 +26,19 @@ async def create_class(session: AsyncSession, lesson_in: CreateLesson) -> Lesson
     await session.commit()
     await session.refresh(lesson)
     return lesson
+
+async def isUserRoll() -> bool:
+    return True
     
-async def get_topics_by_teacher_id(session: AsyncSession) -> dict:
+async def get_topics_by_teacher_id(session: AsyncSession, user) -> dict:
 
-    # HARCODED TEACHER
-    teacherName = "teachertest"
-    teacher = (await session.exec(
-        select(User).where(User.username == teacherName)
-    )).first()
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    print("user", user)
+    print("user", isUserRoll())
 
-    if not teacher:
-        raise ValueError("Teacher not found")
 
-    # Get all topics
     topics = (await session.exec(
-        select(Topic).where(Topic.teacher_id == teacher.id)
+        select(Topic).where(Topic.teacher_id == user.id)
     )).all()
     
     subjecs = (await session.exec(

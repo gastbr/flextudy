@@ -14,7 +14,7 @@ import { format, set } from "date-fns"
 import Link from "next/link"
 import TopicEdit from "@/components/organisms/TopicEdit"
 import TopicCreate from "@/components/organisms/TopicCreate"
-import { useGet } from "@/hooks/use-fetch"
+import { useGet, usePost } from "@/hooks/use-fetch"
 
 export default function CreateClassPage() {
   const [date, setDate] = useState<Date>()
@@ -42,11 +42,10 @@ export default function CreateClassPage() {
     }
   }, [selectedTopicId])
 
-
-
   const { fetch: data, loading, error } = useGet('/classes/to_create');
 
   useEffect(() => {
+    
     if (loading) {
       console.log('Loading user data...');
     } else {
@@ -60,7 +59,6 @@ export default function CreateClassPage() {
       }
     }
   }, [data, error, loading]);
-
 
   function combineDateAndTimeToISO(dateString: string, timeString: string) {
     const date = new Date(dateString);
@@ -81,7 +79,7 @@ export default function CreateClassPage() {
       topic_id: selectedTopicId,
       lesson_url: url,
     };
-
+    // const { fetch: data, loading, error } = usePost('/classes/create');
     const response = await fetch('http://localhost:8000/v1/classes/create', {
       method: 'POST',
       headers: {
