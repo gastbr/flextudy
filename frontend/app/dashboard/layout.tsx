@@ -52,7 +52,7 @@ function DashboardHeader() {
           <MobileSidebar />
           <Link href="/dashboard" className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg hidden md:inline-block">FCT School</span>
+            <span className="font-semibold text-lg hidden md:inline-block">FLEXTUDY</span>
           </Link>
         </div>
 
@@ -105,7 +105,7 @@ function MobileSidebar() {
         <div className="h-16 border-b flex items-center px-6">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg">FCT School</span>
+            <span className="font-semibold text-lg">FLEXTUDY</span>
           </Link>
         </div>
         <nav className="flex flex-col gap-1 p-2">
