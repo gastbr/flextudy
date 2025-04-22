@@ -14,6 +14,7 @@ import { format, set } from "date-fns"
 import Link from "next/link"
 import TopicEdit from "@/components/organisms/TopicEdit"
 import TopicCreate from "@/components/organisms/TopicCreate"
+import { useGet } from "@/hooks/use-fetch"
 
 export default function CreateClassPage() {
   const [date, setDate] = useState<Date>()
@@ -41,6 +42,23 @@ export default function CreateClassPage() {
     }
   }, [selectedTopicId])
 
+
+
+  const { fetch: data, loading, error } = useGet('/classes/to_create');
+ 
+  useEffect(() => {
+    if (loading) {
+      console.log('Loading user data...');
+    } else {
+      if (data) {
+        console.log('User data:', data);
+      }
+      if (error) {
+        console.error('Error fetching user:', error);
+      }
+    }
+  }, [data, error, loading]);
+ 
 
   
   useEffect(() => {
