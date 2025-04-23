@@ -1,0 +1,22 @@
+Generar tipos en el front para consultar la api correctamente.
+
+-----------
+    npx openapi-typescript http://localhost:8000/openapi.json --output app/types/api.d.ts
+-----------
+
+Es necesario cambiar "http://localhost:8000" por la URL de la API que se esté usando.
+
+Este comando usa la librería openapi-typescript para generar automáticamente los tipos que usará el front, basados en las respuestas que da cada endpoint de la API. Si se cambian los endpoints, hay que volver a generar los tipos.
+
+EJEMPLOS DE USO:
+
+GET:
+    type Response = paths["/auth/me"]["get"]["responses"]["200"]
+    const { fetch: userData, loading, error } = useGet<MeResponse>('/auth/me');
+
+POST:
+    type UserTypePayload = paths["/user_type/user_type"]["post"]["requestBody"]
+    type UserTypeResponse = paths["/user_type/user_type"]["post"]["responses"]["201"]
+    
+    const { mutate } = usePost<CreateUserRequest, CreateUserResponse>("/users");
+    mutate({ name: "Gastón", email: "gaston@email.com" });
