@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Flextudy · Your All-in-One Educational Hub',
+  title: 'FLEXTUDY · Your All-in-One Educational Hub',
   description: 'Your All-in-One Educational Hub.',
   generator: 'v0.dev',
 }

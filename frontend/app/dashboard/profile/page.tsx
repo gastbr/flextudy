@@ -4,9 +4,6 @@ import { useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, Edit } from "lucide-react"
@@ -21,7 +18,7 @@ export default function ProfilePage() {
       console.log('Loading user data...');
     } else {
       if (data) {
-        console.log('User data:', data);
+        //console.log('User data:', data);
       }
       if (error) {
         console.error('Error fetching user:', error);

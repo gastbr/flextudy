@@ -39,7 +39,7 @@ export default function AdminSettingsPage() {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="platformName">Platform Name</Label>
-                  <Input id="platformName" defaultValue="FCT School" />
+                  <Input id="platformName" defaultValue="FLEXTUDY" />
                 </div>
 
                 <div className="space-y-2">
