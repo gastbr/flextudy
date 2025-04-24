@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,18 @@ import {
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
+import { useGet } from "@/hooks/use-fetch"
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    avatar: string;
+    status: string;
+    classes: number;
+    joinDate: string;
+}
 
 export default function UserManagementContent() {
     const [searchQuery, setSearchQuery] = useState("")
@@ -26,60 +38,31 @@ export default function UserManagementContent() {
     const [showStatsDialog, setShowStatsDialog] = useState(false)
     const [showSubjectDialog, setShowSubjectDialog] = useState(false)
     const [showPricingDialog, setShowPricingDialog] = useState(false)
+    const [users, setUsers] = useState<User[]>([])
+    const { fetch: usersFetch, loading, error } = useGet('/user');
 
-    // Sample user data
-    const users = [
-        {
-            id: "1",
-            name: "John Smith",
-            email: "john.smith@example.com",
-            role: "student",
-            status: "active",
-            joinDate: "May 10, 2023",
-            classes: 3,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "2",
-            name: "Sarah Johnson",
-            email: "sarah.johnson@example.com",
-            role: "teacher",
-            status: "active",
-            joinDate: "April 15, 2023",
-            classes: 5,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "3",
-            name: "Michael Brown",
-            email: "michael.brown@example.com",
-            role: "student",
-            status: "inactive",
-            joinDate: "June 2, 2023",
-            classes: 0,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "4",
-            name: "Emily Davis",
-            email: "emily.davis@example.com",
-            role: "admin",
-            status: "active",
-            joinDate: "March 20, 2023",
-            classes: 0,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "5",
-            name: "David Wilson",
-            email: "david.wilson@example.com",
-            role: "teacher",
-            status: "pending",
-            joinDate: "June 5, 2023",
-            classes: 0,
-            avatar: "/placeholder.svg",
-        },
-    ]
+
+    useEffect(() => {
+        if (loading) {
+            console.log('Loading user data...');
+        } else {
+            if (usersFetch) {
+                console.log('User data:', usersFetch);
+                const transformedUsers = usersFetch.map((user: User & { profile_pic: string, user_type_name: string }) => ({
+                    ...user,
+                    role: user.user_type_name,
+                    avatar: user.profile_pic,
+                    status: "active",
+                    classes: 4,
+                    joinDate: "2023-06-01",
+                }));
+                setUsers(transformedUsers);
+            }
+            if (error) {
+                console.error('Error fetching user:', error);
+            }
+        }
+    }, [usersFetch, error, loading]);
 
     // Filter users based on search query and role filter
     const filteredUsers = users.filter((user) => {
@@ -225,7 +208,7 @@ export default function UserManagementContent() {
                                         <RoleBadge role={user.role} />
                                     </div>
                                     <div>
-                                        <StatusBadge status={user.status} />
+                                        <StatusBadge status={user.status as "active" | "inactive" | "pending"} />
                                     </div>
                                     <div className="text-center">{user.classes}</div>
                                     <div>
@@ -585,14 +568,14 @@ export default function UserManagementContent() {
     )
 }
 
-function RoleBadge({ role }) {
+function RoleBadge({ role }: { role: string }) {
     const variants = {
         student: { color: "bg-blue-50 text-blue-700 border-blue-200", label: "Student" },
         teacher: { color: "bg-green-50 text-green-700 border-green-200", label: "Teacher" },
         admin: { color: "bg-purple-50 text-purple-700 border-purple-200", label: "Admin" },
     }
 
-    const { color, label } = variants[role] || variants.student
+    const { color, label } = variants[role as keyof typeof variants] || variants.student
 
     return (
         <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${color}`}>
@@ -601,7 +584,7 @@ function RoleBadge({ role }) {
     )
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status }: { status: "active" | "inactive" | "pending" }) {
     const variants = {
         active: { color: "bg-green-50 text-green-700 border-green-200", label: "Active" },
         inactive: { color: "bg-gray-50 text-gray-700 border-gray-200", label: "Inactive" },
