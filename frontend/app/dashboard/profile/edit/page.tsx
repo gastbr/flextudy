@@ -40,16 +40,10 @@ export default function ProfilePage() {
 
 
   function handleSubmit(/* formValues: CreateUserTypeResponse */) {
-    console.log("ESTOY EN HANDLE SUBMIT");
-    /* 
-        const post = {
-          id: fetchMe?.id,
-          name: name,
-          email: email,
-        } */
 
     const post = {
-      name: '222'
+      name: name,
+      email: email
     }
 
     patchUser(post)
