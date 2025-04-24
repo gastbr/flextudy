@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useEffect } from "react"
 import { useGet } from "@/hooks/use-fetch"
+// @ts-ignore
 import { paths } from "@/types/api"
 
 interface DashboardLayoutProps {
@@ -36,16 +37,16 @@ function DashboardHeader() {
 
   type MeResponse = paths["/auth/me"]["get"]["responses"]["200"]
 
-  const { data: userData, loading, error } = useGet<MeResponse>('/auth/me');
+  const { fetch: userData, error, loading } = useGet<MeResponse>('/auth/me');
 
-  useEffect(() => {
-    if (userData) {
-      console.log('User data:', userData);
-    }
-    if (error) {
-      console.error('Error fetching user:', error);
-    }
-  }, [userData, error]);
+  /*   useEffect(() => {
+      if (userData) {
+        console.log('User data:', userData);
+      }
+      if (error) {
+        console.error('Error fetching user:', error);
+      }
+    }, [userData, error]); */
 
   return (
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">

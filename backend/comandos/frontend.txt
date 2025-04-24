@@ -10,13 +10,16 @@ Este comando usa la librería openapi-typescript para generar automáticamente l
 
 EJEMPLOS DE USO:
 
+    import { paths } from "@/types/api"
+
 GET:
     type Response = paths["/auth/me"]["get"]["responses"]["200"]
     const { fetch: userData, loading, error } = useGet<MeResponse>('/auth/me');
 
 POST:
-    type UserTypePayload = paths["/user_type/user_type"]["post"]["requestBody"]
-    type UserTypeResponse = paths["/user_type/user_type"]["post"]["responses"]["201"]
-    
+    type CreateUserRequest = paths["/users"]["post"]["requestBody"]["content"]["application/json"];
+    type CreateUserResponse = paths["/users"]["post"]["responses"][201];
+
     const { mutate } = usePost<CreateUserRequest, CreateUserResponse>("/users");
+
     mutate({ name: "Gastón", email: "gaston@email.com" });

@@ -175,7 +175,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/user{user_id}": {
+    "/v1/user/{user_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -183,16 +183,16 @@ export interface paths {
             cookie?: never;
         };
         /** Read User */
-        get: operations["read_user_v1_user_user_id__get"];
+        get: operations["read_user_v1_user__user_id__get"];
         /** Update Existing User */
-        put: operations["update_existing_user_v1_user_user_id__put"];
+        put: operations["update_existing_user_v1_user__user_id__put"];
         post?: never;
         /** Delete Existing User */
-        delete: operations["delete_existing_user_v1_user_user_id__delete"];
+        delete: operations["delete_existing_user_v1_user__user_id__delete"];
         options?: never;
         head?: never;
         /** Patch Existing User */
-        patch: operations["patch_existing_user_v1_user_user_id__patch"];
+        patch: operations["patch_existing_user_v1_user__user_id__patch"];
         trace?: never;
     };
     "/v1/user_type/user_type": {
@@ -458,11 +458,8 @@ export interface components {
             email?: string | null;
             /** Profile Pic */
             profile_pic?: string | null;
-            /**
-             * User Type Id
-             * @default 3
-             */
-            user_type_id: number | null;
+            /** User Type Id */
+            user_type_id?: number | null;
             /** Password */
             password?: string | null;
         };
@@ -954,7 +951,7 @@ export interface operations {
             };
         };
     };
-    read_user_v1_user_user_id__get: {
+    read_user_v1_user__user_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -985,7 +982,7 @@ export interface operations {
             };
         };
     };
-    update_existing_user_v1_user_user_id__put: {
+    update_existing_user_v1_user__user_id__put: {
         parameters: {
             query?: never;
             header?: never;
@@ -1020,7 +1017,7 @@ export interface operations {
             };
         };
     };
-    delete_existing_user_v1_user_user_id__delete: {
+    delete_existing_user_v1_user__user_id__delete: {
         parameters: {
             query?: never;
             header?: never;
@@ -1051,7 +1048,7 @@ export interface operations {
             };
         };
     };
-    patch_existing_user_v1_user_user_id__patch: {
+    patch_existing_user_v1_user__user_id__patch: {
         parameters: {
             query?: never;
             header?: never;
