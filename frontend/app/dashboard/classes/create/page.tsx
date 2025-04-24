@@ -14,7 +14,7 @@ import { format, set } from "date-fns"
 import Link from "next/link"
 import TopicEdit from "@/components/organisms/TopicEdit"
 import TopicCreate from "@/components/organisms/TopicCreate"
-import { useGet } from "@/hooks/use-fetch"
+import { useGet, usePost } from "@/hooks/use-fetch"
 
 export default function CreateClassPage() {
   const [date, setDate] = useState<Date>()
@@ -42,39 +42,23 @@ export default function CreateClassPage() {
     }
   }, [selectedTopicId])
 
-
-
   const { fetch: data, loading, error } = useGet('/classes/to_create');
- 
+
   useEffect(() => {
+    
     if (loading) {
       console.log('Loading user data...');
     } else {
       if (data) {
         console.log('User data:', data);
+        setTopics(data.topics)
+        setSubject(data.subjects)
       }
       if (error) {
         console.error('Error fetching user:', error);
       }
     }
   }, [data, error, loading]);
- 
-
-  
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/v1/classes/to_create")
-        const data = await response.json()
-        setTopics(data.topics)
-        setSubject(data.subjects)
-        console.log(data)
-      } catch (error) {
-        console.error("Error fetching lessons:", error)
-      }
-    }
-    fetchLessons()
-  }, [])
 
   function combineDateAndTimeToISO(dateString: string, timeString: string) {
     const date = new Date(dateString);
@@ -95,7 +79,7 @@ export default function CreateClassPage() {
       topic_id: selectedTopicId,
       lesson_url: url,
     };
-
+    // const { fetch: data, loading, error } = usePost('/classes/create');
     const response = await fetch('http://localhost:8000/v1/classes/create', {
       method: 'POST',
       headers: {
