@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useEffect } from "react"
 import { useGet } from "@/hooks/use-fetch"
+// @ts-ignore
+import { paths } from "@/types/api"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -33,17 +35,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
 function DashboardHeader() {
 
-  //const { fetch: user, error } = useFetch('/auth/me');
-  const { fetch: user, loading, error } = useGet('/auth/me');
+  type MeResponse = paths["/auth/me"]["get"]["responses"]["200"]
 
-  useEffect(() => {
-    if (user) {
-      console.log('User data:', user);
-    }
-    if (error) {
-      console.error('Error fetching user:', error);
-    }
-  }, [user, error]);
+  const { fetch: userData, error, loading } = useGet<MeResponse>('/auth/me');
+
+  /*   useEffect(() => {
+      if (userData) {
+        console.log('User data:', userData);
+      }
+      if (error) {
+        console.error('Error fetching user:', error);
+      }
+    }, [userData, error]); */
 
   return (
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">
@@ -52,7 +55,7 @@ function DashboardHeader() {
           <MobileSidebar />
           <Link href="/dashboard" className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg hidden md:inline-block">FCT School</span>
+            <span className="font-semibold text-lg hidden md:inline-block">FLEXTUDY</span>
           </Link>
         </div>
 
@@ -78,12 +81,12 @@ function DashboardHeader() {
 
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user?.profile_pic} alt="User" />
+              <AvatarImage src={userData?.profile_pic} alt="User" />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div className="hidden md:block">
-              <div className="text-sm font-medium">{user?.name}</div>
-              <div className="text-xs text-muted-foreground">{user?.user_type_name.toUpperCase()}</div>
+              <div className="text-sm font-medium">{userData?.name}</div>
+              <div className="text-xs text-muted-foreground">{userData?.user_type_name.toUpperCase()}</div>
             </div>
           </div>
         </div>
@@ -105,7 +108,7 @@ function MobileSidebar() {
         <div className="h-16 border-b flex items-center px-6">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg">FCT School</span>
+            <span className="font-semibold text-lg">FLEXTUDY</span>
           </Link>
         </div>
         <nav className="flex flex-col gap-1 p-2">

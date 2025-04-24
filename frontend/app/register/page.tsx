@@ -11,7 +11,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4 py-8">
       <Link href="/" className="flex items-center gap-2 mb-8">
         <Calendar className="h-6 w-6 text-primary" />
-        <span className="font-bold text-xl">FCT School</span>
+        <span className="font-bold text-xl">FLEXTUDY</span>
       </Link>
 
       <Card className="w-full max-w-md">

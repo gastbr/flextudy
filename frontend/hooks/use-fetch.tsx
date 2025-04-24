@@ -85,3 +85,39 @@ export function usePost<TResponse = any, TBody = any>(
     immediate: false, // don't call on mount
   });
 }
+
+export function usePut<TResponse = any, TBody = any>(
+  url: string,
+  config?: AxiosRequestConfig
+) {
+  return useFetch<TResponse, TBody>({
+    method: 'PUT',
+    url,
+    config,
+    immediate: false,
+  });
+}
+
+export function usePatch<TResponse = any, TBody = any>(
+  url: string,
+  config?: AxiosRequestConfig
+) {
+  return useFetch<TResponse, TBody>({
+    method: 'PATCH',
+    url,
+    config,
+    immediate: false,
+  });
+}
+
+export function useDelete<TResponse = any, TBody = any>(
+  url: string,
+  config?: AxiosRequestConfig
+) {
+  return useFetch<TResponse, TBody>({
+    method: 'DELETE',
+    url,
+    config,
+    immediate: false,
+  });
+}

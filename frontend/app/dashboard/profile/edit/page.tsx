@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,41 +10,79 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare, ListTodo } from "lucide-react"
-import { useGet } from "@/hooks/use-fetch"
+import { useGet, usePatch } from "@/hooks/use-fetch"
+// @ts-ignore
+import { paths } from "@/types/api"
+
+type UserDataType = paths["/auth/me"]["get"]["responses"][200];
+
+type CreateUserRequest = paths["/user"]["patch"]["requestBody"]["content"]["application/json"];
+type CreateUserResponse = paths["/user"]["patch"]["responses"][201];
 
 export default function ProfilePage() {
 
-  const { fetch: data, loading, error } = useGet('/auth/me');
+  const { fetch: fetchMe, loading, error } = useGet<UserDataType>('/auth/me');
 
+  const { fetch: userType, execute: patchUser } = usePatch<CreateUserRequest, CreateUserResponse>(`/user/${fetchMe?.id}`);
   const user = {
-    name: data?.name ?? '',
-    email: data?.email ?? '',
-    role: data?.user_type_name ?? '',
-    avatar: data?.profile_pic ?? '',
+    name: fetchMe?.name ?? '',
+    email: fetchMe?.email ?? '',
+    role: fetchMe?.user_type_name ?? '',
+    avatar: fetchMe?.profile_pic ?? '',
     bio: "Student passionate about mathematics and languages.",
     phone: "+1 (555) 123-4567",
     location: "New York, NY",
-    github: data?.username ?? '',
-    twitter: data?.username ?? '',
+    github: fetchMe?.username ?? '',
+    twitter: fetchMe?.username ?? '',
     joined: "May 2023",
     classes: {
       enrolled: 5,
       completed: 12,
     },
   }
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+
+
+  function handleSubmit(/* formValues: CreateUserTypeResponse */) {
+    console.log("ESTOY EN HANDLE SUBMIT");
+    /* 
+        const post = {
+          id: fetchMe?.id,
+          name: name,
+          email: email,
+        } */
+
+    const post = {
+      name: '3333333333'
+    }
+
+    patchUser(post)
+      .then((response) => {
+        console.log("posted:", response);
+      })
+      .catch((err) => {
+        console.error("post failed:", err);
+      });
+  }
 
   useEffect(() => {
     if (loading) {
       console.log('Loading user data...');
     } else {
-      if (data) {
-        console.log('User data:', data);
+      if (fetchMe) {
+        setName(fetchMe?.name);
+        setEmail(fetchMe?.email);
+
       }
       if (error) {
         console.error('Error fetching user:', error);
       }
     }
-  }, [data, error, loading]);
+  }, [fetchMe, error, loading]);
+
+
+
 
   return (
     <div className="space-y-6">
@@ -55,7 +93,7 @@ export default function ProfilePage() {
         </div>
 
         <Link href="/dashboard/profile">
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" onClick={() => handleSubmit()}>
             <CheckSquare className="h-4 w-4" />
             <span>Confirm</span>
           </Button>
@@ -85,11 +123,11 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" defaultValue={user.name} readOnly />
+                    <Input id="name" defaultValue={name} onChange={(e) => setName(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" defaultValue={user.email} readOnly />
+                    <Input id="email" defaultValue={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                 </div>
 

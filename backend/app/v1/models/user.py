@@ -40,7 +40,7 @@ class CreateUser(BaseUser):
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
-    user_type_id: Optional[int] = 3
+    user_type_id: Optional[int] = None
     password: Optional[str] = None
 
 class UpdateUser(BaseUser):
