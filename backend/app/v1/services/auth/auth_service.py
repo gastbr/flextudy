@@ -8,6 +8,8 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from dotenv import load_dotenv
+from app.v1.models.user import User
+from app.v1.models.user_type import UserType
 import os
 
 from app.config.db import get_session
@@ -71,3 +73,13 @@ async def authorize(
     if user is None:
         raise credentials_exception
     return user
+
+async def isUserRoll(roll: str, user: User, session) -> bool:
+        userRoll = (await session.exec(
+        select(UserType).where(UserType.id == user.user_type_id)
+        )).first()
+        if userRoll.name == roll:
+            return True
+        else:
+            return False
+# roll = await isUserRoll("admin", user, session)

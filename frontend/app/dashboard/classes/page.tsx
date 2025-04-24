@@ -15,6 +15,24 @@ export default function MyClassesPage() {
     const [searchQuery, setSearchQuery] = useState("")
     const [filterSubject, setFilterSubject] = useState("all")
 
+    const allClasses = [
+        {
+            id: "1",
+            title: "Introduction to Mathematics",
+            subject: "Mathematics",
+            date: "Every Monday",
+            time: "09:00 - 10:30",
+            location: "Room 101",
+            enrolled: 12,
+            capacity: 15,
+            status: "active",
+
+            teacher: "Ms. Garcia",
+            // progress: "3/10 sessions",
+            // rating: 4.5,
+        }]
+
+
     // Sample data for classes
     const teachingClasses = [
         {
@@ -253,10 +271,10 @@ function TeachingClassCard({ classData }) {
                                 <Clock className="h-4 w-4" />
                                 <span>{classData.time}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <MapPin className="h-4 w-4" />
                                 <span>{classData.location}</span>
-                            </div>
+                            </div> */}
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Users className="h-4 w-4" />
                                 <span>
@@ -323,10 +341,10 @@ function EnrolledClassCard({ classData }) {
                                 <Clock className="h-4 w-4" />
                                 <span>{classData.time}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <MapPin className="h-4 w-4" />
                                 <span>{classData.location}</span>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 

@@ -7,6 +7,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.services.classes_service import (
     create_class,
     get_topics_by_teacher_id,
+    get_my_classes
 )
 from app.config.db import get_session
 
@@ -36,4 +37,11 @@ async def get_info_to_create_lesson(
     session: AsyncSession = Depends(get_session)
     ):
     return await get_topics_by_teacher_id(session, user)
+
+@router.get("/my_classes", response_model=dict)
+async def get_info_to_create_lesson(
+    user: Annotated[None, Depends(authorize)],
+    session: AsyncSession = Depends(get_session)
+    ):
+    return await get_my_classes(session, user)
 
