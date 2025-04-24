@@ -1,9 +1,9 @@
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -17,12 +17,43 @@ interface TopicProps {
   setShowNewTopicCreateDialog: (show: boolean) => void;
   subjects: any[]; // Evita usar 'any' si posible
 }
+import { useGet, usePost } from "@/hooks/use-fetch"
+
+
 
 export default function Topic({
   showNewTopicCreateDialog,
   setShowNewTopicCreateDialog,
   subjects
 }: TopicProps) {
+
+  const { fetch: userType, execute: postTopic } = usePost(`/topic/create`);
+  const [name, setName] = useState('');
+  const [subjectId, setSubjectId] = useState('');
+  const [description, setDescription] = useState('');
+  
+  // {
+  //   "name": "string",
+  //   "description": "string",
+  //   "subject_id": 0,
+  //   "teacher_id": 0
+  // }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = {
+      name: name,
+      description: description,
+      subject_id: subjectId,
+    }
+    console.log('data', data)
+    postTopic(data)
+
+
+    // setShowNewTopicCreateDialog(false)
+  };
+
   return (
     <Dialog open={showNewTopicCreateDialog} onOpenChange={setShowNewTopicCreateDialog}>
     <DialogContent>
@@ -33,18 +64,18 @@ export default function Topic({
       <div className="space-y-4 py-4">
         <div className="space-y-2">
           <Label htmlFor="topicTitle">Topic Title</Label>
-          <Input id="topicTitle" placeholder="Enter topic title" />
+          <Input id="topicTitle" placeholder="Enter topic title" onChange={(e)=>setName(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="topicSubject">Subject</Label>
           <div className="flex gap-2">
-            <Select >
+            <Select onValueChange={(e) => setSubjectId(e)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a subject" />
               </SelectTrigger>
               
               {subjects ? (
-              <SelectContent>
+              <SelectContent >
                 {subjects.map((subject) => (
                   <SelectItem key={subject.id} value={subject.id}>
                     {subject.name}
@@ -58,14 +89,14 @@ export default function Topic({
         </div>
         <div className="space-y-2">
           <Label htmlFor="topicDescription">Description</Label>
-          <Textarea id="topicDescription" placeholder="Provide a description of this topic" rows={3} />
+          <Textarea id="topicDescription" placeholder="Provide a description of this topic" rows={3} onChange={(e)=>setDescription(e.target.value)} />
         </div>
       </div>
       <DialogFooter>
         <Button variant="outline" onClick={() => setShowNewTopicCreateDialog(false)}>
           Cancel
         </Button>
-        <Button onClick={() => setShowNewTopicCreateDialog(false)}>Create Topic</Button>
+        <Button onClick={handleSubmit}>Create Topic</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

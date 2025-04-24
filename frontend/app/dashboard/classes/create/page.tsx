@@ -14,9 +14,14 @@ import { format, set } from "date-fns"
 import Link from "next/link"
 import TopicEdit from "@/components/organisms/TopicEdit"
 import TopicCreate from "@/components/organisms/TopicCreate"
+import { paths } from "@/types/api"
 import { useGet, usePost } from "@/hooks/use-fetch"
 
+
+
 export default function CreateClassPage() {
+
+  
   const [date, setDate] = useState<Date>()
   const [startTime, setStartTime] = useState<string>("")
   const [endTime, setEndTime] = useState<string>("")
@@ -31,6 +36,8 @@ export default function CreateClassPage() {
   const [capacity, setCapacity] = useState(15);
   const [subjects, setSubject] = useState();
   const [topics, setTopics] = useState();
+
+  const { fetch: userType, execute: postClass } = usePost(`/classes/create`);
 
 
   useEffect(() => {
@@ -79,18 +86,7 @@ export default function CreateClassPage() {
       topic_id: selectedTopicId,
       lesson_url: url,
     };
-    // const { fetch: data, loading, error } = usePost('/classes/create');
-    const response = await fetch('http://localhost:8000/v1/classes/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(classData)
-    });
-
-    const data = await response.json();
-    console.log(data);
-
+    postClass(classData);
     console.log('Datos de la clase:', classData);
   };
 

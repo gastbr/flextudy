@@ -12,18 +12,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare, ListTodo } from "lucide-react"
 import { useGet, usePatch } from "@/hooks/use-fetch"
 // @ts-ignore
-import { paths } from "@/types/api"
 
-type UserDataType = paths["/auth/me"]["get"]["responses"][200];
-
-type CreateUserRequest = paths["/user"]["patch"]["requestBody"]["content"]["application/json"];
-type CreateUserResponse = paths["/user"]["patch"]["responses"][201];
 
 export default function ProfilePage() {
 
-  const { fetch: fetchMe, loading, error } = useGet<UserDataType>('/auth/me');
+  const { fetch: fetchMe, loading, error } = useGet('/auth/me');
 
-  const { fetch: userType, execute: patchUser } = usePatch<CreateUserRequest, CreateUserResponse>(`/user/${fetchMe?.id}`);
+  const { fetch: userType, execute: patchUser } = usePatch(`/user/${fetchMe?.id}`);
   const user = {
     name: fetchMe?.name ?? '',
     email: fetchMe?.email ?? '',

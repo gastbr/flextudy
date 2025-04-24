@@ -12,7 +12,7 @@ from app.v1.services.auth.auth_service import isUserRoll
 
 import app.v1.repositories.example_repository as repo
 
-async def create_class(session: AsyncSession, lesson_in: CreateLesson) -> Lesson:
+async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> Lesson:
     lesson = Lesson.from_orm(lesson_in)
     
     # Check if topic exists
