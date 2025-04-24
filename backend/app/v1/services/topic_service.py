@@ -23,8 +23,11 @@ async def update_topic(session: AsyncSession, topic_id: int, topic_in: UpdateTop
     await session.refresh(db_example)
     return db_example
 
-async def create_topic(session: AsyncSession, example_in: CreateTopic) -> Topic:
+async def create_topic(session: AsyncSession, example_in: CreateTopic, user) -> Topic:
+
+    
     topic = Topic.from_orm(example_in)
+    topic.teacher_id = user.id
     session.add(topic)
     await session.commit()
     await session.refresh(topic)

@@ -23,13 +23,11 @@ router = APIRouter()
 
 @router.post("/create", response_model=Lesson, status_code=201)
 async def create_new_example(
-    # user: Annotated[None, Depends(authorize)],
+    user: Annotated[None, Depends(authorize)],
     example_in: CreateLesson,
     session: AsyncSession = Depends(get_session)
     ):
-    return await create_class(session, example_in, 
-                            #   user
-                              )
+    return await create_class(session, example_in, user)
 
 @router.get("/to_create", response_model=dict)
 async def get_info_to_create_lesson(
