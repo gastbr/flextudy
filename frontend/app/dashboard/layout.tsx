@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useEffect } from "react"
 import { useGet } from "@/hooks/use-fetch"
 // @ts-ignore
 import { paths } from "@/types/api"

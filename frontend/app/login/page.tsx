@@ -12,8 +12,6 @@ export default function LoginPage() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
 
-  console.log('login/page callBackURL', callbackUrl);
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4">
       <Link href="/" className="flex items-center gap-2 mb-8">
