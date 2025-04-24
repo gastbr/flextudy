@@ -18,7 +18,7 @@ export default function ProfilePage() {
       console.log('Loading user data...');
     } else {
       if (data) {
-        //console.log('User data:', data);
+        console.log('User data:', data);
       }
       if (error) {
         console.error('Error fetching user:', error);
