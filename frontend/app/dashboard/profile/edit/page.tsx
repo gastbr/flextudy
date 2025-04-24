@@ -45,7 +45,6 @@ export default function ProfilePage() {
 
 
   function handleSubmit(/* formValues: CreateUserTypeResponse */) {
-    console.log("ESTOY EN HANDLE SUBMIT");
 
     const post = {
       name: name,
