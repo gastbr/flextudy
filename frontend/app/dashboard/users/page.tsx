@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus } from "lucide-react"
+import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, UserPlus } from "lucide-react"
 import {
     Dialog,
     DialogContent,
@@ -35,12 +35,12 @@ interface User {
 export default function UserManagementContent() {
     const [searchQuery, setSearchQuery] = useState("")
     const [filterRole, setFilterRole] = useState("all")
+    const [filterStatus, setFilterStatus] = useState("all")
     const [showStatsDialog, setShowStatsDialog] = useState(false)
     const [showSubjectDialog, setShowSubjectDialog] = useState(false)
     const [showPricingDialog, setShowPricingDialog] = useState(false)
     const [users, setUsers] = useState<User[]>([])
     const { fetch: usersFetch, loading, error } = useGet('/user');
-
 
     useEffect(() => {
         if (loading) {
@@ -52,7 +52,7 @@ export default function UserManagementContent() {
                     ...user,
                     role: user.user_type_name,
                     avatar: user.profile_pic,
-                    status: "active",
+                    status: user.status,
                     classes: 4,
                     joinDate: "2023-06-01",
                 }));
@@ -64,7 +64,7 @@ export default function UserManagementContent() {
         }
     }, [usersFetch, error, loading]);
 
-    // Filter users based on search query and role filter
+    // Filter users based on search query, status and role filter
     const filteredUsers = users.filter((user) => {
         const matchesSearch =
             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -72,7 +72,9 @@ export default function UserManagementContent() {
 
         const matchesRole = filterRole === "all" || user.role === filterRole
 
-        return matchesSearch && matchesRole
+        const matchesStatus = filterStatus === "all" || user.status === filterStatus
+
+        return matchesSearch && matchesRole && matchesStatus
     })
 
     // Sample statistics data
@@ -166,6 +168,22 @@ export default function UserManagementContent() {
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="w-full sm:w-[200px]">
+                    <Select value={filterStatus} onValueChange={setFilterStatus}>
+                        <SelectTrigger>
+                            <div className="flex items-center gap-2">
+                                <Filter className="h-4 w-4" />
+                                <SelectValue placeholder="Filter by role" />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                            <SelectItem value="pending">Pending approval</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
                 <Button variant="outline" className="gap-2">
                     <Download className="h-4 w-4" />
                     <span>Export</span>
@@ -173,9 +191,12 @@ export default function UserManagementContent() {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Users</CardTitle>
-                    <CardDescription>Manage user accounts and role assignments</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex flex-col gap-1.5">
+                        <CardTitle>Users</CardTitle>
+                        <CardDescription>Manage user accounts and role assignments</CardDescription>
+                    </div>
+                    <Button><UserPlus /></Button>
                 </CardHeader>
                 <CardContent>
                     <div className="border rounded-md">
@@ -214,7 +235,7 @@ export default function UserManagementContent() {
                                     <div>
                                         <Dialog>
                                             <DialogTrigger asChild>
-                                                <Button variant="ghost" size="sm">
+                                                <Button variant="secondary" size="xs">
                                                     Edit
                                                 </Button>
                                             </DialogTrigger>
@@ -300,7 +321,6 @@ export default function UserManagementContent() {
                     <div className="text-sm text-muted-foreground">
                         Showing {filteredUsers.length} of {users.length} users
                     </div>
-                    <Button>Add New User</Button>
                 </CardFooter>
             </Card>
 
