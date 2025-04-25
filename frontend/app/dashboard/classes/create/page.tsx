@@ -49,7 +49,7 @@ export default function CreateClassPage() {
     }
   }, [selectedTopicId])
 
-  const { fetch: data, loading, error } = useGet('/classes/to_create');
+  const { fetch: data, loading, error, execute } = useGet('/classes/to_create');
 
   useEffect(() => {
     
@@ -197,8 +197,8 @@ export default function CreateClassPage() {
         </CardFooter>
       </Card>
 
-      {TopicEdit ? <TopicEdit showNewTopicEditDialog={showNewTopicEditDialog} setShowNewTopicEditDialog={setShowNewTopicEditDialog} subjects={subjects} topic={selectedTopic} /> : null}
-      {TopicCreate ? <TopicCreate showNewTopicCreateDialog={showNewTopicCreateDialog} setShowNewTopicCreateDialog={setShowNewTopicCreateDialog} subjects={subjects}  /> : null}
+      {TopicEdit ? <TopicEdit showNewTopicEditDialog={showNewTopicEditDialog} setShowNewTopicEditDialog={setShowNewTopicEditDialog} subjects={subjects} topic={selectedTopic} execute={execute} /> : null}
+      {TopicCreate ? <TopicCreate showNewTopicCreateDialog={showNewTopicCreateDialog} setShowNewTopicCreateDialog={setShowNewTopicCreateDialog} subjects={subjects} execute={execute}  /> : null}
 
     </div>
   )

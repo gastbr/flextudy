@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
+import { useRouter } from 'next/router';
+
 import {
   Dialog,
   DialogContent,
@@ -15,16 +17,18 @@ import {
 interface TopicProps {
   showNewTopicCreateDialog: boolean;
   setShowNewTopicCreateDialog: (show: boolean) => void;
+  execute: () => void;
   subjects: any[]; // Evita usar 'any' si posible
 }
 import { useGet, usePost } from "@/hooks/use-fetch"
-
+import Link from "next/link"
 
 
 export default function Topic({
   showNewTopicCreateDialog,
   setShowNewTopicCreateDialog,
-  subjects
+  subjects,
+  execute,
 }: TopicProps) {
 
   const { fetch: userType, execute: postTopic } = usePost(`/topic/create`);
@@ -49,8 +53,7 @@ export default function Topic({
     }
     console.log('data', data)
     postTopic(data)
-
-
+    execute()
     // setShowNewTopicCreateDialog(false)
   };
 
@@ -93,10 +96,10 @@ export default function Topic({
         </div>
       </div>
       <DialogFooter>
-        <Button variant="outline" onClick={() => setShowNewTopicCreateDialog(false)}>
+        <Button variant="outline"  onClick={() => setShowNewTopicCreateDialog(false)}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit}>Create Topic</Button>
+        <Button  onClick={handleSubmit}>Create Topic</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

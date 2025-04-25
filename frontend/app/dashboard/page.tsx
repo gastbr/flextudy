@@ -8,12 +8,24 @@ import ClassListView from "@/components/organisms/ClassListView"
 import MonthCalendarView from "@/components/organisms/MonthCalendarView"
 import Link from "next/link"
 
+import { useProvider } from '@/app/context/provider'
+
+
 export default function CalendarView() {
+  
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
-
   const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
   // Fetch lessons from the API
+
+  const { context, setContext , dispatch, state} = useProvider();
+  // setContext("landing");
+  // setContext("trolo");
+  // console.log("context", context);
+  // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+  // console.log("state", state);
+    
+
   useEffect(() => {
     const fetchLessons = async () => {
       try {
