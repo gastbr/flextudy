@@ -8,6 +8,20 @@ export const ContextReducer = (state:any, action:any) => {
                 ...state,
                 [action.campo]: action.payload,
             };
+        
+        case "UPDATE":
+            return {
+                ...state,
+                [action.campo]: action.payload,
+            };
+
+        case "DELETE":
+            const newState = { ...state }; 
+            delete newState[action.campo];
+            return newState;
+        
+        
+        
 
         // case "AGREGAR_EVENTOS":
         //     return {

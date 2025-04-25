@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Plus, List, Grid3X3 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -22,8 +22,17 @@ export default function CalendarView() {
   // setContext("landing");
   // setContext("trolo");
   // console.log("context", context);
-  // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
-  // console.log("state", state);
+
+  useEffect(() => {
+  dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+  dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
+  // dispatch({ type: "DELETE", campo: "lotro" });
+  // dispatch({ type: "UPDATE", campo: "lotro", payload: "lotrolotrolotro" });
+  }, []);
+
+
+
+  console.log("state", state);
     
 
   useEffect(() => {
