@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
 import { useGet } from "@/hooks/use-fetch"
+import Link from "next/link"
 
 interface User {
     id: number;
@@ -218,11 +219,17 @@ export default function UserManagementContent() {
                                     className="grid grid-cols-[1fr_1fr_auto_auto_auto] md:grid-cols-[1fr_1fr_auto_auto_auto_auto] items-center gap-4 p-4 border-b last:border-0"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={user.avatar} alt={user.name} />
-                                            <AvatarFallback>{user.name[0]}</AvatarFallback>
-                                        </Avatar>
-                                        <div>{user.name}</div>
+                                        <Link href={`/dashboard/profile/${user.id}`}>
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={user.avatar} alt={user.name} />
+                                                <AvatarFallback>{user.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                        </Link>
+                                        <Link href={`/dashboard/profile/${user.id}`}>
+                                            <Button variant="link" size="sm">
+                                                {user.name}
+                                            </Button>
+                                        </Link>
                                     </div>
                                     <div className="text-muted-foreground truncate">{user.email}</div>
                                     <div className="hidden md:block">

@@ -1,17 +1,20 @@
 "use client"
 
 import { useEffect } from "react"
+import { useParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, Edit } from "lucide-react"
+import { Calendar, Mail, Edit } from "lucide-react"
 import { useGet } from "@/hooks/use-fetch"
 
 export default function ProfilePage() {
 
-  const { fetch: data, loading, error } = useGet('/auth/me');
+  const { id } = useParams() as { id: string };
+  const endpoint = id === "me" ? "/auth/me" : `/user/${id}`
+  const { fetch: data, loading, error } = useGet(endpoint);
 
   useEffect(() => {
     if (loading) {

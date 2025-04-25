@@ -7,9 +7,6 @@ import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-re
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useGet } from "@/hooks/use-fetch"
-// @ts-ignore
-import { paths } from "@/types/api"
-import { useEffect, useState } from "react"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -28,7 +25,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <div className="min-h-screen flex flex-col">
       <DashboardHeader userData={userData} />
       <div className="flex-1 flex flex-col md:flex-row">
-        <DashboardSidebar userRole={userData?.user_type_name} />
+        <DashboardSidebar userData={userData} />
         <main className="flex-1 p-4 md:p-6 overflow-auto">{children}</main>
       </div>
     </div>
@@ -41,7 +38,7 @@ function DashboardHeader({ userData }: { userData: any }) {
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2">
-          <MobileSidebar userRole={userData?.user_type_name} />
+          <MobileSidebar userData={userData} />
           <Link href="/dashboard" className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
             <span className="font-semibold text-lg hidden md:inline-block">FLEXTUDY</span>
@@ -84,7 +81,10 @@ function DashboardHeader({ userData }: { userData: any }) {
   )
 }
 
-function MobileSidebar({ userRole }: { userRole: string }) {
+function MobileSidebar({ userData }: { userData: any }) {
+
+  const profileHref = `/dashboard/profile/${userData?.id}`;
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -104,11 +104,11 @@ function MobileSidebar({ userRole }: { userRole: string }) {
           <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
           <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
           <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
-          <NavItem href="/dashboard/profile" icon={<User className="h-4 w-4" />} label="Profile" />
+          <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
 
           {/* Admin-only items */}
-          {userRole === "admin" && (
+          {userData?.user_type_name === "admin" && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
               <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
@@ -121,7 +121,7 @@ function MobileSidebar({ userRole }: { userRole: string }) {
           )}
 
           <div className="mt-auto pt-2" onClick={handleLogout}>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground text-red-400">
+            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground text-red-500">
               <LogOut className="h-4 w-4 mr-2" />
               Sign out
             </Button>
@@ -132,7 +132,7 @@ function MobileSidebar({ userRole }: { userRole: string }) {
   )
 }
 
-function DashboardSidebar({ userRole }: { userRole: string }) {
+function DashboardSidebar({ userData }: { userData: any }) {
 
   return (
     <aside className="hidden md:flex w-64 border-r flex-col sticky top-16 h-[calc(100vh-4rem)]">
@@ -141,10 +141,10 @@ function DashboardSidebar({ userRole }: { userRole: string }) {
           <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
           <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
           <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
-          <NavItem href="/dashboard/profile" icon={<User className="h-4 w-4" />} label="Profile" />
+          <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
           {/* Admin-only items */}
-          {userRole === 'admin' && (
+          {userData?.user_type_name === 'admin' && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
               <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
@@ -158,7 +158,7 @@ function DashboardSidebar({ userRole }: { userRole: string }) {
           onClick={handleLogout}>
           <Button
             variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-foreground text-red-400"
+            className="w-full justify-start text-muted-foreground hover:text-foreground text-red-500"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign out
