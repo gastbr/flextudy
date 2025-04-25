@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useGet } from "@/hooks/use-fetch"
 // @ts-ignore
 import { paths } from "@/types/api"
+import { useEffect, useState } from "react"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -21,37 +22,26 @@ export function handleLogout() {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
+  const { fetch: userData, error, loading } = useGet('/auth/me');
+
   return (
     <div className="min-h-screen flex flex-col">
-      <DashboardHeader />
+      <DashboardHeader userData={userData} />
       <div className="flex-1 flex flex-col md:flex-row">
-        <DashboardSidebar />
+        <DashboardSidebar userRole={userData?.user_type_name} />
         <main className="flex-1 p-4 md:p-6 overflow-auto">{children}</main>
       </div>
     </div>
   )
 }
 
-function DashboardHeader() {
-
-  type MeResponse = paths["/auth/me"]["get"]["responses"]["200"]
-
-  const { fetch: userData, error, loading } = useGet<MeResponse>('/auth/me');
-
-  /*   useEffect(() => {
-      if (userData) {
-        console.log('User data:', userData);
-      }
-      if (error) {
-        console.error('Error fetching user:', error);
-      }
-    }, [userData, error]); */
+function DashboardHeader({ userData }: { userData: any }) {
 
   return (
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2">
-          <MobileSidebar />
+          <MobileSidebar userRole={userData?.user_type_name} />
           <Link href="/dashboard" className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
             <span className="font-semibold text-lg hidden md:inline-block">FLEXTUDY</span>
@@ -94,7 +84,7 @@ function DashboardHeader() {
   )
 }
 
-function MobileSidebar() {
+function MobileSidebar({ userRole }: { userRole: string }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -110,7 +100,7 @@ function MobileSidebar() {
             <span className="font-semibold text-lg">FLEXTUDY</span>
           </Link>
         </div>
-        <nav className="flex flex-col gap-1 p-2">
+        <nav className="flex flex-col gap-1 p-2 h-[calc(100vh-4rem)] justify-between">
           <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
           <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
           <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
@@ -118,18 +108,20 @@ function MobileSidebar() {
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
 
           {/* Admin-only items */}
-          <div className="mt-2 pt-2 border-t">
-            <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin</div>
-            <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
-            <NavItem
-              href="/dashboard/admin/settings"
-              icon={<Settings className="h-4 w-4" />}
-              label="Platform Settings"
-            />
-          </div>
+          {userRole === "admin" && (
+            <div className="mt-2 pt-2 border-t">
+              <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
+              <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
+              <NavItem
+                href="/dashboard/admin/settings"
+                icon={<Settings className="h-4 w-4" />}
+                label="Platform Settings"
+              />
+            </div>
+          )}
 
           <div className="mt-auto pt-2" onClick={handleLogout}>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground text-red-400">
               <LogOut className="h-4 w-4 mr-2" />
               Sign out
             </Button>
@@ -140,7 +132,8 @@ function MobileSidebar() {
   )
 }
 
-function DashboardSidebar() {
+function DashboardSidebar({ userRole }: { userRole: string }) {
+
   return (
     <aside className="hidden md:flex w-64 border-r flex-col sticky top-16 h-[calc(100vh-4rem)]">
       <nav className="flex flex-col gap-1 p-2 flex-1 justify-between">
@@ -150,21 +143,22 @@ function DashboardSidebar() {
           <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
           <NavItem href="/dashboard/profile" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
-
           {/* Admin-only items */}
-          <div className="mt-2 pt-2 border-t">
-            <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin</div>
-            <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
-            <NavItem href="/dashboard/admin/settings" icon={<Settings className="h-4 w-4" />} label="Platform Settings" />
-          </div>
+          {userRole === 'admin' && (
+            <div className="mt-2 pt-2 border-t">
+              <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
+              <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
+              <NavItem href="/dashboard/admin/settings" icon={<Settings className="h-4 w-4" />} label="Platform Settings" />
+            </div>
+          )}
+
         </div>
 
         <div
-          className=""
           onClick={handleLogout}>
           <Button
             variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-foreground"
+            className="w-full justify-start text-muted-foreground hover:text-foreground text-red-400"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign out

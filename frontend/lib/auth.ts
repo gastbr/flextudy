@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import * as jose from 'jose';
 import { logout } from "@/app/login/actions";
 
-// Ensure this secret matches the one used to sign your JWT tokens
 const secret = process.env.SECRET_KEY as string;
 
 export interface UserData {
@@ -10,7 +9,6 @@ export interface UserData {
   role: string;
   name: string;
   email: string;
-  // Add any other fields that are included in your JWT payload
 }
 
 export async function getCurrentUser(request: NextRequest): Promise<UserData | null> {
