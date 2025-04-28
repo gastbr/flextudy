@@ -44,8 +44,9 @@ export default function UserManagementContent() {
     const [showSubjectDialog, setShowSubjectDialog] = useState(false)
     const [showPricingDialog, setShowPricingDialog] = useState(false)
     const [newUser, setNewUser] = useState({
-        name: "name1",
-        email: "email1",
+        username: "",
+        name: "",
+        email: "",
         role: ""
     });
 

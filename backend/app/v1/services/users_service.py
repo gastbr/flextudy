@@ -42,6 +42,12 @@ async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
 
     user.user_type_id = user_type.id
 
+    # Set status based on user_type_name
+    if user_in.user_type_name == "student":
+        user.status = "active"
+    else:
+        user.status = "pending"
+
     return await repo.create_user(session, user)
 
 async def update_user(session: AsyncSession, user_id: int, user_in: UpdateUser) -> Optional[User]:
