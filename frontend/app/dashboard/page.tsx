@@ -19,20 +19,21 @@ export default function CalendarView() {
   // Fetch lessons from the API
 
   const { context, setContext , dispatch, state} = useProvider();
-  // setContext("landing");
-  // setContext("trolo");
-  // console.log("context", context);
 
-  useEffect(() => {
-  dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
-  dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
+
+  // // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
+  // const saludar = () => {
+  //   console.log("Hola desde el provider")
+  // }
+  // useEffect(() => {
+  // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+  // dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
   // dispatch({ type: "DELETE", campo: "lotro" });
-  // dispatch({ type: "UPDATE", campo: "lotro", payload: "lotrolotrolotro" });
-  }, []);
-
-
-
-  console.log("state", state);
+  // dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
+  // dispatch({ type: "ADD", campo: "funciones", payload: {saludar: saludar} });
+  // }, []);
+  // console.log("state", state);
+  // state.funciones.saludar();
     
 
   useEffect(() => {
