@@ -10,7 +10,6 @@ from app.v1.models.subject import Subject
 
 import app.v1.repositories.example_repository as repo
 
-
 async def update_topic(session: AsyncSession, topic_id: int, topic_in: UpdateTopic) -> Optional[Topic]:
     db_example = await session.get(Topic, topic_id)
     if not db_example:
@@ -24,8 +23,6 @@ async def update_topic(session: AsyncSession, topic_id: int, topic_in: UpdateTop
     return db_example
 
 async def create_topic(session: AsyncSession, example_in: CreateTopic, user) -> Topic:
-
-    
     topic = Topic.from_orm(example_in)
     topic.teacher_id = user.id
     session.add(topic)

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { ContextProvider } from './context/provider'
 
 export const metadata: Metadata = {
   title: 'FLEXTUDY · Your All-in-One Educational Hub',
@@ -14,7 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ContextProvider>
+          {children}
+        </ContextProvider>
+      </body>
     </html>
   )
 }

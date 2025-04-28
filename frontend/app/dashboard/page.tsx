@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Plus, List, Grid3X3 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,12 +8,34 @@ import ClassListView from "@/components/organisms/ClassListView"
 import MonthCalendarView from "@/components/organisms/MonthCalendarView"
 import Link from "next/link"
 
+import { useProvider } from '@/app/context/provider'
+
+
 export default function CalendarView() {
+  
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
-
   const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
   // Fetch lessons from the API
+
+  const { context, setContext , dispatch, state} = useProvider();
+
+
+  // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
+  // const saludar = () => {
+  //   console.log("Hola desde el provider")
+  // }
+  // useEffect(() => {
+  // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+  // dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
+  // dispatch({ type: "DELETE", campo: "lotro" });
+  // dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
+  // dispatch({ type: "ADD", campo: "funciones", payload: {saludar: saludar} });
+  // }, []);
+  // console.log("state", state);
+  // state.funciones.saludar();
+    
+
   useEffect(() => {
     const fetchLessons = async () => {
       try {
