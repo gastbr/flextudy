@@ -15,6 +15,7 @@ class BaseUser(SQLModel):
     name: str
     email: str = Field(index=True, unique=True)
     profile_pic: str
+    status: str = Field(default="pending")
 
 class AuthenticatedUser(BaseUser):
     is_active: bool = Field(default=True)
@@ -40,7 +41,7 @@ class CreateUser(BaseUser):
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
-    user_type_id: Optional[int] = None
+    user_type_name: Optional[str] = None
     password: Optional[str] = None
 
 class UpdateUser(BaseUser):
@@ -49,6 +50,7 @@ class UpdateUser(BaseUser):
     email: Optional[str] = None
     profile_pic: Optional[str] = None
     user_type_id: Optional[int] = None
+    status: Optional[str] = None
 
 class ReadUser(BaseUser):
     id: int
@@ -56,6 +58,7 @@ class ReadUser(BaseUser):
     email: Optional[str] = None
     profile_pic: Optional[str] = None
     user_type_name: Optional[str] = None
+    status: Optional[str] = None
 
 class Token(SQLModel):
     access_token: str

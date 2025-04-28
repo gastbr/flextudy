@@ -1,17 +1,20 @@
 "use client"
 
 import { useEffect } from "react"
+import { useParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, Edit } from "lucide-react"
+import { Calendar, Mail, Edit } from "lucide-react"
 import { useGet } from "@/hooks/use-fetch"
 
 export default function ProfilePage() {
 
-  const { fetch: data, loading, error } = useGet('/auth/me');
+  const { id } = useParams() as { id: string };
+  const endpoint = id === "me" ? "/auth/me" : `/user/${id}`
+  const { fetch: data, loading, error } = useGet(endpoint);
 
   useEffect(() => {
     if (loading) {
@@ -94,7 +97,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <div className="text-sm text-muted-foreground">Phone number</div>
                 <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.phone}</div>
@@ -114,7 +117,7 @@ export default function ProfilePage() {
                 <div className="text-sm text-muted-foreground">Twiiter</div>
                 <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.twitter}</div>
               </div>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
 
@@ -132,7 +135,7 @@ export default function ProfilePage() {
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm">{user.email}</span>
               </div>
-              {user.phone && (
+              {/*               {user.phone && (
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">{user.phone}</span>
@@ -155,7 +158,7 @@ export default function ProfilePage() {
                   <Twitter className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">{user.twitter}</span>
                 </div>
-              )}
+              )} */}
             </CardContent>
           </Card>
 

@@ -20,6 +20,8 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
 import { useGet } from "@/hooks/use-fetch"
+import Link from "next/link"
+import UserCreateModal from "@/components/organisms/UserCreateModal"
 
 interface User {
     id: number;
@@ -33,14 +35,19 @@ interface User {
 }
 
 export default function UserManagementContent() {
+    const [users, setUsers] = useState<User[]>([])
+    const { fetch: usersFetch, loading, error } = useGet('/user');
     const [searchQuery, setSearchQuery] = useState("")
     const [filterRole, setFilterRole] = useState("all")
+    const [filterStatus, setFilterStatus] = useState("all")
     const [showStatsDialog, setShowStatsDialog] = useState(false)
     const [showSubjectDialog, setShowSubjectDialog] = useState(false)
     const [showPricingDialog, setShowPricingDialog] = useState(false)
-    const [users, setUsers] = useState<User[]>([])
-    const { fetch: usersFetch, loading, error } = useGet('/user');
-
+    const [newUser, setNewUser] = useState({
+        name: "name1",
+        email: "email1",
+        role: ""
+    });
 
     useEffect(() => {
         if (loading) {
@@ -52,7 +59,7 @@ export default function UserManagementContent() {
                     ...user,
                     role: user.user_type_name,
                     avatar: user.profile_pic,
-                    status: "active",
+                    status: user.status,
                     classes: 4,
                     joinDate: "2023-06-01",
                 }));
@@ -64,7 +71,7 @@ export default function UserManagementContent() {
         }
     }, [usersFetch, error, loading]);
 
-    // Filter users based on search query and role filter
+    // Filter users based on search query, status and role filter
     const filteredUsers = users.filter((user) => {
         const matchesSearch =
             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -72,7 +79,9 @@ export default function UserManagementContent() {
 
         const matchesRole = filterRole === "all" || user.role === filterRole
 
-        return matchesSearch && matchesRole
+        const matchesStatus = filterStatus === "all" || user.status === filterStatus
+
+        return matchesSearch && matchesRole && matchesStatus
     })
 
     // Sample statistics data
@@ -166,6 +175,22 @@ export default function UserManagementContent() {
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="w-full sm:w-[200px]">
+                    <Select value={filterStatus} onValueChange={setFilterStatus}>
+                        <SelectTrigger>
+                            <div className="flex items-center gap-2">
+                                <Filter className="h-4 w-4" />
+                                <SelectValue placeholder="Filter by role" />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                            <SelectItem value="pending">Pending approval</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
                 <Button variant="outline" className="gap-2">
                     <Download className="h-4 w-4" />
                     <span>Export</span>
@@ -173,9 +198,15 @@ export default function UserManagementContent() {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Users</CardTitle>
-                    <CardDescription>Manage user accounts and role assignments</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex flex-col gap-1.5">
+                        <CardTitle>Users</CardTitle>
+                        <CardDescription>Manage user accounts and role assignments</CardDescription>
+                    </div>
+
+                    <UserCreateModal newUser={newUser} setNewUser={setNewUser} />
+
+
                 </CardHeader>
                 <CardContent>
                     <div className="border rounded-md">
@@ -197,11 +228,17 @@ export default function UserManagementContent() {
                                     className="grid grid-cols-[1fr_1fr_auto_auto_auto] md:grid-cols-[1fr_1fr_auto_auto_auto_auto] items-center gap-4 p-4 border-b last:border-0"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={user.avatar} alt={user.name} />
-                                            <AvatarFallback>{user.name[0]}</AvatarFallback>
-                                        </Avatar>
-                                        <div>{user.name}</div>
+                                        <Link href={`/dashboard/profile/${user.id}`}>
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={user.avatar} alt={user.name} />
+                                                <AvatarFallback>{user.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                        </Link>
+                                        <Link href={`/dashboard/profile/${user.id}`}>
+                                            <Button variant="link" size="sm">
+                                                {user.name}
+                                            </Button>
+                                        </Link>
                                     </div>
                                     <div className="text-muted-foreground truncate">{user.email}</div>
                                     <div className="hidden md:block">
@@ -214,13 +251,13 @@ export default function UserManagementContent() {
                                     <div>
                                         <Dialog>
                                             <DialogTrigger asChild>
-                                                <Button variant="ghost" size="sm">
-                                                    Edit
+                                                <Button variant="outline" size="xs">
+                                                    Edit user
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
-                                                    <DialogTitle>Edit User</DialogTitle>
+                                                    <DialogTitle>Edit user</DialogTitle>
                                                     <DialogDescription>Update user information and role</DialogDescription>
                                                 </DialogHeader>
                                                 <div className="space-y-4 py-4">
@@ -300,7 +337,6 @@ export default function UserManagementContent() {
                     <div className="text-sm text-muted-foreground">
                         Showing {filteredUsers.length} of {users.length} users
                     </div>
-                    <Button>Add New User</Button>
                 </CardFooter>
             </Card>
 

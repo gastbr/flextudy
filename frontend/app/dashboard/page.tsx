@@ -78,6 +78,7 @@ export default function CalendarView() {
         </div>
 
         {/* This button would only be visible to teachers */}
+        
         <Button asChild className="flex items-center gap-2">
           <Link href="/dashboard/classes/create">
             <Plus className="h-4 w-4" />
