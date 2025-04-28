@@ -12,12 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-
+import { usePut } from "@/hooks/use-fetch"
 
 interface TopicProps {
   showNewTopicEditDialog: boolean;
   setShowNewTopicEditDialog: (show: boolean) => void;
-  subjects: any[]; // Evita usar 'any' si posible
+  subjects: any[]; // Evita usar 'any' si posible,
   topic: {
     "name": string,
     "subject_id": number,
@@ -25,28 +25,31 @@ interface TopicProps {
     "id": number,
     "teacher_id": number
   };
+  executeGetToCreate: () => Promise<void>;
 }
-
 
 
 export default function TopicEdit({
   showNewTopicEditDialog,
   setShowNewTopicEditDialog,
   subjects,
-  topic
+  topic,
+  executeGetToCreate
 }: TopicProps) {
 
-
+  console.log('topic', topic)
   const [name, setName] = useState(topic.name)
   const [subject_id, setSubjectId] = useState(topic.subject_id)
   const [description, setDescription] = useState(topic.description)
+  const id = topic.id
+  const { fetch: userType, execute: executeEditTopic } = usePut(`/topic/edit/${id}`);
 
-useEffect(() => {
-  setName(topic.name)
-  setSubjectId(topic.subject_id)
-  setDescription(topic.description)
-}, [topic])
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    setName(topic.name)
+    setSubjectId(topic.subject_id)
+    setDescription(topic.description)
+  }, [topic])
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const editTopic = {
       name: name,
@@ -56,22 +59,8 @@ useEffect(() => {
       teacher_id: topic.teacher_id
     };
 
-    console.log('Datos de la clase:', editTopic);
-    // /v1/topic/edit/{topic_id}
-
-
-    const response = await fetch(`http://localhost:8000/v1/topic/edit/${topic_id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(editTopic)
-    });
-  
-    const data = await response.json();
-    console.log(data);
-  
-    console.log('Datos de la clase:', classData);
+    await executeEditTopic(editTopic) 
+    await executeGetToCreate()
     setShowNewTopicEditDialog(false)
   };
 

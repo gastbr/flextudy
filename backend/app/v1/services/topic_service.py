@@ -10,7 +10,6 @@ from app.v1.models.subject import Subject
 
 import app.v1.repositories.example_repository as repo
 
-
 async def update_topic(session: AsyncSession, topic_id: int, topic_in: UpdateTopic) -> Optional[Topic]:
     db_example = await session.get(Topic, topic_id)
     if not db_example:

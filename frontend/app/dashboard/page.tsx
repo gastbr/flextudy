@@ -21,7 +21,7 @@ export default function CalendarView() {
   const { context, setContext , dispatch, state} = useProvider();
 
 
-  // // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
+  // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
   // const saludar = () => {
   //   console.log("Hola desde el provider")
   // }
