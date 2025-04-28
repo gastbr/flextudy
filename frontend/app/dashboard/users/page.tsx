@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, UserPlus } from "lucide-react"
+import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus } from "lucide-react"
 import {
     Dialog,
     DialogContent,
@@ -21,6 +21,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
 import { useGet } from "@/hooks/use-fetch"
 import Link from "next/link"
+import UserCreateModal from "@/components/organisms/UserCreateModal"
 
 interface User {
     id: number;
@@ -34,14 +35,19 @@ interface User {
 }
 
 export default function UserManagementContent() {
+    const [users, setUsers] = useState<User[]>([])
+    const { fetch: usersFetch, loading, error } = useGet('/user');
     const [searchQuery, setSearchQuery] = useState("")
     const [filterRole, setFilterRole] = useState("all")
     const [filterStatus, setFilterStatus] = useState("all")
     const [showStatsDialog, setShowStatsDialog] = useState(false)
     const [showSubjectDialog, setShowSubjectDialog] = useState(false)
     const [showPricingDialog, setShowPricingDialog] = useState(false)
-    const [users, setUsers] = useState<User[]>([])
-    const { fetch: usersFetch, loading, error } = useGet('/user');
+    const [newUser, setNewUser] = useState({
+        name: "name1",
+        email: "email1",
+        role: ""
+    });
 
     useEffect(() => {
         if (loading) {
@@ -197,7 +203,10 @@ export default function UserManagementContent() {
                         <CardTitle>Users</CardTitle>
                         <CardDescription>Manage user accounts and role assignments</CardDescription>
                     </div>
-                    <Button><UserPlus /></Button>
+
+                    <UserCreateModal newUser={newUser} setNewUser={setNewUser} />
+
+
                 </CardHeader>
                 <CardContent>
                     <div className="border rounded-md">
@@ -242,13 +251,13 @@ export default function UserManagementContent() {
                                     <div>
                                         <Dialog>
                                             <DialogTrigger asChild>
-                                                <Button variant="secondary" size="xs">
-                                                    Edit
+                                                <Button variant="outline" size="xs">
+                                                    Edit user
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader>
-                                                    <DialogTitle>Edit User</DialogTitle>
+                                                    <DialogTitle>Edit user</DialogTitle>
                                                     <DialogDescription>Update user information and role</DialogDescription>
                                                 </DialogHeader>
                                                 <div className="space-y-4 py-4">

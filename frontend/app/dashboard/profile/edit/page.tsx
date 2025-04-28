@@ -9,16 +9,15 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare, ListTodo } from "lucide-react"
+import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare } from "lucide-react"
 import { useGet, usePatch } from "@/hooks/use-fetch"
 // @ts-ignore
-
 
 export default function ProfilePage() {
 
   const { fetch: fetchMe, loading, error } = useGet('/auth/me');
 
-  const { fetch: userType, execute: patchUser } = usePatch(`/user/${fetchMe?.id}`);
+  const { execute: patchUser } = usePatch(`/user/${fetchMe?.id}`);
   const user = {
     name: fetchMe?.name ?? '',
     email: fetchMe?.email ?? '',
@@ -39,7 +38,7 @@ export default function ProfilePage() {
   const [email, setEmail] = useState(user.email);
 
 
-  function handleSubmit(/* formValues: CreateUserTypeResponse */) {
+  function handleSubmit() {
 
     const post = {
       name: name,
