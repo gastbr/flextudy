@@ -12,13 +12,13 @@ import { useProvider } from '@/app/context/provider'
 
 
 export default function CalendarView() {
-  
+
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
   // Fetch lessons from the API
 
-  const { context, setContext , dispatch, state} = useProvider();
+  const { context, setContext, dispatch, state } = useProvider();
 
 
   // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
@@ -26,15 +26,14 @@ export default function CalendarView() {
   //   console.log("Hola desde el provider")
   // }
   // useEffect(() => {
-  // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
-  // dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
-  // dispatch({ type: "DELETE", campo: "lotro" });
-  // dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
-  // dispatch({ type: "ADD", campo: "funciones", payload: {saludar: saludar} });
+  //   dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+  //   dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
+  //   dispatch({ type: "DELETE", campo: "lotro" });
+  //   dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
   // }, []);
-  // console.log("state", state);
-  // state.funciones.saludar();
-    
+
+  // console.log("Contexto", state);
+
 
   useEffect(() => {
     const fetchLessons = async () => {
@@ -78,7 +77,7 @@ export default function CalendarView() {
         </div>
 
         {/* This button would only be visible to teachers */}
-        
+
         <Button asChild className="flex items-center gap-2">
           <Link href="/dashboard/classes/create">
             <Plus className="h-4 w-4" />

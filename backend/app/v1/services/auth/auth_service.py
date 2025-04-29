@@ -74,11 +74,11 @@ async def authorize(
         raise credentials_exception
     return user
 
-async def isUserRoll(roll: str, user: User, session) -> bool:
+async def isUserRoll(role: str, user: User, session) -> bool:
         userRoll = (await session.exec(
         select(UserType).where(UserType.id == user.user_type_id)
         )).first()
-        if userRoll.name == roll:
+        if userRoll.name == role:
             return True
         else:
             return False
