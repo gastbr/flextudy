@@ -30,6 +30,7 @@ export default function ProfilePage() {
   }, [data, error, loading]);
 
   const user = {
+    username: data?.username ?? '',
     name: data?.name ?? '',
     email: data?.email ?? '',
     role: data?.user_type_name ?? '',
@@ -54,12 +55,14 @@ export default function ProfilePage() {
           <p className="text-muted-foreground">View your profile information</p>
         </div>
 
-        <Link href="/dashboard/profile/edit">
-          <Button className="flex items-center gap-2" variant={"ghost"}>
-            <Edit className="h-4 w-4" />
-            <span>Edit Profile</span>
-          </Button>
-        </Link>
+        {id === "me" &&
+          <Link href="/dashboard/profile/edit">
+            <Button className="flex items-center gap-2" variant={"ghost"}>
+              <Edit className="h-4 w-4" />
+              <span>Edit Profile</span>
+            </Button>
+          </Link>
+        }
 
       </div>
 
@@ -80,6 +83,10 @@ export default function ProfilePage() {
 
               <div className="flex-1 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="text-sm text-muted-foreground">Username</div>
+                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.username}</div>
+                  </div>
                   <div className="space-y-2">
                     <div className="text-sm text-muted-foreground">Full Name</div>
                     <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.name}</div>
@@ -204,7 +211,7 @@ export default function ProfilePage() {
           </Tabs>
         </CardContent>
       </Card>
-    </div>
+    </div >
   )
 }
 
