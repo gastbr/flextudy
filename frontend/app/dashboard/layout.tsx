@@ -123,7 +123,7 @@ function MobileSidebar({ user }: { user: any }) {
           )}
 
           <div className="mt-auto pt-2" onClick={handleLogout}>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground text-red-500">
+            <Button variant="destructiveGhost" className="w-full justify-start">
               <LogOut className="h-4 w-4 mr-2" />
               Sign out
             </Button>
@@ -159,8 +159,8 @@ function DashboardSidebar({ user }: { user: any }) {
         <div
           onClick={handleLogout}>
           <Button
-            variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-foreground text-red-500"
+            variant="destructiveGhost"
+            className="w-full justify-start"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign out
