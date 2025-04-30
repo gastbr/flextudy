@@ -1,16 +1,10 @@
 # services/example_service.py
-from typing import List, Optional
-from sqlmodel import select, func
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.models.lesson import Lesson, CreateLesson
-from app.v1.models.user import User
-from app.v1.models.user_type import UserType
 from app.v1.models.topic import Topic
-from app.v1.models.subject import Subject
-from app.v1.repositories.user_type_repository import get_user_type_by_name
-
-
-import app.v1.repositories.example_repository as repo
+from app.v1.repositories.user_type_repository import get_user_type_name_by_id
+import app.v1.repositories.classes_repository as repo
 
 async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> Lesson:
     lesson = Lesson.from_orm(lesson_in)
@@ -29,45 +23,15 @@ async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> 
     await session.refresh(lesson)
     return lesson
 
-
-
-    
 async def get_topics_by_teacher_id(session: AsyncSession, user) -> dict:
-    
-
-    topics = (await session.exec(
-        select(Topic).where(Topic.teacher_id == user.id)
-    )).all()
-    
-    subjecs = (await session.exec(
-        select(Subject)
-    )).all()
-
-    response_data = {
-        "topics": [topic.dict() for topic in topics],
-        "subjects": [subject.dict() for subject in subjecs],
-    }
-
-    return response_data
-
-
-
-async def get_my_classes(session: AsyncSession, user):
-    role = await get_user_type_by_name(user.user_type_name)
-    isTeacher = role == 'teacher'
-
-    if isTeacher:
-        topics = (await session.exec(
-            select(Topic).where(Topic.teacher_id == user.id)
-        )).all()
-        
-        subjecs = (await session.exec(
-            select(Subject)
-        )).all()
+    role = await get_user_type_name_by_id(session, user.user_type_id)
+    if role == 'teacher':
+        topics = await repo.get_topics_by_teacher_id(session, user.id)
+        subjects = await repo.get_all_subjects(session)
 
         response_data = {
             "topics": [topic.dict() for topic in topics],
-            "subjects": [subject.dict() for subject in subjecs],
+            "subjects": [subject.dict() for subject in subjects],
         }
     else:
         response_data = {
@@ -75,6 +39,21 @@ async def get_my_classes(session: AsyncSession, user):
             "status": 401,
             "message": "You are not authorized to access this resource."
         }
-    
+    return response_data
 
+async def get_my_classes(session: AsyncSession, user):
+    role = await get_user_type_name_by_id(session, user.user_type_id)
+    if role == 'teacher':
+        topics = repo.get_topics_by_teacher_id(session, user.id)
+        subjects = repo.get_all_subjects
+        response_data = {
+            "topics": [topic.dict() for topic in topics],
+            "subjects": [subject.dict() for subject in subjects],
+        }
+    else:
+        response_data = {
+            "Answer": "Unauthorized",
+            "status": 401,
+            "message": "You are not authorized to access this resource."
+        }
     return response_data

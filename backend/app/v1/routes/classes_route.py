@@ -1,13 +1,12 @@
 # routes/example_route.py
-from fastapi import APIRouter, Depends, Request, Body 
+from fastapi import APIRouter, Depends, HTTPException, status
 from app.v1.models.lesson import Lesson, CreateLesson
-from typing import List, Dict, Any, Annotated
-from app.v1.services.auth.auth_service import authorize
+from typing import Annotated, List
+from app.v1.services.auth.auth_service import authorize, authorize_roles
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.services.classes_service import (
     create_class,
-    get_topics_by_teacher_id,
-    get_my_classes
+    get_topics_by_teacher_id
 )
 from app.config.db import get_session
 
@@ -34,12 +33,14 @@ async def get_info_to_create_lesson(
     user: Annotated[None, Depends(authorize)],
     session: AsyncSession = Depends(get_session)
     ):
+    authorize_roles(user, ['admin', 'student'])
     return await get_topics_by_teacher_id(session, user)
+        
 
-@router.get("/my_classes", response_model=dict)
-async def get_classes_info(
-    user: Annotated[None, Depends(authorize)],
-    session: AsyncSession = Depends(get_session)
-    ):
-    return await get_my_classes(session, user)
+# @router.get("/my_classes", response_model=dict)
+# async def get_classes_info(
+#     user: Annotated[None, Depends(authorize)],
+#     session: AsyncSession = Depends(get_session)
+#     ):
+#     return await get_my_classes(session, user)
 
