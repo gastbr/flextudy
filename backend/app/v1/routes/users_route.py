@@ -17,9 +17,9 @@ router = APIRouter()
 async def read_users(session: AsyncSession = Depends(get_session)):
     return await get_users(session)
 
-@router.get("/{user_id}", response_model=ReadUser)
-async def read_user(user_id: int, session: AsyncSession = Depends(get_session)):
-    user = await get_user(session, user_id)
+@router.get("/{user_identifier}", response_model=ReadUser)
+async def read_user(user_identifier: str, session: AsyncSession = Depends(get_session)):
+    user = await get_user(session, user_identifier)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

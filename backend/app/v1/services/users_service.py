@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Union, List, Optional
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
@@ -11,8 +11,14 @@ import string
 async def get_users(session: AsyncSession) -> List[ReadUser]:
     return await repo.get_all_users(session)
 
-async def get_user(session: AsyncSession, user_id: int) -> Optional[ReadUser]:
-    return await repo.get_user_by_id(session, user_id)
+async def get_user(session: AsyncSession, user_key: Union[int, str]) -> Optional[ReadUser]:
+    if isinstance(user_key, str) and user_key.isdigit():
+        return await repo.get_user_by_id(session, int(user_key))
+    if isinstance(user_key, int):
+        return await repo.get_user_by_id(session, user_key)
+    if isinstance(user_key, str):
+        return await repo.get_user_by_username(session, user_key)
+    raise ValueError("Expected int or str identifier")
 
 async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
 
