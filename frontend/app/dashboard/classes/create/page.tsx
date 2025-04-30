@@ -16,8 +16,7 @@ import TopicEdit from "@/components/organisms/TopicEdit"
 import TopicCreate from "@/components/organisms/TopicCreate"
 import { paths } from "@/types/api"
 import { useGet, usePost } from "@/hooks/use-fetch"
-
-
+import { redirect } from "next/navigation"
 
 export default function CreateClassPage() {
 
@@ -51,26 +50,15 @@ export default function CreateClassPage() {
 
   const { fetch: data, loading, error, execute:executeGetToCreate } = useGet('/classes/to_create');
 
-  const handleRefresh = async () => {
-    console.log('Before refresh')
-    await executeGetToCreate()
-    console.log('After refresh', data)
-  }
 
   useEffect(() => {
-    
-    if (loading) {
-      console.log('Loading user data...');
-    } else {
       if (data) {
-        console.log('User data:', data);
         setTopics(data.topics)
         setSubject(data.subjects)
-      }
+      } else
       if (error) {
         console.error('Error fetching user:', error);
       }
-    }
   }, [data, error, loading]);
 
   function combineDateAndTimeToISO(dateString: string, timeString: string) {
@@ -93,7 +81,7 @@ export default function CreateClassPage() {
       lesson_url: url,
     };
     postClass(classData);
-    console.log('Datos de la clase:', classData);
+    redirect("/dashboard");
   };
 
   return (

@@ -37,7 +37,6 @@ export default function TopicEdit({
   executeGetToCreate
 }: TopicProps) {
 
-  console.log('topic', topic)
   const [name, setName] = useState(topic.name)
   const [subject_id, setSubjectId] = useState(topic.subject_id)
   const [description, setDescription] = useState(topic.description)

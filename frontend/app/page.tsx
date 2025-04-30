@@ -1,9 +1,12 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Calendar, Users, BookOpen, Settings } from "lucide-react"
 import Image from "next/image"
 
 export default function LandingPage() {
+
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}

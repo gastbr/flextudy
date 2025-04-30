@@ -1,26 +1,34 @@
 'use client';
 
-export const ContextReducer = (state:any, action:any) => {
+export const ContextReducer = (state: any, action: any) => {
     switch (action.type) {
 
         case "ADD":
-            return {
-                ...state,
-                [action.campo]: action.payload,
-            };
-        
         case "UPDATE":
             return {
-                ...state,
-                [action.campo]: action.payload,
-            };
+                flextudy: {
+                    ...state,
+                    [action.campo]: action.payload,
+                },
+            }
 
         case "DELETE":
-            const newState = { ...state }; 
-            delete newState[action.campo];
-            return newState;
-        
+            const newFlextudy = { ...state.flextudy }
+            delete newFlextudy[action.campo]
+            return {
+                ...state,
+                flextudy: newFlextudy,
+            }
+
         default:
-            return state;
+            return state
     }
 }
+
+  // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
+  // useEffect(() => {
+  //   // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+  //   // dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
+  //   // dispatch({ type: "DELETE", campo: "lotro" });
+  //   // dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
+  // }, []);

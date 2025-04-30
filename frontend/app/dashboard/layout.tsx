@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useGet } from "@/hooks/use-fetch"
+import { useProvider } from '@/app/context/provider'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -14,31 +14,33 @@ interface DashboardLayoutProps {
 
 export function handleLogout() {
   document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  sessionStorage.removeItem("flextudy");
   window.location.href = '/login';
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
-  const { fetch: userData, error, loading } = useGet('/auth/me');
+  const { state } = useProvider();
+  const user = state.flextudy.currentUser;
 
   return (
     <div className="min-h-screen flex flex-col">
-      <DashboardHeader userData={userData} />
+      <DashboardHeader user={user} />
       <div className="flex-1 flex flex-col md:flex-row">
-        <DashboardSidebar userData={userData} />
+        <DashboardSidebar user={user} />
         <main className="flex-1 p-4 md:p-6 overflow-auto">{children}</main>
       </div>
     </div>
   )
 }
 
-function DashboardHeader({ userData }: { userData: any }) {
+function DashboardHeader({ user }: { user: any }) {
 
   return (
     <header className="h-16 border-b bg-background flex items-center px-4 sticky top-0 z-30">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-2">
-          <MobileSidebar userData={userData} />
+          <MobileSidebar user={user} />
           <Link href="/dashboard" className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
             <span className="font-semibold text-lg hidden md:inline-block">FLEXTUDY</span>
@@ -67,12 +69,12 @@ function DashboardHeader({ userData }: { userData: any }) {
 
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={userData?.profile_pic} alt="User" />
+              <AvatarImage src={user?.profile_pic} alt="User" />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
             <div className="hidden md:block">
-              <div className="text-sm font-medium">{userData?.name}</div>
-              <div className="text-xs text-muted-foreground">{userData?.user_type_name.toUpperCase()}</div>
+              <div className="text-sm font-medium">{user?.name}</div>
+              <div className="text-xs text-muted-foreground">{user?.user_type_name.toUpperCase()}</div>
             </div>
           </div>
         </div>
@@ -81,9 +83,9 @@ function DashboardHeader({ userData }: { userData: any }) {
   )
 }
 
-function MobileSidebar({ userData }: { userData: any }) {
+function MobileSidebar({ user }: { user: any }) {
 
-  const profileHref = `/dashboard/profile/${userData?.id}`;
+  const profileHref = `/dashboard/profile/${user?.id}`;
 
   return (
     <Sheet>
@@ -108,7 +110,7 @@ function MobileSidebar({ userData }: { userData: any }) {
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
 
           {/* Admin-only items */}
-          {userData?.user_type_name === "admin" && (
+          {user?.user_type_name === "admin" && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
               <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
@@ -132,7 +134,7 @@ function MobileSidebar({ userData }: { userData: any }) {
   )
 }
 
-function DashboardSidebar({ userData }: { userData: any }) {
+function DashboardSidebar({ user }: { user: any }) {
 
   return (
     <aside className="hidden md:flex w-64 border-r flex-col sticky top-16 h-[calc(100vh-4rem)]">
@@ -144,7 +146,7 @@ function DashboardSidebar({ userData }: { userData: any }) {
           <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
           {/* Admin-only items */}
-          {userData?.user_type_name === 'admin' && (
+          {user?.user_type_name === 'admin' && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
               <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
