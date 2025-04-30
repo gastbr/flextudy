@@ -21,7 +21,7 @@ export default function CalendarView() {
   const { context, setContext, dispatch, state } = useProvider();
 
 
-  // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
+  // EJEMPLOS DE COMO USAR USEREDUCER / USECONTEXT
   // const saludar = () => {
   //   console.log("Hola desde el provider")
   // }
@@ -30,9 +30,10 @@ export default function CalendarView() {
   //   dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
   //   dispatch({ type: "DELETE", campo: "lotro" });
   //   dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
+  //   dispatch({ type: "ADD", campo: "funciones", payload: { saludar: saludar } });
   // }, []);
-
-  // console.log("Contexto", state);
+  // console.log("state", state);
+  // state.funciones.saludar();
 
 
   useEffect(() => {

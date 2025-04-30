@@ -37,7 +37,7 @@ async def get_info_to_create_lesson(
     return await get_topics_by_teacher_id(session, user)
 
 @router.get("/my_classes", response_model=dict)
-async def get_info_to_create_lesson(
+async def get_classes_info(
     user: Annotated[None, Depends(authorize)],
     session: AsyncSession = Depends(get_session)
     ):
