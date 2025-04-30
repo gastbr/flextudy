@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   });
 
   await setToken(request);
-  redirect(callbackUrl);
+  // redirect(callbackUrl);
 }
 
 async function setToken(request: URLSearchParams) {

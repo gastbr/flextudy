@@ -7,10 +7,29 @@ import { Input } from "@/components/ui/input"
 import { Calendar } from "lucide-react"
 import { login } from "./actions"
 import { useSearchParams } from "next/navigation"
+import { useGet, usePatch } from "@/hooks/use-fetch"
+import { useProvider } from '@/app/context/provider'
+import { redirect } from "next/navigation"
+
 
 export default function LoginPage() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
+  const { context, setContext , dispatch, state} = useProvider();
+
+  const { fetch: fetchMe, loading, error, execute } = useGet('/auth/me');
+
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); 
+
+    const formData = new FormData(event.currentTarget);
+    await login(formData);
+    const userMe = await execute();
+    dispatch({ type: "ADD", campo: "currentUser", payload: userMe });
+    redirect("/dashboard");
+
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4">
@@ -26,7 +45,10 @@ export default function LoginPage() {
             Enter your email and password to access your account
           </CardDescription>
         </CardHeader>
-        <form action={login}>
+        <form
+        onSubmit={handleSubmit}
+        //  action={login}
+        >
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Input id="username" name="username" type="text" placeholder="Username" />

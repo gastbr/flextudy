@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ContextProvider } from './context/provider'
-
+import { useEffect  } from "react"
+import { usePathname } from "next/navigation";
 export const metadata: Metadata = {
   title: 'FLEXTUDY · Your All-in-One Educational Hub',
   description: 'Your All-in-One Educational Hub.',
@@ -13,6 +14,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
   return (
     <html lang="en">
       <body>
