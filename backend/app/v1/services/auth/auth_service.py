@@ -1,12 +1,11 @@
 import jwt
 from jwt.exceptions import InvalidTokenError
-from typing import Annotated, Optional
+from typing import Annotated, Optional, List
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
-from app.v1.models.user import TokenData
 from app.v1.repositories.users_repository import get_user_by_username
 from app.config.db import get_session
 import os
@@ -40,7 +39,7 @@ def get_password_hash(password):
 
 async def authorize(
         token: Annotated[str, Depends(oauth2_scheme)],
-        db: Annotated[AsyncSession, Depends(get_session)]
+        db: Annotated[AsyncSession, Depends(get_session)],
         ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -49,21 +48,29 @@ async def authorize(
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
+        # PAYLOAD STRUCTURE:
+        # {
+        #     'sub': 'teachertest',
+        #     'role': 'teacher',
+        #     'name': 'Lisa Torres',
+        #     'email': 'rebeccajones@example.net',
+        #     'exp': 1746093282
+        # }
+
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
     except InvalidTokenError:
         raise credentials_exception
-    user = await get_user_by_username(db, username=token_data.username)
+    user = await get_user_by_username(db, username)
     if user is None:
         raise credentials_exception
     return user
 
-""" async def isUserRole(role: str, user: User, session) -> bool:
-        userRole = (await session.exec(select(UserType).where(UserType.id == user.user_type_id))).first()
-        if userRole.name == role:
-            return True
-        else:
-            return False
-# role = await isUserRole("admin", user, session) """
+def authorize_roles(user, allowed_roles: List[str]):
+    if user.user_type_name not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Requires one of the following roles: {', '.join(allowed_roles)}"
+        )

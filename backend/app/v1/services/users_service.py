@@ -3,7 +3,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
 import app.v1.repositories.users_repository as repo
-from app.v1.repositories.user_type_repository import get_user_type_by_name
+from app.v1.repositories.user_type_repository import get_user_type_id_by_name
 from app.v1.services.auth.auth_service import pwd_context
 import secrets
 import string
@@ -40,12 +40,12 @@ async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
     user.profile_pic = user_in.profile_pic
 
     # Query the UserType table to get the ID for the given user_type_name
-    user_type = await get_user_type_by_name(session, user_in.user_type_name)
+    user_type_id = await get_user_type_id_by_name(session, user_in.user_type_name)
 
-    if not user_type:
+    if not user_type_id:
         raise ValueError(f"UserType '{user_in.user_type_name}' not found")
 
-    user.user_type_id = user_type.id
+    user.user_type_id = user_type_id
 
     # Set status based on user_type_name
     if user_in.user_type_name == "student":
