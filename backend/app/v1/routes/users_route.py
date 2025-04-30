@@ -40,16 +40,19 @@ async def read_user(
 @router.post("", response_model=User, status_code=201)
 async def create_new_user(
     auth_user: Annotated[None, Depends(authorize)],
-    user_in: CreateUser, session: AsyncSession = Depends(get_session)):
+    user_in: CreateUser, session: AsyncSession = Depends(get_session)
+    ):
     authorize_roles(auth_user, ['admin'])
     return await create_user(session, user_in)
 
 @router.put("/{user_id}", response_model=User)
 async def update_existing_user(
-    _: Annotated[None, Depends(authorize)],
+    auth_user: Annotated[None, Depends(authorize)],
     user_id: int,
     user_in: UpdateUser,
-    session: AsyncSession = Depends(get_session)):
+    session: AsyncSession = Depends(get_session)
+    ):
+    authorize_roles(auth_user, ['admin'])
     user = await update_user(session, user_id, user_in)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -57,10 +60,12 @@ async def update_existing_user(
 
 @router.patch("/{user_id}", response_model=User)
 async def patch_existing_user(
-    _: Annotated[None, Depends(authorize)],
+    auth_user: Annotated[None, Depends(authorize)],
     user_id: int,
     user_in: UpdateUser,
-    session: AsyncSession = Depends(get_session)):
+    session: AsyncSession = Depends(get_session)
+    ):
+    authorize_roles(auth_user, ['admin'])
     user = await update_user(session, user_id, user_in)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -70,7 +75,8 @@ async def patch_existing_user(
 async def delete_existing_user(
     auth_user: Annotated[None, Depends(authorize)],
     user_id: int,
-    session: AsyncSession = Depends(get_session)):
+    session: AsyncSession = Depends(get_session)
+    ):
     authorize_roles(auth_user, ['admin'])
     success = await delete_user(session, user_id)
     if not success:

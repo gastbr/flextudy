@@ -49,7 +49,7 @@ class UpdateUser(BaseUser):
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
-    user_type_id: Optional[int] = None
+    user_type_name: Optional[str] = None
     status: Optional[str] = None
 
 class ReadUser(BaseUser):

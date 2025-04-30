@@ -56,6 +56,12 @@ async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
     return await repo.create_user(session, user)
 
 async def update_user(session: AsyncSession, user_id: int, user_in: UpdateUser) -> Optional[User]:
+    if user_in.user_type_name:
+        user_type_id = await get_user_type_id_by_name(session, user_in.user_type_name)
+        if not user_type_id:
+            raise ValueError(f"UserType '{user_in.user_type_name}' not found")
+        user_in.user_type_id = user_type_id
+        del user_in.user_type_name
     return await repo.update_user(session, user_id, user_in)
 
 async def delete_user(session: AsyncSession, user_id: int) -> bool:
