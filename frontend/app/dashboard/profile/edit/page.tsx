@@ -19,6 +19,7 @@ export default function ProfilePage() {
 
   const { execute: patchUser } = usePatch(`/user/${fetchMe?.id}`);
   const user = {
+    username: fetchMe?.username ?? '',
     name: fetchMe?.name ?? '',
     email: fetchMe?.email ?? '',
     role: fetchMe?.user_type_name ?? '',
@@ -34,6 +35,7 @@ export default function ProfilePage() {
       completed: 12,
     },
   }
+  const [username, setUsername] = useState(user.username);
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
 
@@ -59,6 +61,7 @@ export default function ProfilePage() {
       console.log('Loading user data...');
     } else {
       if (fetchMe) {
+        setUsername(fetchMe?.username);
         setName(fetchMe?.name);
         setEmail(fetchMe?.email);
 
@@ -80,7 +83,7 @@ export default function ProfilePage() {
           <p className="text-muted-foreground">Edit your profile information</p>
         </div>
 
-        <Link href="/dashboard/profile">
+        <Link href="/dashboard/profile/me">
           <Button className="flex items-center gap-2" onClick={() => handleSubmit()}>
             <CheckSquare className="h-4 w-4" />
             <span>Confirm</span>
@@ -109,6 +112,10 @@ export default function ProfilePage() {
 
               <div className="flex-1 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username" disabled defaultValue={username} onChange={(e) => setUsername(e.target.value)} />
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <Input id="name" defaultValue={name} onChange={(e) => setName(e.target.value)} />

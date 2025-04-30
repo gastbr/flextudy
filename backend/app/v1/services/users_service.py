@@ -1,9 +1,9 @@
-from typing import List, Optional
+from typing import Union, List, Optional
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
-from app.v1.models.user_type import UserType
 import app.v1.repositories.users_repository as repo
+from app.v1.repositories.user_type_repository import get_user_type_by_name
 from app.v1.services.auth.auth_service import pwd_context
 import secrets
 import string
@@ -11,8 +11,14 @@ import string
 async def get_users(session: AsyncSession) -> List[ReadUser]:
     return await repo.get_all_users(session)
 
-async def get_user(session: AsyncSession, user_id: int) -> Optional[ReadUser]:
-    return await repo.get_user_by_id(session, user_id)
+async def get_user(session: AsyncSession, user_key: Union[int, str]) -> Optional[ReadUser]:
+    if isinstance(user_key, str) and user_key.isdigit():
+        return await repo.get_user_by_id(session, int(user_key))
+    if isinstance(user_key, int):
+        return await repo.get_user_by_id(session, user_key)
+    if isinstance(user_key, str):
+        return await repo.get_user_by_username(session, user_key)
+    raise ValueError("Expected int or str identifier")
 
 async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
 
@@ -34,13 +40,18 @@ async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
     user.profile_pic = user_in.profile_pic
 
     # Query the UserType table to get the ID for the given user_type_name
-    statement = select(UserType).where(UserType.name == user_in.user_type_name)
-    user_type = (await session.exec(statement)).first()
+    user_type = await get_user_type_by_name(session, user_in.user_type_name)
 
     if not user_type:
         raise ValueError(f"UserType '{user_in.user_type_name}' not found")
 
     user.user_type_id = user_type.id
+
+    # Set status based on user_type_name
+    if user_in.user_type_name == "student":
+        user.status = "active"
+    else:
+        user.status = "pending"
 
     return await repo.create_user(session, user)
 

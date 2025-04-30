@@ -7,7 +7,7 @@ from app.v1.models.user import User
 from app.v1.models.user_type import UserType
 from app.v1.models.topic import Topic
 from app.v1.models.subject import Subject
-from app.v1.services.auth.auth_service import isUserRoll
+from app.v1.repositories.user_type_repository import get_user_type_by_name
 
 
 import app.v1.repositories.example_repository as repo
@@ -53,8 +53,8 @@ async def get_topics_by_teacher_id(session: AsyncSession, user) -> dict:
 
 
 async def get_my_classes(session: AsyncSession, user):
-    
-    isTeacher = await isUserRoll("teacher", user, session)
+    role = await get_user_type_by_name(user.user_type_name)
+    isTeacher = role == 'teacher'
 
     if isTeacher:
         topics = (await session.exec(

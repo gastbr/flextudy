@@ -16,7 +16,12 @@ async def get_user_by_id(session: AsyncSession, user_id: int) -> Optional[ReadUs
     user = results.one_or_none()
     return ReadUser.from_orm(user) if user else None
 
-async def create_user(session: AsyncSession, user_in: User) -> User:
+async def get_user_by_username(session: AsyncSession, username: str) -> Optional[User]:
+    statement = select(User).where(User.username == username).options(selectinload(User.user_type))
+    result = await session.exec(statement)
+    return result.one_or_none()
+
+async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
     session.add(user_in)
     await session.commit()
     await session.refresh(user_in)
