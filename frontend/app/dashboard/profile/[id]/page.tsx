@@ -88,6 +88,10 @@ export default function ProfilePage() {
                     <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.username}</div>
                   </div>
                   <div className="space-y-2">
+                    <div className="text-sm text-muted-foreground">Role</div>
+                    <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.role.toUpperCase()}</div>
+                  </div>
+                  <div className="space-y-2">
                     <div className="text-sm text-muted-foreground">Full Name</div>
                     <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.name}</div>
                   </div>

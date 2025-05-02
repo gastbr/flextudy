@@ -22,7 +22,7 @@ async def read_users(
     auth_user: Annotated[None, Depends(authorize)],
     session: AsyncSession = Depends(get_session)
     ):
-    authorize_roles(auth_user, ['admin'])
+    authorize_roles(auth_user, ['student'])
     return await get_users(session)
 
 @router.get("/{user_identifier}", response_model=ReadUser)
