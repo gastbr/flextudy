@@ -3,7 +3,7 @@
 import type React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
+import { Calendar, Users, Wallet, Settings, User, LogOut, Menu, GraduationCap } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useProvider } from '@/app/context/provider'
@@ -113,7 +113,16 @@ function MobileSidebar({ user }: { user: any }) {
           {user?.user_type_name === "admin" && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
-              <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
+              <NavItem
+                href="/dashboard/users"
+                icon={<Users className="h-4 w-4" />}
+                label="User Management"
+              />
+              <NavItem
+                href="/dashboard/teachers"
+                icon={<GraduationCap className="h-4 w-4" />}
+                label="Teacher Management"
+              />
               <NavItem
                 href="/dashboard/admin/settings"
                 icon={<Settings className="h-4 w-4" />}
@@ -149,8 +158,21 @@ function DashboardSidebar({ user }: { user: any }) {
           {user?.user_type_name === 'admin' && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
-              <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
-              <NavItem href="/dashboard/admin/settings" icon={<Settings className="h-4 w-4" />} label="Platform Settings" />
+              <NavItem
+                href="/dashboard/users"
+                icon={<Users className="h-4 w-4" />}
+                label="User Management"
+              />
+              <NavItem
+                href="/dashboard/teachers"
+                icon={<GraduationCap className="h-4 w-4" />}
+                label="Teacher Management"
+              />
+              <NavItem
+                href="/dashboard/admin/settings"
+                icon={<Settings className="h-4 w-4" />}
+                label="Platform Settings"
+              />
             </div>
           )}
 

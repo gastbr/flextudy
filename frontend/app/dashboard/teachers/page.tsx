@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, User } from "lucide-react"
+import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, GraduationCap } from "lucide-react"
 import {
     Dialog,
     DialogContent,
@@ -25,7 +25,6 @@ import UserCreateModal from "@/components/organisms/UserCreateModal"
 
 interface User {
     id: number;
-    username: string;
     name: string;
     email: string;
     role: string;
@@ -59,7 +58,6 @@ export default function UserManagementContent() {
                 console.log('User data:', usersFetch);
                 const transformedUsers = usersFetch.map((user: User & { profile_pic: string, user_type_name: string }) => ({
                     ...user,
-                    username: user.username,
                     role: user.user_type_name,
                     avatar: user.profile_pic,
                     status: user.status,
@@ -133,10 +131,10 @@ export default function UserManagementContent() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <User />
-                        <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
+                        <GraduationCap />
+                        <h1 className="text-2xl font-bold tracking-tight">Teacher Management</h1>
                     </div>
-                    <p className="text-muted-foreground">Manage users, roles, and platform settings</p>
+                    <p className="text-muted-foreground">Manage teachers and payments</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -159,7 +157,7 @@ export default function UserManagementContent() {
                 <div className="relative flex-1">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search users..."
+                        placeholder="Search teachers..."
                         className="pl-8"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -206,8 +204,8 @@ export default function UserManagementContent() {
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div className="flex flex-col gap-1.5">
-                        <CardTitle>Users</CardTitle>
-                        <CardDescription>Manage user accounts and role assignments</CardDescription>
+                        <CardTitle>Teachers</CardTitle>
+                        <CardDescription>Manage teacher accounts</CardDescription>
                     </div>
 
                     <UserCreateModal newUser={newUser} setNewUser={setNewUser} />
@@ -234,7 +232,7 @@ export default function UserManagementContent() {
                                     className="grid grid-cols-[1fr_1fr_auto_auto_auto] md:grid-cols-[1fr_1fr_auto_auto_auto_auto] items-center gap-4 p-4 border-b last:border-0"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <Link href={`/dashboard/profile/${user.username}`}>
+                                        <Link href={`/dashboard/profile/${user.id}`}>
                                             <Avatar className="h-8 w-8">
                                                 <AvatarImage src={user.avatar} alt={user.name} />
                                                 <AvatarFallback>{user.name[0]}</AvatarFallback>
