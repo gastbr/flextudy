@@ -20,14 +20,11 @@ import { redirect } from "next/navigation"
 
 export default function CreateClassPage() {
 
-  
   const [date, setDate] = useState<Date>()
   const [startTime, setStartTime] = useState<string>("")
   const [endTime, setEndTime] = useState<string>("")
   const [showNewTopicCreateDialog, setShowNewTopicCreateDialog] = useState(false)
   const [showNewTopicEditDialog, setShowNewTopicEditDialog] = useState(false)
-
-  const [showNewTopicDialog, setShowNewTopicDialog] = useState(false)
 
   const [selectedTopicId, setSelectedTopicId] = useState('');
   const [selectedTopic, setSelectedTopic] = useState('');

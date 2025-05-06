@@ -21,7 +21,7 @@ export function handleLogout() {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const { state } = useProvider();
-  const user = state.flextudy.currentUser;
+  const user = state?.flextudy.currentUser;
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -25,10 +25,3 @@ export const ContextReducer = (state: any, action: any) => {
     }
 }
 
-  // EJEMPLOS DE COMO USAR USEREDUCER/USECONTEXT
-  // useEffect(() => {
-  //   // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
-  //   // dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
-  //   // dispatch({ type: "DELETE", campo: "lotro" });
-  //   // dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
-  // }, []);

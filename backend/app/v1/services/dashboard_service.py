@@ -29,7 +29,7 @@ async def get_lessons(session: AsyncSession) -> List[dict]:
         select(
             Lesson,
             Topic,
-            User,  # Profesor
+            User,
             student_count.c.student_count
         )
         .join(Topic, Lesson.topic_id == Topic.id)

@@ -19,13 +19,37 @@ export function useProvider() {
     return context
 }
 
-// Provider component that wraps your app and makes theme available to any child component
-export function ContextProvider({ children }: { children: React.ReactNode }) {
+interface AppState {
+    // Define la forma de tu estado aquí
+    [key: string]: any;
+}
 
-    const sesionStorage = JSON.parse(sessionStorage.getItem('flextudy'));
-    
-    const [context, setContext] = useState<AnyType>("")
-    const [state, dispatch] = useReducer(ContextReducer, sesionStorage);
+export function ContextProvider({ children }: { children: React.ReactNode }) {
+    // Manejo seguro del sessionStorage
+    let initialState: AppState = {};
+    try {
+        const storedData = sessionStorage.getItem('flextudy');
+        initialState = storedData ? JSON.parse(storedData) : {};
+    } catch (error) {
+        console.error('Error parsing sessionStorage data', error);
+        initialState = {};
+    }
+
+    const [context, setContext] = useState<AppState>(initialState);
+    const [state, dispatch] = useReducer(ContextReducer, initialState);
+
+    // EXAMPLES OF HOW TO USE USEREDUCER/USECONTEXT
+    // useEffect(() => {
+    //   // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+    //   // dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
+    //   // dispatch({ type: "DELETE", campo: "lotro" });
+    //   // dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
+    // }, []);
+
+    // EXAMPLE HOW TO CONSUME
+    //   import { useProvider } from "@/app/context/provider"
+    //   const {context, setContext, state, dispatch,} = useProvider()
+
 
     useEffect(() => {
         if (state && state.flextudy) {
