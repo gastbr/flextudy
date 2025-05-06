@@ -9,8 +9,8 @@ import secrets
 import string
 
 
-async def get_users(session: AsyncSession) -> List[ReadUser]:
-    return await repo.get_all_users(session)
+async def get_users(session: AsyncSession, params: dict) -> List[ReadUser]:
+    return await repo.get_all_users(session, params)
 
 
 async def get_user(

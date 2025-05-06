@@ -5,8 +5,38 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
 
 
-async def get_all_users(session: AsyncSession) -> List[ReadUser]:
+async def get_all_users(session: AsyncSession, params) -> List[ReadUser]:
     statement = select(User).options(selectinload(User.user_type))
+    if "role" in params:
+        statement = statement.where(User.user_type.has(name=params["role"]))
+    if "status" in params:
+        statement = statement.where(User.status == params["status"])
+    if "orderby" in params:
+        order_by = params["orderby"]
+        order_mapping = {
+            "username": User.username,
+            "email": User.email,
+            "status": User.status,
+            "name": User.name,
+        }
+        if order_by in order_mapping:
+            column = order_mapping[order_by]
+            if "desc" in params:
+                statement = statement.order_by(column.desc())
+            else:
+                statement = statement.order_by(column)
+        else:
+            raise ValueError("Invalid orderby parameter")
+    if "limit" in params:
+        limit = int(params["limit"])
+        statement = statement.limit(limit)
+        if "page" in params:
+            offset = int(params["page"]) * limit
+            statement = statement.offset(offset)
+    if "offset" in params:
+        offset = int(params["offset"])
+        statement = statement.offset(offset)
+
     results = await session.exec(statement)
     users = results.all()
     return [ReadUser.from_orm(user) for user in users]
@@ -50,7 +80,7 @@ async def update_user(
 
     update_data = user_in.dict(exclude_unset=True)
     update_data.pop("user_type_name", None)
-    
+
     for key, value in update_data.items():
         setattr(db_user, key, value)
 
