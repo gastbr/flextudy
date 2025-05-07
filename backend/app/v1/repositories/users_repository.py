@@ -1,16 +1,29 @@
 from typing import List, Optional
 from sqlalchemy.orm import selectinload
+from sqlalchemy import func
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
+from math import ceil
 
 
 async def get_all_users(session: AsyncSession, params) -> List[ReadUser]:
     statement = select(User).options(selectinload(User.user_type))
+    
+    # Filters
     if "role" in params:
         statement = statement.where(User.user_type.has(name=params["role"]))
     if "status" in params:
         statement = statement.where(User.status == params["status"])
+
+    # Count
+    count_stmt = select(func.count()).select_from(statement.subquery())
+    total = await session.scalar(count_stmt)
+
+    # Pagination
+    limit = int(params.get("limit", total))
+    offset = 0
+
     if "orderby" in params:
         order_by = params["orderby"]
         order_mapping = {
@@ -31,7 +44,7 @@ async def get_all_users(session: AsyncSession, params) -> List[ReadUser]:
         limit = int(params["limit"])
         statement = statement.limit(limit)
         if "page" in params:
-            offset = int(params["page"]) * limit
+            offset = (int(params["page"]) - 1) * limit
             statement = statement.offset(offset)
     if "offset" in params:
         offset = int(params["offset"])
@@ -39,7 +52,16 @@ async def get_all_users(session: AsyncSession, params) -> List[ReadUser]:
 
     results = await session.exec(statement)
     users = results.all()
-    return [ReadUser.from_orm(user) for user in users]
+    total_pages = ceil(total / limit)
+    return {
+        "data": [ReadUser.from_orm(user) for user in users],
+        "meta" : {
+            "total": total,
+            "per_page": limit,
+            "current_page": (offset * limit) + 1,
+            "total_pages": total_pages
+        }
+    }
 
 
 async def get_user_by_id(session: AsyncSession, user_id: int) -> Optional[ReadUser]:

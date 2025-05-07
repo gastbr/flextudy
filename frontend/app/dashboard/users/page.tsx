@@ -7,15 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, User } from "lucide-react"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, } from "@/components/ui/pagination"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
@@ -37,7 +30,10 @@ interface User {
 
 export default function UserManagementContent() {
     const [users, setUsers] = useState<User[]>([])
-    const { fetch: usersFetch, loading, error } = useGet('/user');
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageLimit] = useState(20);
+    const [pageMetadata, setPageMetadata] = useState<{ total: number; per_page: number; current_page: number; total_pages: number }>({ total: 0, per_page: 0, current_page: 0, total_pages: 0 });
+    const { fetch: usersFetch, loading, error } = useGet(`/user?limit=${pageLimit}&offset=${(currentPage - 1) * pageLimit}`);
     const [searchQuery, setSearchQuery] = useState("")
     const [filterRole, setFilterRole] = useState("all")
     const [filterStatus, setFilterStatus] = useState("all")
@@ -56,8 +52,9 @@ export default function UserManagementContent() {
             console.log('Loading user data...');
         } else {
             if (usersFetch) {
-                console.log('User data:', usersFetch);
-                const transformedUsers = usersFetch.map((user: User & { profile_pic: string, user_type_name: string }) => ({
+                console.log('User data:', usersFetch.meta);
+                setPageMetadata(usersFetch.meta);
+                const transformedUsers = usersFetch.data.map((user: User & { profile_pic: string, user_type_name: string }) => ({
                     ...user,
                     username: user.username,
                     role: user.user_type_name,
@@ -73,6 +70,8 @@ export default function UserManagementContent() {
             }
         }
     }, [usersFetch, error, loading]);
+
+    console.log('metadata state', pageMetadata.total);
 
     // Filter users based on search query, status and role filter
     const filteredUsers = users.filter((user) => {
@@ -209,10 +208,7 @@ export default function UserManagementContent() {
                         <CardTitle>Users</CardTitle>
                         <CardDescription>Manage user accounts and role assignments</CardDescription>
                     </div>
-
                     <UserCreateModal newUser={newUser} setNewUser={setNewUser} />
-
-
                 </CardHeader>
                 <CardContent>
                     <div className="border rounded-md">
@@ -314,7 +310,7 @@ export default function UserManagementContent() {
                                                     </div>
 
                                                     <div className="space-y-2">
-                                                        <Label>Account Status</Label>
+                                                        s                <Label>Account Status</Label>
                                                         <Select defaultValue={user.status}>
                                                             <SelectTrigger>
                                                                 <SelectValue placeholder="Select status" />
@@ -339,10 +335,44 @@ export default function UserManagementContent() {
                         )}
                     </div>
                 </CardContent>
-                <CardFooter className="flex justify-between">
-                    <div className="text-sm text-muted-foreground">
-                        Showing {filteredUsers.length} of {users.length} users
+                <CardFooter className="flex justify-between w-full">
+                    <div className="text-sm text-muted-foreground w-1/5 mt-4">
+                        Showing {filteredUsers.length} of {pageMetadata.total} total users
                     </div>
+
+                    <Pagination className="mt-4">
+                        <PaginationContent>
+                            <PaginationPrevious
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    if (currentPage > 1) setCurrentPage(currentPage - 1)
+                                }}
+                            />
+                            {Array.from({ length: pageMetadata.total_pages }, (_, i) => i + 1).map((page) => (
+                                <PaginationItem key={page}>
+                                    <PaginationLink
+                                        href="#"
+                                        isActive={page === currentPage}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage(page)
+                                        }}
+                                    >
+                                        {page}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+                            <PaginationNext
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    if (currentPage < pageMetadata.total_pages) setCurrentPage(currentPage + 1)
+                                }}
+                            />
+                        </PaginationContent>
+                    </Pagination>
+
                 </CardFooter>
             </Card>
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from typing import List, Annotated
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
+from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser, ReadUserList
 from app.v1.services.auth.auth_service import authorize, authorize_roles
 from app.v1.services.users_service import (
     get_users,
@@ -15,7 +15,7 @@ from app.config.db import get_session
 router = APIRouter()
 
 
-@router.get("", response_model=List[ReadUser])
+@router.get("", response_model=ReadUserList)
 async def read_users(
     auth_user: Annotated[None, Depends(authorize)],
     request: Request = None,
