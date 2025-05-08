@@ -7,6 +7,7 @@ import { Calendar, Users, Wallet, Settings, User, LogOut, Menu, GraduationCap } 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useProvider } from '@/app/context/provider'
+import { useEffect, useState } from "react"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 interface DashboardLayoutProps {
@@ -15,14 +16,18 @@ interface DashboardLayoutProps {
 
 export function handleLogout() {
   document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  sessionStorage.removeItem("flextudy");
+  sessionStorage.clear();
   window.location.href = '/login';
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const { state } = useProvider();
-  const user = state.flextudy.currentUser;
+  const [user, setUser] = useState("");
+  // const user = state?.flextudy.currentUser;
+  useEffect(() => {
+    setUser(state?.currentUser)
+  }, [state])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -79,7 +84,7 @@ function DashboardHeader({ user }: { user: any }) {
                     </Avatar>
                     <div className="hidden md:block">
                       <div className="text-sm font-medium">{user?.username}</div>
-                      <div className="text-xs text-muted-foreground">{user?.user_type_name.toUpperCase()}</div>
+                      <div className="text-xs text-muted-foreground">{user?.user_type_name?.toUpperCase()}</div>
                     </div>
                   </Link>
                 </TooltipTrigger>
