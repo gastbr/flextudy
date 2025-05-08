@@ -3,7 +3,7 @@
 import type React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Calendar, Users, Wallet, Settings, User, LogOut, Menu, GraduationCap } from "lucide-react"
+import { Calendar, Users, /* Wallet, */ Settings, User, LogOut, Menu, GraduationCap } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useProvider } from '@/app/context/provider'
@@ -126,7 +126,7 @@ function MobileSidebar({ user }: { user: any }) {
         <nav className="flex flex-col gap-1 p-2 h-[calc(100vh-4rem)] justify-between">
           <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
           <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
-          <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
+          {/* <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" /> */}
           <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
 
@@ -139,11 +139,11 @@ function MobileSidebar({ user }: { user: any }) {
                 icon={<Users className="h-4 w-4" />}
                 label="User Management"
               />
-              <NavItem
+              {/*               <NavItem
                 href="/dashboard/teachers"
                 icon={<GraduationCap className="h-4 w-4" />}
                 label="Teacher Management"
-              />
+              /> */}
               <NavItem
                 href="/dashboard/admin/settings"
                 icon={<Settings className="h-4 w-4" />}
@@ -172,7 +172,7 @@ function DashboardSidebar({ user }: { user: any }) {
         <div className="flex flex-col">
           <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
           <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
-          <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" />
+          {/* <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" /> */}
           <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
           {/* Admin-only items */}
@@ -184,11 +184,11 @@ function DashboardSidebar({ user }: { user: any }) {
                 icon={<Users className="h-4 w-4" />}
                 label="User Management"
               />
-              <NavItem
+              {/*          <NavItem
                 href="/dashboard/teachers"
                 icon={<GraduationCap className="h-4 w-4" />}
                 label="Teacher Management"
-              />
+              /> */}
               <NavItem
                 href="/dashboard/admin/settings"
                 icon={<Settings className="h-4 w-4" />}
