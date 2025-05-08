@@ -22,8 +22,8 @@ export function useProvider() {
 // Provider component that wraps your app and makes theme available to any child component
 export function ContextProvider({ children }: { children: React.ReactNode }) {
 
-    const sesionStorage = JSON.parse(sessionStorage.getItem('flextudy'));
-    
+    const sesionStorage: AnyType = JSON.parse(sessionStorage.getItem('flextudy') || "{}");
+
     const [context, setContext] = useState<AnyType>("")
     const [state, dispatch] = useReducer(ContextReducer, sesionStorage);
 
