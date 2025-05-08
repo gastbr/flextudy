@@ -21,6 +21,7 @@ export function useProvider() {
 interface AppState {
     // Define la forma de tu estado aquí
     [key: string]: any;
+}
 
 export function ContextProvider({ children }: { children: React.ReactNode }) {
     const [context, setContext] = useState<AppState>({});

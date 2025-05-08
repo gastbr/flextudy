@@ -7,6 +7,7 @@ from app.v1.models.attend import Attend
 from app.v1.models.topic import Topic
 from app.v1.models.subject import Subject
 from datetime import datetime
+from sqlalchemy import func
 from app.v1.repositories.user_type_repository import get_user_type_name_by_id
 import app.v1.repositories.classes_repository as repo
 

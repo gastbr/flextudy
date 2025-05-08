@@ -28,7 +28,7 @@ async def get_info_to_create_lesson(
     user: Annotated[None, Depends(authorize)],
     session: AsyncSession = Depends(get_session)
     ):
-    authorize_roles(user, ['admin', 'student'])
+    authorize_roles(user, ['admin', 'teacher'])
     return await get_topics_by_teacher_id(session, user)
 
 @router.post("/create", response_model=Lesson, status_code=201)

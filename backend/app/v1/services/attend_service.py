@@ -8,7 +8,6 @@ from app.v1.models.attend import Attend
 from app.v1.models.user_type import UserType
 from app.v1.models.topic import Topic
 from app.v1.models.subject import Subject
-from app.v1.repositories.user_type_repository import get_user_type_by_name
 from datetime import datetime
 
 
