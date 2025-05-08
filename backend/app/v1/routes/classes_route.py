@@ -56,6 +56,7 @@ async def get_my_classes_view(
     user: Annotated[None, Depends(authorize)],
     session: AsyncSession = Depends(get_session)
     ):
+    authorize_roles('teacher', 'student')
     return await get_my_classes(session, user)
 
 

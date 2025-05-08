@@ -125,7 +125,12 @@ function MobileSidebar({ user }: { user: any }) {
         </div>
         <nav className="flex flex-col gap-1 p-2 h-[calc(100vh-4rem)] justify-between">
           <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
-          <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
+
+          {
+            (user?.user_type_name === "teacher") || (user?.user_type_name === "student") && (
+              <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />)
+          }
+
           {/* <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" /> */}
           <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
@@ -171,7 +176,10 @@ function DashboardSidebar({ user }: { user: any }) {
       <nav className="flex flex-col gap-1 p-2 flex-1 justify-between">
         <div className="flex flex-col">
           <NavItem href="/dashboard" icon={<Calendar className="h-4 w-4" />} label="Calendar" />
-          <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />
+          {
+            ((user?.user_type_name === "teacher") || (user?.user_type_name === "student")) && (
+              <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />)
+          }
           {/* <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" /> */}
           <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
           <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
