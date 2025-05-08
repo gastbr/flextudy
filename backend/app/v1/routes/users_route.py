@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
-from typing import List, Annotated
+from typing import Annotated
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser, ReadUserList
 from app.v1.services.auth.auth_service import authorize, authorize_roles

@@ -10,11 +10,11 @@ import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, User } 
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, } from "@/components/ui/pagination"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
-import { useGet } from "@/hooks/use-fetch"
+import { useGet, usePut } from "@/hooks/use-fetch"
 import Link from "next/link"
 import UserCreateModal from "@/components/organisms/UserCreateModal"
+import UserEditModal from "@/components/organisms/UserEditModal"
 
 interface User {
     id: number;
@@ -31,7 +31,7 @@ interface User {
 export default function UserManagementContent() {
     const [users, setUsers] = useState<User[]>([])
     const [currentPage, setCurrentPage] = useState(1)
-    const [pageLimit] = useState(20);
+    const [pageLimit] = useState(10);
     const [pageMetadata, setPageMetadata] = useState<{ total: number; per_page: number; current_page: number; total_pages: number }>({ total: 0, per_page: 0, current_page: 0, total_pages: 0 });
     const { fetch: usersFetch, loading, error } = useGet(`/user?limit=${pageLimit}&offset=${(currentPage - 1) * pageLimit}`);
     const [searchQuery, setSearchQuery] = useState("")
@@ -70,8 +70,6 @@ export default function UserManagementContent() {
             }
         }
     }, [usersFetch, error, loading]);
-
-    console.log('metadata state', pageMetadata.total);
 
     // Filter users based on search query, status and role filter
     const filteredUsers = users.filter((user) => {
@@ -251,84 +249,7 @@ export default function UserManagementContent() {
                                     </div>
                                     <div className="text-center">{user.classes}</div>
                                     <div>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button variant="outline" size="xs">
-                                                    Edit user
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>Edit user</DialogTitle>
-                                                    <DialogDescription>Update user information and role</DialogDescription>
-                                                </DialogHeader>
-                                                <div className="space-y-4 py-4">
-                                                    <div className="flex items-center gap-4">
-                                                        <Avatar className="h-12 w-12">
-                                                            <AvatarImage src={user.avatar} alt={user.name} />
-                                                            <AvatarFallback>{user.name[0]}</AvatarFallback>
-                                                        </Avatar>
-                                                        <div>
-                                                            <div className="font-medium">{user.name}</div>
-                                                            <div className="text-sm text-muted-foreground">Joined {user.joinDate}</div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 gap-4">
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="name">Full Name</Label>
-                                                            <Input id="name" defaultValue={user.name} />
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="email">Email</Label>
-                                                            <Input id="email" type="email" defaultValue={user.email} />
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="space-y-2">
-                                                        <Label>Role</Label>
-                                                        <RadioGroup defaultValue={user.role}>
-                                                            <div className="flex items-center space-x-2">
-                                                                <RadioGroupItem value="student" id="student" />
-                                                                <Label htmlFor="student" className="font-normal">
-                                                                    Student
-                                                                </Label>
-                                                            </div>
-                                                            <div className="flex items-center space-x-2">
-                                                                <RadioGroupItem value="teacher" id="teacher" />
-                                                                <Label htmlFor="teacher" className="font-normal">
-                                                                    Teacher
-                                                                </Label>
-                                                            </div>
-                                                            <div className="flex items-center space-x-2">
-                                                                <RadioGroupItem value="admin" id="admin" />
-                                                                <Label htmlFor="admin" className="font-normal">
-                                                                    Administrator
-                                                                </Label>
-                                                            </div>
-                                                        </RadioGroup>
-                                                    </div>
-
-                                                    <div className="space-y-2">
-                                                        s                <Label>Account Status</Label>
-                                                        <Select defaultValue={user.status}>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Select status" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="active">Active</SelectItem>
-                                                                <SelectItem value="inactive">Inactive</SelectItem>
-                                                                <SelectItem value="pending">Pending Approval</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button variant="outline">Reset Password</Button>
-                                                    <Button>Save Changes</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
+                                        <UserEditModal user={user} />
                                     </div>
                                 </div>
                             ))

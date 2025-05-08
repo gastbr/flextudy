@@ -54,9 +54,9 @@ class UpdateUser(BaseUser):
     username: Optional[str] = None
     name: Optional[str] = None
     email: Optional[str] = None
-    profile_pic: Optional[str] = None
-    user_type_name: Optional[str] = None
-    status: Optional[str] = None
+    profile_pic: Optional[str] = 'https://avatar.iran.liara.run/username?username=string'
+    user_type_name: Optional[str] = 'student'
+    status: Optional[str] = 'inactive'
 
 class ReadUser(BaseUser):
     id: int
