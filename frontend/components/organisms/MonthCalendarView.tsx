@@ -88,9 +88,12 @@ export default function MonthCalendarView({ month, lessons }: MonthCalendarViewP
                 <div className="text-sm font-medium p-1">{day.number}</div>
                 <div className="space-y-1">
                   {day.events.map((event) => (
-                    <Link href={`/dashboard/classes/${event.id}`}>
+                        <Link 
+                        href={`/dashboard/classes/${event.id}`}
+                        key={`Link-${event.id}`} 
+                      >
                       <div
-                        key={event.id}
+                        key={`Lesson-${event.id}`}
                         className={`text-xs p-1 rounded truncate ${event.status === "enrolled"
                             ? "bg-primary/10 text-primary"
                             : event.status === "available"

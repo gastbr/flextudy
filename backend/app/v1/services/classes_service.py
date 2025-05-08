@@ -32,8 +32,6 @@ async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> 
     return lesson
 
 async def get_class(session: AsyncSession, class_id: int,  user: Optional[dict] = None) -> dict:
-    
-
 
     result = (await session.execute(
         select(Topic, Lesson, Subject)
@@ -92,9 +90,8 @@ async def get_class(session: AsyncSession, class_id: int,  user: Optional[dict] 
             if(user.user_type_name == "student"):
                 attended = (await session.execute(
                     select(Attend)
-                    .where(Attend.student_id == user.id)
-                    .where(Attend.lesson_id == lesson.id)
-                ))
+                    .where(Attend.student_id == user.id, Attend.lesson_id == lesson.id)
+                )).first()
                 if attended:
                     class_data["class"]["student_enrolled"] = True
                 else:
@@ -222,8 +219,6 @@ async def get_my_classes(session: AsyncSession, user):
 
 async def update_lesson(session: AsyncSession, class_id: int, class_in:Lesson, user):
         db_class = await session.get(Lesson, class_id)
-        print(class_in)
-        print("XXXXXXXXXXXXXXX")
         if not db_class:
             return None
         update_data = class_in.dict(exclude_unset=True)

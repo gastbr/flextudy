@@ -52,11 +52,8 @@ export default function MyClassesPage() {
     }, [data, error]);
 
 
-    const user = state?.flextudy.currentUser
+    const user = state?.currentUser
     const userType = user?.user_type_name
-    console.log("teachingClasses", data)
-
-
 
     // Filter classes based on search query and subject filter
     const filterClasses = (classes) => {

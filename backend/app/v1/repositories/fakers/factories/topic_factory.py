@@ -13,8 +13,8 @@ class TopicFactory(factory.Factory):
     class Meta:
         model = Topic
 
-    name = factory.Faker('name')
-    description = factory.Faker('email')
+    name = factory.Faker('text', max_nb_chars=30)
+    description = factory.Faker('text', max_nb_chars=200)
 
     teacher_id = 1
     subject_id = 1

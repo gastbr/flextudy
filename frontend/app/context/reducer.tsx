@@ -5,20 +5,15 @@ export const ContextReducer = (state: any, action: any) => {
 
         case "ADD":
         case "UPDATE":
+            sessionStorage.setItem(`${[action.campo]}`, JSON.stringify(action.payload));
             return {
-                flextudy: {
                     ...state,
                     [action.campo]: action.payload,
-                },
             }
 
         case "DELETE":
-            const newFlextudy = { ...state.flextudy }
-            delete newFlextudy[action.campo]
-            return {
-                ...state,
-                flextudy: newFlextudy,
-            }
+            delete state[action.campo]
+            return state
 
         default:
             return state

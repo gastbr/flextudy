@@ -28,8 +28,8 @@ export default function LoginPage() {
     const userMe = await execute();
     dispatch({ type: "ADD", campo: "currentUser", payload: userMe });
     redirect("/dashboard");
-
   };
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4">

@@ -50,8 +50,6 @@ async def update_existing_example(
     return example
 
 
-
-
 @router.get("/my_classes", response_model=dict)
 async def get_my_classes_view(
     user: Annotated[None, Depends(authorize)],

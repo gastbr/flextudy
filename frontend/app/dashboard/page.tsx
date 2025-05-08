@@ -15,34 +15,16 @@ export default function CalendarView() {
 
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [lessons, setLessons] = useState([]) // Estado para almacenar las lecciones
-  // Fetch lessons from the API
+  const [lessons, setLessons] = useState([])
 
   const { context, setContext, dispatch, state } = useProvider();
-
-
-  // EJEMPLOS DE COMO USAR USEREDUCER / USECONTEXT
-  // const saludar = () => {
-  //   console.log("Hola desde el provider")
-  // }
-  // useEffect(() => {
-  //   dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
-  //   dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
-  //   dispatch({ type: "DELETE", campo: "lotro" });
-  //   dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
-  //   dispatch({ type: "ADD", campo: "funciones", payload: { saludar: saludar } });
-  // }, []);
-  // console.log("state", state);
-  // state.funciones.saludar();
-
 
   useEffect(() => {
     const fetchLessons = async () => {
       try {
         const response = await fetch("http://localhost:8000/v1/dashboard/lessons")
         const data = await response.json()
-        setLessons(data) // Guardar las lecciones en el estado
-        //console.log(data)
+        setLessons(data)
       } catch (error) {
         console.error("Error fetching lessons:", error)
       }
@@ -68,6 +50,18 @@ export default function CalendarView() {
     newDate.setMonth(newDate.getMonth() + 1)
     setCurrentMonth(newDate)
   }
+
+  //   // EXAMPLES OF HOW TO USE USEREDUCER/USECONTEXT
+  // useEffect(() => {
+  //   // dispatch({ type: "ADD", campo: "trolo", payload: "trolo" });
+  //   // dispatch({ type: "ADD", campo: "lotro", payload: "lotro" });
+  //   // dispatch({ type: "DELETE", campo: "lotro" });
+  //   // dispatch({ type: "UPDATE", campo: "trolo", payload: "lotrolotrolotro" });
+  // }, []);
+
+  // EXAMPLE HOW TO CONSUME
+  //   import { useProvider } from "@/app/context/provider"
+  //   const {context, setContext, state, dispatch,} = useProvider()
 
   return (
     <div className="space-y-6">

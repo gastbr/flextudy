@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, use } from "react"
+import { useState, use , useEffect} from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -10,27 +10,22 @@ import { Calendar, Clock, MapPin, ArrowLeft, Edit, Star, Users, BookOpen, Messag
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { Progress } from "@/components/ui/progress"
-import { Textarea } from "@/components/ui/textarea"
 import { useProvider } from "@/app/context/provider"
 import { useGet } from "@/hooks/use-fetch"
-import { useEffect } from "react"
 import ClassEdit from "@/components/organisms/ClassEdit"
-import { use as usePromise } from 'react'; // Renombramos la importación
-import { start } from "repl"
+import AttendanceModal from "@/components/organisms/AttendanceModal"
+
 
 export default function ClassDetailPage({ params }: { params: { id: string } }) {
   const { id } = use(params); // Usamos el alias
 
   const [activeTab, setActiveTab] = useState("overview")
-  const [isLoading, setIsLoading] = useState(true)
-  const [formatedData, setFormatedData] = useState(false)
   const [classDetails, setClassDetails] = useState(null)
   const [showEditClassDialog, setShowEditClassDialog] = useState(false)
 
 
   const { state } = useProvider()
-  const user = useState(state?.flextudy.currentUser)
+  const user = useState(state?.currentUser)
   const isTeacher = user[0]?.user_type_name == "teacher" ? true : false
   const isEnrolled = true
   const { fetch: data, loading, error, execute: excuteGetClassById } = useGet(`/classes/class/${id}`);
@@ -44,7 +39,6 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
   useEffect(() => {
     if (data) {
       const c = data.class
-
       setClassDetails({
         id: c.id,
         title: c.title,
@@ -64,8 +58,10 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
         enrolled: c.enrolled,
         capacity: c.capacity,
         status: c.status, // or 'available', 'full', 'completed'
-        student_enrolled: c.student_enrolled
+        ...(c.student_enrolled !== undefined && { student_enrolled: c.student_enrolled }),
+        ...(c.teacher_owns_lesson !== undefined && { teacher_owns_lesson: c.teacher_owns_lesson })
       })
+
     } else if (error) {
       console.error("Error fetching class details:", error)
     }
@@ -102,7 +98,7 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {isTeacher ? (
+          {isTeacher && classDetails?.teacher_owns_lesson ? (
             <>
               <Button className="gap-2" asChild>
                 <Link href={``} onClick={() => setShowEditClassDialog(true)}>
@@ -110,17 +106,20 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
                   Edit Class
                 </Link>
               </Button>
-              <Button variant="outline" asChild>
-                <Link href={`/dashboard/classes/${id}/attendance`}>Attendance</Link>
-              </Button>
+              <AttendanceModal lessonId={classDetails.id}/>
             </>
-          ) : classDetails && classDetails.student_enrolled ? (
+          ) : classDetails && classDetails?.student_enrolled ? (
             <Button variant="outline">Cancel Enrollment</Button>
           ) : (
-            <Button disabled={classDetails && classDetails.status === "full"}>Enroll </Button>
+            !isTeacher && (
+              <Button disabled={classDetails?.status === "full"}>
+                Enroll
+              </Button>
+            )
           )}
         </div>
       </div>
+      
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="md:col-span-3">
