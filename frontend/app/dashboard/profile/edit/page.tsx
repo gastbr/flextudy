@@ -10,14 +10,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare } from "lucide-react"
-import { useGet, usePatch } from "@/hooks/use-fetch"
+import { useGet, usePut } from "@/hooks/use-fetch"
 // @ts-ignore
 
 export default function ProfilePage() {
 
   const { fetch: fetchMe, loading, error } = useGet('/auth/me');
 
-  const { execute: patchUser } = usePatch(`/user/${fetchMe?.id}`);
+  const { execute: patchUser } = usePut(`/auth/me`);
+
   const user = {
     username: fetchMe?.username ?? '',
     name: fetchMe?.name ?? '',
@@ -115,6 +116,10 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <Label htmlFor="username">Username</Label>
                     <Input id="username" disabled defaultValue={username} onChange={(e) => setUsername(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Role</Label>
+                    <Input id="username" disabled defaultValue={user.role.toUpperCase()} onChange={(e) => setUsername(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>

@@ -21,12 +21,12 @@ export function useProvider() {
 interface AppState {
     // Define la forma de tu estado aquí
     [key: string]: any;
-}
 
 export function ContextProvider({ children }: { children: React.ReactNode }) {
     const [context, setContext] = useState<AppState>({});
     const [state, dispatch] = useReducer(ContextReducer, {});
     const [isMounted, setIsMounted] = useState(false);
+
 
     useEffect(() => {
         setIsMounted(true);

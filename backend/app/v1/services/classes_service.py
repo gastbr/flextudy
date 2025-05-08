@@ -1,18 +1,14 @@
 # services/example_service.py
-from typing import List, Optional
-from sqlmodel import select, func
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
+from typing import Optional
 from app.v1.models.lesson import Lesson, CreateLesson
-from app.v1.models.user import User
 from app.v1.models.attend import Attend
-from app.v1.models.user_type import UserType
 from app.v1.models.topic import Topic
 from app.v1.models.subject import Subject
-from app.v1.repositories.user_type_repository import get_user_type_by_name
 from datetime import datetime
-
-
-import app.v1.repositories.example_repository as repo
+from app.v1.repositories.user_type_repository import get_user_type_name_by_id
+import app.v1.repositories.classes_repository as repo
 
 async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> Lesson:
     lesson = Lesson.from_orm(lesson_in)

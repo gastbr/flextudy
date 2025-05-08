@@ -3,12 +3,12 @@
 import type React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Calendar, Users, Wallet, Settings, User, LogOut, Menu } from "lucide-react"
+import { Calendar, Users, Wallet, Settings, User, LogOut, Menu, GraduationCap } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useProvider } from '@/app/context/provider'
 import { useEffect, useState } from "react"
-
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -82,7 +82,30 @@ function DashboardHeader({ user }: { user: any }) {
               <div className="text-sm font-medium">{user?.name}</div>
               <div className="text-xs text-muted-foreground">{user?.user_type_name?.toUpperCase()}</div>
             </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/dashboard/profile/me" className="flex items-center gap-2 hover:bg-muted p-2 rounded-md">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.profile_pic} alt="User" />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                    <div className="hidden md:block">
+                      <div className="text-sm font-medium">{user?.username}</div>
+                      <div className="text-xs text-muted-foreground">{user?.user_type_name.toUpperCase()}</div>
+                    </div>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="text-xs round-sm ">
+                    <p><strong>Name:</strong> {user?.name}</p>
+                    <p><strong>Email:</strong> {user?.email}</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
+
         </div>
       </div>
     </header>
@@ -119,7 +142,16 @@ function MobileSidebar({ user }: { user: any }) {
           {user?.user_type_name === "admin" && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
-              <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
+              <NavItem
+                href="/dashboard/users"
+                icon={<Users className="h-4 w-4" />}
+                label="User Management"
+              />
+              <NavItem
+                href="/dashboard/teachers"
+                icon={<GraduationCap className="h-4 w-4" />}
+                label="Teacher Management"
+              />
               <NavItem
                 href="/dashboard/admin/settings"
                 icon={<Settings className="h-4 w-4" />}
@@ -129,7 +161,7 @@ function MobileSidebar({ user }: { user: any }) {
           )}
 
           <div className="mt-auto pt-2" onClick={handleLogout}>
-            <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-foreground text-red-500">
+            <Button variant="destructiveGhost" className="w-full justify-start">
               <LogOut className="h-4 w-4 mr-2" />
               Sign out
             </Button>
@@ -155,8 +187,21 @@ function DashboardSidebar({ user }: { user: any }) {
           {user?.user_type_name === 'admin' && (
             <div className="mt-2 pt-2 border-t">
               <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Admin settings</div>
-              <NavItem href="/dashboard/users" icon={<Users className="h-4 w-4" />} label="User Management" />
-              <NavItem href="/dashboard/admin/settings" icon={<Settings className="h-4 w-4" />} label="Platform Settings" />
+              <NavItem
+                href="/dashboard/users"
+                icon={<Users className="h-4 w-4" />}
+                label="User Management"
+              />
+              <NavItem
+                href="/dashboard/teachers"
+                icon={<GraduationCap className="h-4 w-4" />}
+                label="Teacher Management"
+              />
+              <NavItem
+                href="/dashboard/admin/settings"
+                icon={<Settings className="h-4 w-4" />}
+                label="Platform Settings"
+              />
             </div>
           )}
 
@@ -165,8 +210,8 @@ function DashboardSidebar({ user }: { user: any }) {
         <div
           onClick={handleLogout}>
           <Button
-            variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-foreground text-red-500"
+            variant="destructiveGhost"
+            className="w-full justify-start"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign out

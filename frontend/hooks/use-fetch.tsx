@@ -31,7 +31,7 @@ function useFetch<TResponse = any, TBody = any>({
         const res = await api.request<TResponse>({
           method,
           url,
-          data: overrideBody ?? body,
+          ...(method !== "GET" && { data: overrideBody ?? body }),
           ...config,
         });
         if (mounted.current) setData(res.data);
