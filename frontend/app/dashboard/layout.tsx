@@ -88,10 +88,14 @@ function DashboardHeader({ user }: { user: any }) {
                     </div>
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent>
-                  <div className="text-xs round-sm ">
+                <TooltipContent className="mx-5">
+                  <div className="text-xs round-sm flex flex-col p-2">
                     <p><strong>Name:</strong> {user?.name}</p>
                     <p><strong>Email:</strong> {user?.email}</p>
+                    <Avatar className="self-center m-5 w-24 h-24">
+                      <AvatarImage src={user?.profile_pic} alt="User" />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
                   </div>
                 </TooltipContent>
               </Tooltip>
