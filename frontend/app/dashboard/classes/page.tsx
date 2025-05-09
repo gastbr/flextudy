@@ -20,19 +20,19 @@ export default function MyClassesPage() {
     const [enrolledClasses, setEnrolledClasses] = useState([])
     const [pastClasses, setPassClasses] = useState([])
     // AJUSTAR LA HORA, ME DA UNA HORA MENOS EN EL FRONT XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    const [dateNow , setDateNow] = useState(new Date().toISOString()) 
-    
+    const [dateNow, setDateNow] = useState(new Date().toISOString())
+
 
     const { state } = useProvider();
-    if(dateNow.slice(-1)=="Z"){
-        setDateNow(dateNow.replace("Z", "+00:00")) 
+    if (dateNow.slice(-1) == "Z") {
+        setDateNow(dateNow.replace("Z", "+00:00"))
     }
-    
-    const { fetch: data, loading, error, execute:executeGetToCreate } = useGet('/classes/my_classes');
+
+    const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/my_classes');
     useEffect(() => {
         if (data) {
             const now = new Date(); // Fecha actual como objeto Date
-            
+
             // Clases futuras (no han empezado)
             setTeachingClasses(
                 data.classes.filter((cls) => new Date(cls.start_time) > now)
@@ -128,11 +128,11 @@ export default function MyClassesPage() {
                 </div>
             </div>
 
-            <Tabs defaultValue="teaching">
+            <Tabs defaultValue="past">
                 <TabsList className="mb-4">
+                    <TabsTrigger value="past">Past Classes</TabsTrigger>
                     {userType === "teacher" && <TabsTrigger value="teaching">Teaching</TabsTrigger>}
                     {userType === "student" && <TabsTrigger value="enrolled">Enrolled</TabsTrigger>}
-                    <TabsTrigger value="past">Past Classes</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="teaching">
