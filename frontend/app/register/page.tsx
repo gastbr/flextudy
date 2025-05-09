@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -5,8 +7,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Calendar } from "lucide-react"
+import { useState } from "react"
 
 export default function RegisterPage() {
+
+  const[name, setName] = useState("");
+  const[userName, setUserName] = useState("");
+  const[email, setEmail] = useState("");
+  const[password, setPassword] = useState("");
+  
+  function handleSubmit(){
+    console.log(name)
+  }
+
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4 py-8">
       <Link href="/" className="flex items-center gap-2 mb-8">
@@ -22,11 +36,11 @@ export default function RegisterPage() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
-              <Input id="firstName" placeholder="John" />
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" placeholder="John" onChange={(e)=>setName(e.target.value)}/>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
+              <Label htmlFor="lastName">User name</Label>
               <Input id="lastName" placeholder="Doe" />
             </div>
           </div>
@@ -66,7 +80,7 @@ export default function RegisterPage() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button className="w-full">Create Account</Button>
+          <Button onClick={handleSubmit} className="w-full">Create Account</Button>
           <div className="text-center text-sm">
             Already have an account?{" "}
             <Link href="/login" className="text-primary hover:underline">
