@@ -1,8 +1,7 @@
 # routes/example_route.py
 from fastapi import APIRouter, Depends,HTTPException
-from app.v1.models.attend import Attend, CreateAttend
 from sqlmodel.ext.asyncio.session import AsyncSession
-from typing import List, Dict, Any, Annotated
+from typing import Annotated
 from app.v1.services.auth.auth_service import authorize
 from app.v1.services.attend_service import (
     get_attends_by_id,

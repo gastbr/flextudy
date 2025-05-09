@@ -8,7 +8,7 @@ from app.v1.services.users_service import (
     get_user,
     create_user,
     update_user,
-    delete_user,
+    #delete_user
 )
 from app.config.db import get_session
 
@@ -63,28 +63,28 @@ async def update_existing_user(
     return user
 
 
-@router.patch("/{user_id}", response_model=User)
-async def patch_existing_user(
-    auth_user: Annotated[None, Depends(authorize)],
-    user_id: int,
-    user_in: UpdateUser,
-    session: AsyncSession = Depends(get_session),
-):
-    authorize_roles(auth_user, ["admin"])
-    user = await update_user(session, user_id, user_in)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+# @router.patch("/{user_id}", response_model=User)
+# async def patch_existing_user(
+#     auth_user: Annotated[None, Depends(authorize)],
+#     user_id: int,
+#     user_in: UpdateUser,
+#     session: AsyncSession = Depends(get_session),
+# ):
+#     authorize_roles(auth_user, ["admin"])
+#     user = await update_user(session, user_id, user_in)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return user
 
 
-@router.delete("/{user_id}")
-async def delete_existing_user(
-    auth_user: Annotated[None, Depends(authorize)],
-    user_id: int,
-    session: AsyncSession = Depends(get_session),
-):
-    authorize_roles(auth_user, ["admin"])
-    success = await delete_user(session, user_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "User deleted"}
+# @router.delete("/{user_id}")
+# async def delete_existing_user(
+#     auth_user: Annotated[None, Depends(authorize)],
+#     user_id: int,
+#     session: AsyncSession = Depends(get_session),
+# ):
+#     authorize_roles(auth_user, ["admin"])
+#     success = await delete_user(session, user_id)
+#     if not success:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return {"message": "User deleted"}

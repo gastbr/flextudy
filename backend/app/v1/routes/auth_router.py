@@ -68,14 +68,14 @@ async def update_user_me(
         raise HTTPException(status_code=404, detail="User not found")
     return user
     
-@router.patch("/me", response_model=ReadUser)
-async def patch_user_me(
-    auth_user: Annotated[ReadUser, Depends(authorize)],
-    user_in: UpdateUser,
-    session: AsyncSession = Depends(get_session)
-):
-    user = await update_user(session, auth_user.id, user_in)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+# @router.patch("/me", response_model=ReadUser)
+# async def patch_user_me(
+#     auth_user: Annotated[ReadUser, Depends(authorize)],
+#     user_in: UpdateUser,
+#     session: AsyncSession = Depends(get_session)
+# ):
+#     user = await update_user(session, auth_user.id, user_in)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return user
     
