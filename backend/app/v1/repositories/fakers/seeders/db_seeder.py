@@ -101,7 +101,7 @@ async def db_seeder(session):
     if not teacher_user_type:
         raise ValueError("Teacher UserType not found")
 
-    for _ in range(20):
+    for _ in range(10):
         user = UserFactory()
         session.add(User(
             name=user.name,
