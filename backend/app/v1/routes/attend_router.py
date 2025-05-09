@@ -1,7 +1,8 @@
 # routes/example_route.py
 from fastapi import APIRouter, Depends,HTTPException
+from app.v1.models.attend import Attend
 from sqlmodel.ext.asyncio.session import AsyncSession
-from typing import Annotated
+from typing import List, Annotated
 from app.v1.services.auth.auth_service import authorize
 from app.v1.services.attend_service import (
     get_attends_by_id_lesson,
@@ -31,5 +32,4 @@ async def update_the_attends_of_a_lesson(
     if not attends:
         raise HTTPException(status_code=404, detail="Class not found")
     return attends
-
 
