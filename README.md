@@ -1,5 +1,7 @@
 # Educational Platform - Class Management System
 
+> 🧭 This monorepo contains both the frontend (`/frontend`) and backend (`/backend`) components of the application. Each folder is self-contained, with its own dependencies, entry points, and documentation.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/Docker-Containers-blue)](https://www.docker.com/)
 
