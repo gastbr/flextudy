@@ -30,13 +30,13 @@ export default function ClassEdit({
     classDetails,
     showEditClassDialog,
     setShowEditClassDialog,
-    executeGetClassById: executeGetClassById
+    excuteGetClassById
 }: {
     classDetails: any;
     showEditClassDialog?: boolean;
     setShowEditClassDialog?: (value: boolean) => void;
     propDate?: string
-    executeGetClassById?: () => void
+    excuteGetClassById?: () => void
 }) {
 
     const [date, setDate] = useState<Date>()
@@ -65,7 +65,7 @@ export default function ClassEdit({
     }, [selectedTopicId])
 
     useEffect(() => {
-        if(classDetails){
+        if (classDetails) {
             setCapacity(classDetails.capacity);
             setDate(new Date(classDetails.start_time));
             setStartTime(format(new Date(classDetails.start_time), 'HH:mm'));
@@ -73,7 +73,7 @@ export default function ClassEdit({
             setSelectedTopicId(classDetails.topic_id);
             setUrl(classDetails.location);
         }
-        
+
     }, [classDetails]);
 
     const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/to_create');
@@ -111,7 +111,7 @@ export default function ClassEdit({
         };
         console.log("Class data:", classData);
         await putClass(classData);
-        await executeGetClassById();
+        await excuteGetClassById();
         setShowEditClassDialog(false);
     };
 
