@@ -30,13 +30,13 @@ export default function ClassEdit({
     classDetails,
     showEditClassDialog,
     setShowEditClassDialog,
-    excuteGetClassById
+    executeGetClassById: executeGetClassById
 }: {
     classDetails: any;
     showEditClassDialog?: boolean;
     setShowEditClassDialog?: (value: boolean) => void;
     propDate?: string
-    excuteGetClassById?: () => void
+    executeGetClassById?: () => void
 }) {
 
     const [date, setDate] = useState<Date>()
@@ -111,7 +111,7 @@ export default function ClassEdit({
         };
         console.log("Class data:", classData);
         await putClass(classData);
-        await excuteGetClassById();
+        await executeGetClassById();
         setShowEditClassDialog(false);
     };
 

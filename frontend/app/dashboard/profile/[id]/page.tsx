@@ -13,7 +13,7 @@ import { useGet } from "@/hooks/use-fetch"
 export default function ProfilePage() {
 
   const { id } = useParams() as { id: string };
-  const endpoint = id === "me" ? "/auth/me" : `/user/${id}`
+  const endpoint = id === "me" ? "/auth/me" : `/user?username=${id}`
   const { fetch: data, loading, error } = useGet(endpoint);
 
   useEffect(() => {
@@ -30,16 +30,16 @@ export default function ProfilePage() {
   }, [data, error, loading]);
 
   const user = {
-    username: data?.username ?? '',
-    name: data?.name ?? '',
-    email: data?.email ?? '',
-    role: data?.user_type_name ?? '',
-    avatar: data?.profile_pic ?? '',
+    username: data?.data?.[0]?.username ?? '',
+    name: data?.data?.[0]?.name ?? '',
+    email: data?.data?.[0]?.email ?? '',
+    role: data?.data?.[0]?.user_type_name ?? '',
+    avatar: data?.data?.[0]?.profile_pic ?? '',
     bio: "Student passionate about mathematics and languages.",
     phone: "+1 (555) 123-4567",
     location: "New York, NY",
-    github: data?.username ?? '',
-    twitter: data?.username ?? '',
+    github: data?.data?.[0]?.username ?? '',
+    twitter: data?.data?.[0]?.username ?? '',
     joined: "May 2023",
     classes: {
       enrolled: 5,

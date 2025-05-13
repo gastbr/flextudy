@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.v1.models.user import User, Token
 from app.config.db import get_session
 from app.v1.services.auth.auth_service import pwd_context, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from app.v1.repositories.users_repository import get_user_by_username
+from app.v1.repositories.auth_repository import get_user_by_username
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

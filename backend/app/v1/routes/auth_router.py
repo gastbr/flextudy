@@ -3,10 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.v1.models.user import User, ReadUser, UpdateUser
+from app.v1.models.user import ReadUser, UpdateUser, ReadUserList
 from app.v1.services.auth.auth_service import authorize
 from app.v1.services.auth.login_service import auth_login
-from app.v1.services.users_service import update_user
+from app.v1.services.users_service import get_users, update_user
 from app.config.db import get_session
 
 # # # # EJEMPLO BÁSICO DE RUTA PROTEGIDA # # # #
@@ -51,11 +51,12 @@ async def register(
     ):
     return await auth_register(form_data, db) """
 
-@router.get("/me", response_model=ReadUser)
+@router.get("/me", response_model=ReadUserList)
 async def read_user_me(
-    auth_user: Annotated[ReadUser, Depends(authorize)]
+    auth_user: Annotated[ReadUser, Depends(authorize)],
+    session: AsyncSession = Depends(get_session)
 ):
-    return auth_user
+    return await get_users(session, {"username": auth_user.username})
 
 @router.put("/me", response_model=ReadUser)
 async def update_user_me(
@@ -68,14 +69,14 @@ async def update_user_me(
         raise HTTPException(status_code=404, detail="User not found")
     return user
     
-@router.patch("/me", response_model=ReadUser)
-async def patch_user_me(
-    auth_user: Annotated[ReadUser, Depends(authorize)],
-    user_in: UpdateUser,
-    session: AsyncSession = Depends(get_session)
-):
-    user = await update_user(session, auth_user.id, user_in)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+# @router.patch("/me", response_model=ReadUser)
+# async def patch_user_me(
+#     auth_user: Annotated[ReadUser, Depends(authorize)],
+#     user_in: UpdateUser,
+#     session: AsyncSession = Depends(get_session)
+# ):
+#     user = await update_user(session, auth_user.id, user_in)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return user
     

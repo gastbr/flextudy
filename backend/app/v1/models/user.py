@@ -59,7 +59,6 @@ class UpdateUser(BaseUser):
     status: Optional[str] = 'inactive'
 
 class ReadUser(BaseUser):
-    id: int
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
