@@ -68,6 +68,37 @@ async def authorize(
         raise credentials_exception
     return user
 
+# async def authorize(
+#         token: Annotated[str, Depends(oauth2_scheme)],
+#         db: Annotated[AsyncSession, Depends(get_session)],
+#         ):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could not validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
+#         # PAYLOAD STRUCTURE:
+#         # {
+#         #     'sub': 'teachertest',
+#         #     'role': 'teacher',
+#         #     'name': 'Lisa Torres',
+#         #     'email': 'rebeccajones@example.net',
+#         #     'exp': 1746093282
+#         # }
+
+#         username: str = payload.get("sub")
+#         if username is None:
+#             raise credentials_exception
+#     except InvalidTokenError:
+#         raise credentials_exception
+#     user = await get_user_by_username(db, username)
+#     if user is None:
+#         raise credentials_exception
+#     return user
+
 def authorize_roles(user, allowed_roles: List[str]):
     if user.user_type_name not in allowed_roles:
         raise HTTPException(

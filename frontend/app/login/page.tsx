@@ -22,9 +22,10 @@ export default function LoginPage() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     await login(formData);
-    const userMe = await execute();
-    dispatch({ type: "ADD", campo: "currentUser", payload: userMe.data[0] });
-    redirect("/dashboard");
+    // const userMe = await execute();
+    // dispatch({ type: "ADD", campo: "currentUser", payload: userMe.data[0] });
+    
+    // redirect("/dashboard");
   };
 
 

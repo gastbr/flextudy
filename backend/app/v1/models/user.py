@@ -3,10 +3,9 @@ from typing import List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.v1.models.user_type import UserType
-if TYPE_CHECKING:
     from app.v1.models.topic import Topic
-if TYPE_CHECKING:
     from app.v1.models.lesson import Lesson
+    from app.v1.models.session import Session
 
 from app.v1.models.attend import Attend 
 
@@ -33,6 +32,8 @@ class User(BaseUser, table=True):
 
     # Relationship to UserType
     user_type: Optional["UserType"] = Relationship(back_populates="users")
+    # Relationship 1:1 Session
+    session: Optional["Session"] = Relationship(back_populates="user")
     
     # List
     topics: List["Topic"] = Relationship(back_populates="teacher")
