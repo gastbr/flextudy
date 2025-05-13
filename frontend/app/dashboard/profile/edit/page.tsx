@@ -19,17 +19,19 @@ export default function ProfilePage() {
 
   const { execute: patchUser } = usePut(`/auth/me`);
 
+  console.log(fetchMe?.data?.[0]?.username);
+
   const user = {
-    username: fetchMe?.username ?? '',
-    name: fetchMe?.name ?? '',
-    email: fetchMe?.email ?? '',
-    role: fetchMe?.user_type_name ?? '',
-    avatar: fetchMe?.profile_pic ?? '',
+    username: fetchMe?.data?.[0]?.username ?? 'eee',
+    name: fetchMe?.data?.[0]?.name ?? '',
+    email: fetchMe?.data?.[0]?.email ?? '',
+    role: fetchMe?.data?.[0]?.user_type_name ?? '',
+    avatar: fetchMe?.data?.[0]?.profile_pic ?? '',
     bio: "Student passionate about mathematics and languages.",
     phone: "+1 (555) 123-4567",
     location: "New York, NY",
-    github: fetchMe?.username ?? '',
-    twitter: fetchMe?.username ?? '',
+    github: fetchMe?.data?.[0]?.username ?? '',
+    twitter: fetchMe?.data?.[0]?.username ?? '',
     joined: "May 2023",
     classes: {
       enrolled: 5,
@@ -40,6 +42,7 @@ export default function ProfilePage() {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
 
+  console.log("user.username:", username);
 
   function handleSubmit() {
 
@@ -62,9 +65,9 @@ export default function ProfilePage() {
       console.log('Loading user data...');
     } else {
       if (fetchMe) {
-        setUsername(fetchMe?.username);
-        setName(fetchMe?.name);
-        setEmail(fetchMe?.email);
+        setUsername(fetchMe?.data?.[0]?.username);
+        setName(fetchMe?.data?.[0]?.name);
+        setEmail(fetchMe?.data?.[0]?.email);
 
       }
       if (error) {
