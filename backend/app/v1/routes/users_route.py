@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from typing import Annotated
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser, ReadUserList
+from app.v1.models.user import User, CreateUser, UpdateUser, ReadUserList
 from app.v1.services.auth.auth_service import authorize, authorize_roles
 from app.v1.services.users_service import (
     get_users,
-    get_user,
     create_user,
     update_user,
     #delete_user
@@ -21,23 +20,13 @@ async def read_users(
     request: Request = None,
     session: AsyncSession = Depends(get_session),
 ):
-    authorize_roles(auth_user, ["admin"])
     query_params = dict(request.query_params)
-    return await get_users(session, query_params)
-
-
-@router.get("/{user_identifier}", response_model=ReadUser)
-async def read_user(
-    auth_user: Annotated[None, Depends(authorize)],
-    user_identifier: str,
-    session: AsyncSession = Depends(get_session),
-):
-    authorize_roles(auth_user, ["admin"])
-    user_data = await get_user(session, user_identifier)
+    if "username" not in query_params:
+        authorize_roles(auth_user, ["admin"])
+    user_data = await get_users(session, query_params)
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
     return user_data
-
 
 @router.post("", response_model=User, status_code=201)
 async def create_new_user(

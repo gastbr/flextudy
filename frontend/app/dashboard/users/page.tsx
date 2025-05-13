@@ -84,6 +84,8 @@ export default function UserManagementContent() {
         return matchesSearch && matchesRole && matchesStatus
     })
 
+    console.log("filteredUsers", filteredUsers);
+
     // Sample statistics data
     const monthlyStats = {
         totalClasses: 45,
@@ -224,7 +226,7 @@ export default function UserManagementContent() {
                         ) : (
                             filteredUsers.map((user) => (
                                 <div
-                                    key={user.id}
+                                    key={user.username}
                                     className="grid grid-cols-[1fr_1fr_auto_auto_auto] md:grid-cols-[1fr_1fr_auto_auto_auto_auto] items-center gap-4 p-4 border-b last:border-0"
                                 >
                                     <div className="flex items-center gap-3">
@@ -234,7 +236,7 @@ export default function UserManagementContent() {
                                                 <AvatarFallback>{user.name[0]}</AvatarFallback>
                                             </Avatar>
                                         </Link>
-                                        <Link href={`/dashboard/profile/${user.id}`}>
+                                        <Link href={`/dashboard/profile/${user.username}`}>
                                             <Button variant="link" size="sm">
                                                 {user.name}
                                             </Button>

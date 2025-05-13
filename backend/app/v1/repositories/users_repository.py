@@ -1,16 +1,22 @@
-from typing import List, Optional
+from fastapi import HTTPException
+from typing import Optional
 from sqlalchemy.orm import selectinload
 from sqlalchemy import func
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser
+from app.v1.models.user import User, CreateUser, UpdateUser, ReadUser, ReadUserList
 from math import ceil
 
-
-async def get_all_users(session: AsyncSession, params) -> List[ReadUser]:
+async def get_users(session: AsyncSession, params) -> ReadUserList:
     statement = select(User).options(selectinload(User.user_type))
     
     # Filters
+    if "id" in params:
+        user_id = int(params["id"])
+        statement = statement.where(User.id == user_id)
+    if "username" in params:
+        statement = statement.where(User.username == params["username"])
+        # statement = statement.where(User.username.ilike(f"%{params['username']}%"))
     if "role" in params:
         statement = statement.where(User.user_type.has(name=params["role"]))
     if "status" in params:
@@ -52,6 +58,9 @@ async def get_all_users(session: AsyncSession, params) -> List[ReadUser]:
 
     results = await session.exec(statement)
     users = results.all()
+    if "username" in params and not users:
+        raise HTTPException(status_code=404, detail=f"User with username '{params['username']}' not found.")
+
     total_pages = ceil(total / limit)
     return {
         "data": [ReadUser.from_orm(user) for user in users],
@@ -62,26 +71,6 @@ async def get_all_users(session: AsyncSession, params) -> List[ReadUser]:
             "total_pages": total_pages
         }
     }
-
-
-async def get_user_by_id(session: AsyncSession, user_id: int) -> Optional[ReadUser]:
-    statement = (
-        select(User).where(User.id == user_id).options(selectinload(User.user_type))
-    )
-    results = await session.exec(statement)
-    user = results.one_or_none()
-    return ReadUser.from_orm(user) if user else None
-
-
-async def get_user_by_username(session: AsyncSession, username: str) -> Optional[User]:
-    statement = (
-        select(User)
-        .where(User.username == username)
-        .options(selectinload(User.user_type))
-    )
-    result = await session.exec(statement)
-    return result.one_or_none()
-
 
 async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
     session.add(user_in)

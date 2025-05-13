@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
-from app.v1.repositories.users_repository import get_user_by_username
+from app.v1.repositories.auth_repository import get_user_by_username
 from app.config.db import get_session
 import os
 

@@ -15,18 +15,15 @@ import { redirect } from "next/navigation"
 export default function LoginPage() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
-  const { context, setContext , dispatch, state} = useProvider();
-
-  const { fetch: fetchMe, loading, error, execute } = useGet('/auth/me');
-
+  const { dispatch } = useProvider();
+  const { execute } = useGet('/auth/me');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); 
-
+    event.preventDefault();
     const formData = new FormData(event.currentTarget);
     await login(formData);
     const userMe = await execute();
-    dispatch({ type: "ADD", campo: "currentUser", payload: userMe });
+    dispatch({ type: "ADD", campo: "currentUser", payload: userMe.data[0] });
     redirect("/dashboard");
   };
 
@@ -46,7 +43,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <form
-        onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
         //  action={login}
         >
           <CardContent className="space-y-4">
