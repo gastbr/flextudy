@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -7,39 +9,91 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, Edit } from "lucide-react"
+import { Calendar, Mail, Phone, MapPin, GitlabIcon as GitHub, Twitter, CheckSquare } from "lucide-react"
+import { useGet, usePut } from "@/hooks/use-fetch"
+// @ts-ignore
 
 export default function ProfilePage() {
-  // Sample user data
+
+  const { fetch: fetchMe, loading, error } = useGet('/auth/me');
+
+  const { execute: patchUser } = usePut(`/auth/me`);
+
+  console.log(fetchMe?.data?.[0]?.username);
+
   const user = {
-    name: "Jane Doe",
-    email: "jane.doe@example.com",
-    role: "student",
-    avatar: "/placeholder.svg",
+    username: fetchMe?.data?.[0]?.username ?? 'eee',
+    name: fetchMe?.data?.[0]?.name ?? '',
+    email: fetchMe?.data?.[0]?.email ?? '',
+    role: fetchMe?.data?.[0]?.user_type_name ?? '',
+    avatar: fetchMe?.data?.[0]?.profile_pic ?? '',
     bio: "Student passionate about mathematics and languages.",
     phone: "+1 (555) 123-4567",
     location: "New York, NY",
-    github: "janedoe",
-    twitter: "janedoe",
+    github: fetchMe?.data?.[0]?.username ?? '',
+    twitter: fetchMe?.data?.[0]?.username ?? '',
     joined: "May 2023",
     classes: {
       enrolled: 5,
       completed: 12,
     },
   }
+  const [username, setUsername] = useState(user.username);
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+
+  console.log("user.username:", username);
+
+  function handleSubmit() {
+
+    const post = {
+      name: name,
+      email: email
+    }
+
+    patchUser(post)
+      .then((response) => {
+        console.log("posted:", response);
+      })
+      .catch((err) => {
+        console.error("post failed:", err);
+      });
+  }
+
+  useEffect(() => {
+    if (loading) {
+      console.log('Loading user data...');
+    } else {
+      if (fetchMe) {
+        setUsername(fetchMe?.data?.[0]?.username);
+        setName(fetchMe?.data?.[0]?.name);
+        setEmail(fetchMe?.data?.[0]?.email);
+
+      }
+      if (error) {
+        console.error('Error fetching user:', error);
+      }
+    }
+  }, [fetchMe, error, loading]);
+
+
+
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-          <p className="text-muted-foreground">View and edit your profile information</p>
+          <h1 className="text-2xl font-bold tracking-tight">Edit profile</h1>
+          <p className="text-muted-foreground">Edit your profile information</p>
         </div>
 
-        <Button className="flex items-center gap-2">
-          <Edit className="h-4 w-4" />
-          <span>Edit Profile</span>
-        </Button>
+        <Link href="/dashboard/profile/me">
+          <Button className="flex items-center gap-2" onClick={() => handleSubmit()}>
+            <CheckSquare className="h-4 w-4" />
+            <span>Confirm</span>
+          </Button>
+        </Link>
+
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
@@ -50,7 +104,7 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-6">
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col justify-center items-center gap-4">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
@@ -63,12 +117,20 @@ export default function ProfilePage() {
               <div className="flex-1 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input id="username" disabled defaultValue={username} onChange={(e) => setUsername(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Role</Label>
+                    <Input id="username" disabled defaultValue={user.role.toUpperCase()} onChange={(e) => setUsername(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" defaultValue={user.name} readOnly />
+                    <Input id="name" defaultValue={name} onChange={(e) => setName(e.target.value)} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" defaultValue={user.email} readOnly />
+                    <Input id="email" defaultValue={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                 </div>
 

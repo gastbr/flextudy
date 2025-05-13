@@ -2,8 +2,6 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { getCurrentUser } from "./lib/auth"
 
-
-// This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
   const currentUser = await getCurrentUser(request)
   const isLoggedIn = !!currentUser
@@ -19,14 +17,14 @@ export async function middleware(request: NextRequest) {
 
   // Define admin-only paths
   const adminOnlyPaths = [
-    // "/dashboard/users",
-    //  "/dashboard/admin"
+    "/dashboard/users",
+    "/dashboard/admin"
   ]
 
   // Define teacher-only paths
   const teacherOnlyPaths = [
-    // "/dashboard/classes/create",
-    //  "/dashboard/classes/*/attendance"
+    "/dashboard/classes/create",
+    "/dashboard/classes/*/attendance"
   ]
 
   const url = request.nextUrl.clone()

@@ -1,9 +1,12 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Calendar, Users, BookOpen, Settings } from "lucide-react"
 import Image from "next/image"
 
 export default function LandingPage() {
+
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -212,10 +215,10 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-lg">FCT School</span>
+              <span className="font-semibold text-lg">FLEXTUDY</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} FCT School. All rights reserved.
+              © {new Date().getFullYear()} FLEXTUDY. All rights reserved.
             </div>
             <div className="flex gap-6">
               <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">

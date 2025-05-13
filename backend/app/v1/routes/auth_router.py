@@ -1,12 +1,12 @@
 # routes/example_route.py
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.v1.models.user import User, ReadUser
+from app.v1.models.user import ReadUser, UpdateUser, ReadUserList
 from app.v1.services.auth.auth_service import authorize
 from app.v1.services.auth.login_service import auth_login
-from app.v1.services.auth.register_service import auth_register
+from app.v1.services.users_service import get_users, update_user
 from app.config.db import get_session
 
 # # # # EJEMPLO BÁSICO DE RUTA PROTEGIDA # # # #
@@ -44,12 +44,6 @@ async def login(
     ):
     return await auth_login(form_data, db)
 
-@router.get("/me", response_model=ReadUser)
-async def read_users_me(
-    current_user: Annotated[ReadUser, Depends(authorize)]
-):
-    return current_user 
-
 """ @router.post("/register", response_model=User)
 async def register(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -57,8 +51,32 @@ async def register(
     ):
     return await auth_register(form_data, db) """
 
-""" @router.get("/users/me/items")
-async def read_own_items(
-    current_user: Annotated[User, Depends(get_current_user)]
+@router.get("/me", response_model=ReadUserList)
+async def read_user_me(
+    auth_user: Annotated[ReadUser, Depends(authorize)],
+    session: AsyncSession = Depends(get_session)
 ):
-    return [{"item_id": "Foo", "owner": current_user.username}] """
+    return await get_users(session, {"username": auth_user.username})
+
+@router.put("/me", response_model=ReadUser)
+async def update_user_me(
+    auth_user: Annotated[ReadUser, Depends(authorize)],
+    user_in: UpdateUser,
+    session: AsyncSession = Depends(get_session)
+):
+    user = await update_user(session, auth_user.id, user_in)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+    
+# @router.patch("/me", response_model=ReadUser)
+# async def patch_user_me(
+#     auth_user: Annotated[ReadUser, Depends(authorize)],
+#     user_in: UpdateUser,
+#     session: AsyncSession = Depends(get_session)
+# ):
+#     user = await update_user(session, auth_user.id, user_in)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     return user
+    

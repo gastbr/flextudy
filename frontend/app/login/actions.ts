@@ -2,9 +2,10 @@
 
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
+import { NextResponse, NextRequest } from "next/server"
 import axios from "axios"
 
-axios.defaults.baseURL = process.env.API_URL;
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function login(formData: FormData) {
   const username = formData.get("username") as string;
@@ -18,7 +19,7 @@ export async function login(formData: FormData) {
   });
 
   await setToken(request);
-  redirect(callbackUrl);
+  // redirect(callbackUrl);
 }
 
 async function setToken(request: URLSearchParams) {
@@ -46,8 +47,8 @@ async function setToken(request: URLSearchParams) {
   }
 }
 
-export async function logout() {
-  (await cookies()).delete("currentUser");
-  redirect("/");
+export async function logout(request: NextRequest) {
+  (await cookies()).delete("token");
+  return NextResponse.redirect(new URL("/login", request.url));
 }
 

@@ -29,7 +29,7 @@ async def get_lessons(session: AsyncSession) -> List[dict]:
         select(
             Lesson,
             Topic,
-            User,  # Profesor
+            User,
             student_count.c.student_count
         )
         .join(Topic, Lesson.topic_id == Topic.id)
@@ -48,7 +48,7 @@ async def get_lessons(session: AsyncSession) -> List[dict]:
             "start_time": lesson.start_time,
             "end_time": lesson.end_time,
             "teacher": teacher.name,
-            # "status": "enrolled", 
+            # "status": "enrolled",
             "spots": f"{student_count}/{lesson.max_capacity}",
         }
     

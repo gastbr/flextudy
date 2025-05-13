@@ -11,6 +11,7 @@ from app.v1.models.topic import Topic
 from app.v1.models.lesson import Lesson
 from app.v1.services.auth.auth_service import get_password_hash
 from app.v1.models.attend import Attend
+import random
 
 from sqlalchemy.sql.expression import func
 
@@ -44,7 +45,8 @@ async def db_seeder(session):
         username='admintest',
         profile_pic=user.profile_pic,
         user_type_id = admin_user_type.id,
-        hashed_password=get_password_hash('pass')
+        hashed_password=get_password_hash('pass'),
+        status='active'
     ))
     # TEACHER
     user = UserFactory()
@@ -56,6 +58,7 @@ async def db_seeder(session):
         email=user.email,
         username='teachertest',
         profile_pic=user.profile_pic,
+        status='active',
         user_type_id = teacher_user_type.id,
         hashed_password=get_password_hash('pass')
     ))
@@ -70,6 +73,7 @@ async def db_seeder(session):
         username='studenttest',
         profile_pic=user.profile_pic,
         user_type_id = student_user_type.id,
+        status='active',
         hashed_password=get_password_hash('pass')
     ))
 
@@ -79,20 +83,7 @@ async def db_seeder(session):
     admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
     if not admin_user_type:
         raise ValueError("Admin UserType not found")
-    session.add(User(
-        name=user.name,
-        email=user.email,
-        username=user.email,
-        profile_pic=user.profile_pic,
-        user_type_id=admin_user_type.id,
-        hashed_password=user.hashed_password
-    ))
     
-    # TEACHERS
-    teacher_user_type = (await session.exec(select(UserType).where(UserType.name == "teacher"))).first()
-    if not teacher_user_type:
-        raise ValueError("Teacher UserType not found")
-
     for _ in range(5):
         user = UserFactory()
         session.add(User(
@@ -100,8 +91,27 @@ async def db_seeder(session):
             email=user.email,
             username=user.email,
             profile_pic=user.profile_pic,
+            user_type_id=admin_user_type.id,
+            hashed_password=user.hashed_password,
+            status=random.choice(['active', 'pending', 'inactive'])
+    ))
+    
+    # TEACHERS
+    teacher_user_type = (await session.exec(select(UserType).where(UserType.name == "teacher"))).first()
+    if not teacher_user_type:
+        raise ValueError("Teacher UserType not found")
+
+    for _ in range(10):
+        user = UserFactory()
+        session.add(User(
+            name=user.name,
+            email=user.email,
+            username=user.email,
+            profile_pic=user.profile_pic,
             user_type_id=teacher_user_type.id,
-            hashed_password=user.hashed_password
+            hashed_password=user.hashed_password,
+            status=random.choice(['active', 'pending', 'inactive'])
+
         ))
 
     # STUDENTS
@@ -109,7 +119,7 @@ async def db_seeder(session):
     if not student_user_type:
         raise ValueError("Student UserType not found")
 
-    for _ in range(50):
+    for _ in range(100):
         user = UserFactory()
         session.add(User(
             name=user.name,
@@ -117,7 +127,9 @@ async def db_seeder(session):
             username=user.email,
             profile_pic=user.profile_pic,
             user_type_id=student_user_type.id,
-            hashed_password=user.hashed_password
+            hashed_password=user.hashed_password,
+            status=random.choice(['active', 'pending', 'inactive'])
+
         ))
 
     await session.commit()  # Guardar todos los usuarios
@@ -164,7 +176,7 @@ async def db_seeder(session):
     await session.commit()
 
     # # ATTEND
-    for _ in range(10):
+    for _ in range(200):
         attend = AttendFactory()
         
         lesson = (await session.exec(select(Lesson).order_by(func.random()).limit(1))).first()
@@ -176,14 +188,19 @@ async def db_seeder(session):
             .limit(1)
         )).first()
 
-        if lesson and student:
+        already_attended = (await session.exec(
+            select(Attend)
+            .where(Attend.lesson_id == lesson.id, Attend.student_id == student.id)
+        )).first()
+
+        if not already_attended:
             session.add(Attend(
                 assistance=attend.assistance,
                 lesson_id=lesson.id,
                 student_id=student.id
             ))
-
-    await session.commit()  # Final commit
+        await session.commit()  # Commit inmediato
+        await session.flush()
 
 
     # # FUNCIONA (ejemplos):

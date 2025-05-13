@@ -15,6 +15,13 @@ class BaseUser(SQLModel):
     name: str
     email: str = Field(index=True, unique=True)
     profile_pic: str
+    status: str = Field(default="pending")
+
+class Pagination(SQLModel):
+    total: int
+    per_page: int
+    current_page: int
+    total_pages: int
 
 class AuthenticatedUser(BaseUser):
     is_active: bool = Field(default=True)
@@ -40,22 +47,27 @@ class CreateUser(BaseUser):
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
-    user_type_id: Optional[int] = 3
+    user_type_name: Optional[str] = 'student'
     password: Optional[str] = None
 
 class UpdateUser(BaseUser):
     username: Optional[str] = None
     name: Optional[str] = None
     email: Optional[str] = None
-    profile_pic: Optional[str] = None
-    user_type_id: Optional[int] = None
+    profile_pic: Optional[str] = 'https://avatar.iran.liara.run/username?username=string'
+    user_type_name: Optional[str] = 'student'
+    status: Optional[str] = 'inactive'
 
 class ReadUser(BaseUser):
-    id: int
     name: Optional[str] = None
     email: Optional[str] = None
     profile_pic: Optional[str] = None
     user_type_name: Optional[str] = None
+    status: Optional[str] = None
+
+class ReadUserList(SQLModel):
+    data: List[ReadUser]
+    meta: Pagination
 
 class Token(SQLModel):
     access_token: str

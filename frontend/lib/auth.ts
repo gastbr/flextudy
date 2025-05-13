@@ -1,8 +1,7 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import * as jose from 'jose';
 import { logout } from "@/app/login/actions";
 
-// Ensure this secret matches the one used to sign your JWT tokens
 const secret = process.env.SECRET_KEY as string;
 
 export interface UserData {
@@ -10,7 +9,6 @@ export interface UserData {
   role: string;
   name: string;
   email: string;
-  // Add any other fields that are included in your JWT payload
 }
 
 export async function getCurrentUser(request: NextRequest): Promise<UserData | null> {
@@ -18,8 +16,8 @@ export async function getCurrentUser(request: NextRequest): Promise<UserData | n
     const tokenCookie = request.cookies.get("token")?.value;
     if (!tokenCookie) return null;
 
-    // Remove 'Bearer ' prefix if present
-    const token = tokenCookie.replace(/^Bearer\s+/i, "");
+    // Remove 'token ' prefix if present
+    const token = tokenCookie.replace(/^token\s+/i, "");
 
     // Create a TextEncoder
     const encoder = new TextEncoder();
@@ -39,7 +37,10 @@ export async function getCurrentUser(request: NextRequest): Promise<UserData | n
   } catch (error: any) {
     if (error.code === 'ERR_JWT_EXPIRED') {
       console.error("Token has expired. User needs to log in again.");
-      logout();
+      const logoutResponse = await logout(request);
+      if (logoutResponse instanceof NextResponse) {
+        return null;
+      }
     } else {
       console.error("Token verification failed:", error);
     }

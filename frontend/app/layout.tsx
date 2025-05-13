@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import './globals.css'
-
+import { ContextProvider } from './context/provider'
+import { useEffect  } from "react"
+import { usePathname } from "next/navigation";
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'FLEXTUDY · Your All-in-One Educational Hub',
+  description: 'Your All-in-One Educational Hub.',
   generator: 'v0.dev',
 }
 
@@ -12,9 +14,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ContextProvider>
+          {children}
+        </ContextProvider>
+      </body>
     </html>
   )
 }

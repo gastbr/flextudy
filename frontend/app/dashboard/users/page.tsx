@@ -1,87 +1,77 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus } from "lucide-react"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, User } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, } from "@/components/ui/pagination"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
+import { useGet, usePut } from "@/hooks/use-fetch"
+import Link from "next/link"
+import UserCreateModal from "@/components/organisms/UserCreateModal"
+import UserEditModal from "@/components/organisms/UserEditModal"
+
+interface User {
+    id: number;
+    username: string;
+    name: string;
+    email: string;
+    role: string;
+    avatar: string;
+    status: string;
+    classes: number;
+    joinDate: string;
+}
 
 export default function UserManagementContent() {
+    const [users, setUsers] = useState<User[]>([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [pageLimit] = useState(10);
+    const [pageMetadata, setPageMetadata] = useState<{ total: number; per_page: number; current_page: number; total_pages: number }>({ total: 0, per_page: 0, current_page: 0, total_pages: 0 });
+    const { fetch: usersFetch, loading, error } = useGet(`/user?limit=${pageLimit}&offset=${(currentPage - 1) * pageLimit}`);
     const [searchQuery, setSearchQuery] = useState("")
     const [filterRole, setFilterRole] = useState("all")
+    const [filterStatus, setFilterStatus] = useState("all")
     const [showStatsDialog, setShowStatsDialog] = useState(false)
     const [showSubjectDialog, setShowSubjectDialog] = useState(false)
     const [showPricingDialog, setShowPricingDialog] = useState(false)
+    const [newUser, setNewUser] = useState({
+        username: "",
+        name: "",
+        email: "",
+        role: ""
+    });
 
-    // Sample user data
-    const users = [
-        {
-            id: "1",
-            name: "John Smith",
-            email: "john.smith@example.com",
-            role: "student",
-            status: "active",
-            joinDate: "May 10, 2023",
-            classes: 3,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "2",
-            name: "Sarah Johnson",
-            email: "sarah.johnson@example.com",
-            role: "teacher",
-            status: "active",
-            joinDate: "April 15, 2023",
-            classes: 5,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "3",
-            name: "Michael Brown",
-            email: "michael.brown@example.com",
-            role: "student",
-            status: "inactive",
-            joinDate: "June 2, 2023",
-            classes: 0,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "4",
-            name: "Emily Davis",
-            email: "emily.davis@example.com",
-            role: "admin",
-            status: "active",
-            joinDate: "March 20, 2023",
-            classes: 0,
-            avatar: "/placeholder.svg",
-        },
-        {
-            id: "5",
-            name: "David Wilson",
-            email: "david.wilson@example.com",
-            role: "teacher",
-            status: "pending",
-            joinDate: "June 5, 2023",
-            classes: 0,
-            avatar: "/placeholder.svg",
-        },
-    ]
+    useEffect(() => {
+        if (loading) {
+            console.log('Loading user data...');
+        } else {
+            if (usersFetch) {
+                console.log('User data:', usersFetch.meta);
+                setPageMetadata(usersFetch.meta);
+                const transformedUsers = usersFetch.data.map((user: User & { profile_pic: string, user_type_name: string }) => ({
+                    ...user,
+                    username: user.username,
+                    role: user.user_type_name,
+                    avatar: user.profile_pic,
+                    status: user.status,
+                    classes: 4,
+                    joinDate: "2023-06-01",
+                }));
+                setUsers(transformedUsers);
+            }
+            if (error) {
+                console.error('Error fetching user:', error);
+            }
+        }
+    }, [usersFetch, error, loading]);
 
-    // Filter users based on search query and role filter
+    // Filter users based on search query, status and role filter
     const filteredUsers = users.filter((user) => {
         const matchesSearch =
             user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -89,8 +79,12 @@ export default function UserManagementContent() {
 
         const matchesRole = filterRole === "all" || user.role === filterRole
 
-        return matchesSearch && matchesRole
+        const matchesStatus = filterStatus === "all" || user.status === filterStatus
+
+        return matchesSearch && matchesRole && matchesStatus
     })
+
+    console.log("filteredUsers", filteredUsers);
 
     // Sample statistics data
     const monthlyStats = {
@@ -137,7 +131,10 @@ export default function UserManagementContent() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
+                    <div className="flex items-center gap-2 mb-2">
+                        <User />
+                        <h1 className="text-2xl font-bold tracking-tight">User Management</h1>
+                    </div>
                     <p className="text-muted-foreground">Manage users, roles, and platform settings</p>
                 </div>
 
@@ -183,6 +180,22 @@ export default function UserManagementContent() {
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="w-full sm:w-[200px]">
+                    <Select value={filterStatus} onValueChange={setFilterStatus}>
+                        <SelectTrigger>
+                            <div className="flex items-center gap-2">
+                                <Filter className="h-4 w-4" />
+                                <SelectValue placeholder="Filter by role" />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                            <SelectItem value="pending">Pending approval</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
                 <Button variant="outline" className="gap-2">
                     <Download className="h-4 w-4" />
                     <span>Export</span>
@@ -190,9 +203,12 @@ export default function UserManagementContent() {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Users</CardTitle>
-                    <CardDescription>Manage user accounts and role assignments</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="flex flex-col gap-1.5">
+                        <CardTitle>Users</CardTitle>
+                        <CardDescription>Manage user accounts and role assignments</CardDescription>
+                    </div>
+                    <UserCreateModal newUser={newUser} setNewUser={setNewUser} />
                 </CardHeader>
                 <CardContent>
                     <div className="border rounded-md">
@@ -210,114 +226,76 @@ export default function UserManagementContent() {
                         ) : (
                             filteredUsers.map((user) => (
                                 <div
-                                    key={user.id}
+                                    key={user.username}
                                     className="grid grid-cols-[1fr_1fr_auto_auto_auto] md:grid-cols-[1fr_1fr_auto_auto_auto_auto] items-center gap-4 p-4 border-b last:border-0"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={user.avatar} alt={user.name} />
-                                            <AvatarFallback>{user.name[0]}</AvatarFallback>
-                                        </Avatar>
-                                        <div>{user.name}</div>
+                                        <Link href={`/dashboard/profile/${user.username}`}>
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={user.avatar} alt={user.name} />
+                                                <AvatarFallback>{user.name[0]}</AvatarFallback>
+                                            </Avatar>
+                                        </Link>
+                                        <Link href={`/dashboard/profile/${user.username}`}>
+                                            <Button variant="link" size="sm">
+                                                {user.name}
+                                            </Button>
+                                        </Link>
                                     </div>
                                     <div className="text-muted-foreground truncate">{user.email}</div>
                                     <div className="hidden md:block">
                                         <RoleBadge role={user.role} />
                                     </div>
                                     <div>
-                                        <StatusBadge status={user.status} />
+                                        <StatusBadge status={user.status as "active" | "inactive" | "pending"} />
                                     </div>
                                     <div className="text-center">{user.classes}</div>
                                     <div>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button variant="ghost" size="sm">
-                                                    Edit
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>Edit User</DialogTitle>
-                                                    <DialogDescription>Update user information and role</DialogDescription>
-                                                </DialogHeader>
-                                                <div className="space-y-4 py-4">
-                                                    <div className="flex items-center gap-4">
-                                                        <Avatar className="h-12 w-12">
-                                                            <AvatarImage src={user.avatar} alt={user.name} />
-                                                            <AvatarFallback>{user.name[0]}</AvatarFallback>
-                                                        </Avatar>
-                                                        <div>
-                                                            <div className="font-medium">{user.name}</div>
-                                                            <div className="text-sm text-muted-foreground">Joined {user.joinDate}</div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 gap-4">
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="name">Full Name</Label>
-                                                            <Input id="name" defaultValue={user.name} />
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="email">Email</Label>
-                                                            <Input id="email" type="email" defaultValue={user.email} />
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="space-y-2">
-                                                        <Label>Role</Label>
-                                                        <RadioGroup defaultValue={user.role}>
-                                                            <div className="flex items-center space-x-2">
-                                                                <RadioGroupItem value="student" id="student" />
-                                                                <Label htmlFor="student" className="font-normal">
-                                                                    Student
-                                                                </Label>
-                                                            </div>
-                                                            <div className="flex items-center space-x-2">
-                                                                <RadioGroupItem value="teacher" id="teacher" />
-                                                                <Label htmlFor="teacher" className="font-normal">
-                                                                    Teacher
-                                                                </Label>
-                                                            </div>
-                                                            <div className="flex items-center space-x-2">
-                                                                <RadioGroupItem value="admin" id="admin" />
-                                                                <Label htmlFor="admin" className="font-normal">
-                                                                    Administrator
-                                                                </Label>
-                                                            </div>
-                                                        </RadioGroup>
-                                                    </div>
-
-                                                    <div className="space-y-2">
-                                                        <Label>Account Status</Label>
-                                                        <Select defaultValue={user.status}>
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder="Select status" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="active">Active</SelectItem>
-                                                                <SelectItem value="inactive">Inactive</SelectItem>
-                                                                <SelectItem value="pending">Pending Approval</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
-                                                </div>
-                                                <DialogFooter>
-                                                    <Button variant="outline">Reset Password</Button>
-                                                    <Button>Save Changes</Button>
-                                                </DialogFooter>
-                                            </DialogContent>
-                                        </Dialog>
+                                        <UserEditModal user={user} />
                                     </div>
                                 </div>
                             ))
                         )}
                     </div>
                 </CardContent>
-                <CardFooter className="flex justify-between">
-                    <div className="text-sm text-muted-foreground">
-                        Showing {filteredUsers.length} of {users.length} users
+                <CardFooter className="flex justify-between w-full">
+                    <div className="text-sm text-muted-foreground w-1/5 mt-4">
+                        Showing {filteredUsers.length} of {pageMetadata.total} total users
                     </div>
-                    <Button>Add New User</Button>
+
+                    <Pagination className="mt-4">
+                        <PaginationContent>
+                            <PaginationPrevious
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    if (currentPage > 1) setCurrentPage(currentPage - 1)
+                                }}
+                            />
+                            {Array.from({ length: pageMetadata.total_pages }, (_, i) => i + 1).map((page) => (
+                                <PaginationItem key={page}>
+                                    <PaginationLink
+                                        href="#"
+                                        isActive={page === currentPage}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            setCurrentPage(page)
+                                        }}
+                                    >
+                                        {page}
+                                    </PaginationLink>
+                                </PaginationItem>
+                            ))}
+                            <PaginationNext
+                                href="#"
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    if (currentPage < pageMetadata.total_pages) setCurrentPage(currentPage + 1)
+                                }}
+                            />
+                        </PaginationContent>
+                    </Pagination>
+
                 </CardFooter>
             </Card>
 
@@ -585,14 +563,14 @@ export default function UserManagementContent() {
     )
 }
 
-function RoleBadge({ role }) {
+function RoleBadge({ role }: { role: string }) {
     const variants = {
         student: { color: "bg-blue-50 text-blue-700 border-blue-200", label: "Student" },
         teacher: { color: "bg-green-50 text-green-700 border-green-200", label: "Teacher" },
         admin: { color: "bg-purple-50 text-purple-700 border-purple-200", label: "Admin" },
     }
 
-    const { color, label } = variants[role] || variants.student
+    const { color, label } = variants[role as keyof typeof variants] || variants.student
 
     return (
         <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${color}`}>
@@ -601,7 +579,7 @@ function RoleBadge({ role }) {
     )
 }
 
-function StatusBadge({ status }) {
+function StatusBadge({ status }: { status: "active" | "inactive" | "pending" }) {
     const variants = {
         active: { color: "bg-green-50 text-green-700 border-green-200", label: "Active" },
         inactive: { color: "bg-gray-50 text-gray-700 border-gray-200", label: "Inactive" },

@@ -10,6 +10,7 @@ interface MonthCalendarViewProps {
     topic_id: number
   }[]
 }
+import Link from "next/link"
 
 export default function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
   // Generate calendar days
@@ -19,17 +20,17 @@ export default function MonthCalendarView({ month, lessons }: MonthCalendarViewP
   const events = lessons.map((lesson) => {
     const startDate = new Date(lesson.start_time)
     const endDate = new Date(lesson.end_time)
-    
+
     // Formatear la hora como "HH:MM - HH:MM"
     const formatTime = (date: Date) => {
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
     const timeString = `${formatTime(startDate)} - ${formatTime(endDate)}`
-    
+
     // Determinar el estado basado en la capacidad (esto es un ejemplo, ajusta según tu lógica)
     let status = "available"
     // Aquí puedes agregar lógica para determinar si está "enrolled" o "full"
-    
+
     return {
       id: lesson.id,
       title: lesson.title, // O podrías usar otro campo como título
@@ -63,7 +64,7 @@ export default function MonthCalendarView({ month, lessons }: MonthCalendarViewP
     }
   })
 
-  const weekdays = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
   return (
     <div className="border rounded-lg overflow-hidden">
@@ -79,27 +80,31 @@ export default function MonthCalendarView({ month, lessons }: MonthCalendarViewP
         {days.map((day, i) => (
           <div
             key={i}
-            className={`min-h-[100px] border-t border-l p-1 ${
-              day.number ? "bg-background" : "bg-muted/50"
-            } ${i % 7 === 6 ? "border-r" : ""} ${Math.floor(i / 7) === 5 ? "border-b" : ""}`}
+            className={`min-h-[100px] border-t border-l p-1 ${day.number ? "bg-background" : "bg-muted/50"
+              } ${i % 7 === 6 ? "border-r" : ""} ${Math.floor(i / 7) === 5 ? "border-b" : ""}`}
           >
             {day.number && (
               <>
                 <div className="text-sm font-medium p-1">{day.number}</div>
                 <div className="space-y-1">
                   {day.events.map((event) => (
-                    <div
-                      key={event.id}
-                      className={`text-xs p-1 rounded truncate ${
-                        event.status === "enrolled"
-                          ? "bg-primary/10 text-primary"
-                          : event.status === "available"
-                          ? "bg-muted hover:bg-muted/80 cursor-pointer"
-                          : "bg-muted/50 text-muted-foreground"
-                      }`}
-                    >
-                      {event.title} - {event.time} 
-                    </div>
+                        <Link 
+                        href={`/dashboard/classes/${event.id}`}
+                        key={`Link-${event.id}`} 
+                      >
+                      <div
+                        key={`Lesson-${event.id}`}
+                        className={`text-xs p-1 rounded truncate ${event.status === "enrolled"
+                            ? "bg-primary/10 text-primary"
+                            : event.status === "available"
+                              ? "bg-muted hover:bg-muted/80 cursor-pointer"
+                              : "bg-muted/50 text-muted-foreground"
+                          }`}
+                      >
+                        {event.title} - {event.time}
+                      </div>
+                    </Link>
+
                   ))}
                 </div>
               </>

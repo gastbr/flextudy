@@ -7,18 +7,32 @@ import { Input } from "@/components/ui/input"
 import { Calendar } from "lucide-react"
 import { login } from "./actions"
 import { useSearchParams } from "next/navigation"
+import { useGet, usePatch } from "@/hooks/use-fetch"
+import { useProvider } from '@/app/context/provider'
+import { redirect } from "next/navigation"
+
 
 export default function LoginPage() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
+  const { dispatch } = useProvider();
+  const { execute } = useGet('/auth/me');
 
-  console.log('login/page callBackURL', callbackUrl);
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    await login(formData);
+    const userMe = await execute();
+    dispatch({ type: "ADD", campo: "currentUser", payload: userMe.data[0] });
+    redirect("/dashboard");
+  };
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4">
       <Link href="/" className="flex items-center gap-2 mb-8">
         <Calendar className="h-6 w-6 text-primary" />
-        <span className="font-bold text-xl">FCT School</span>
+        <span className="font-bold text-xl">FLEXTUDY</span>
       </Link>
 
       <Card className="w-full max-w-md">
@@ -28,7 +42,10 @@ export default function LoginPage() {
             Enter your email and password to access your account
           </CardDescription>
         </CardHeader>
-        <form action={login}>
+        <form
+          onSubmit={handleSubmit}
+        //  action={login}
+        >
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Input id="username" name="username" type="text" placeholder="Username" />
