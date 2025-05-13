@@ -17,7 +17,7 @@ export default function LoginPage() {
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
   const { context, setContext , dispatch, state} = useProvider();
 
-  const { fetch: fetchMe, loading, error, execute } = useGet('/auth/me');
+  const { loading, error, execute } = useGet('/auth/me');
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

@@ -45,7 +45,7 @@ async def create_new_user(
     user_in: CreateUser,
     session: AsyncSession = Depends(get_session),
 ):
-    authorize_roles(auth_user, ["admin"])
+    # authorize_roles(auth_user, ["admin"])
     return await create_user(session, user_in)
 
 
