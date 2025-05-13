@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 import { Checkbox } from "@/components/ui/checkbox"
@@ -20,41 +19,61 @@ import { CalendarIcon } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { useGet } from "@/hooks/use-fetch"
+import { useGet, usePut } from "@/hooks/use-fetch"
 
 
-export default function AttendanceModal({lessonId}) {
+export default function AttendanceModal({ lessonId }) {
 
     const { fetch: dataAssistance, loading, error } = useGet(`/attend/${lessonId}`);
-    
-  
-    useEffect(() => {
-        console.log(dataAssistance)
-    }, [dataAssistance])
+    const { fetch: postAttends, loading: loadingPutAttends, error:errorPutAttends, execute: executePutAttends} = usePut(`/attend/class_attends/${lessonId}`);
 
-    const [assistance, setAssistance] = useState({})
+    const [refactoredAttend, setRefactoredAttend] = useState({})
+    
     const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date>(new Date())
-    const [attendanceData, setAttendanceData] = useState([
-        { id: 1, name: "Alice Johnson", status: "present" },
-        { id: 2, name: "Bob Smith", status: "absent" },
-        { id: 3, name: "Charlie Brown", status: "present" },
-        { id: 4, name: "Diana Prince", status: "late" },
-        { id: 5, name: "Edward Cullen", status: "present" },
-        { id: 6, name: "Fiona Green", status: "absent" },
-        { id: 7, name: "George Wilson", status: "present" },
-        { id: 8, name: "Hannah Baker", status: "present" },
-        { id: 9, name: "Ian Foster", status: "late" },
-        { id: 10, name: "Julia Roberts", status: "present" },
-    ])
+    const [attendanceData, setAttendanceData] = useState([])
+
+    interface AssistanceRecord {
+        user_id: number;
+        student_name: string;
+        assistance: boolean;
+    }
+
+    useEffect(() => {
+            const transformedData = dataAssistance?.attends.map(
+                (item: AssistanceRecord) => ({
+                    id: item.user_id,
+                    name: item.student_name,
+                    status: item.assistance ? "present" : "absent"
+                })
+            );
+            setAttendanceData(transformedData);
+    }, [dataAssistance]);
+
 
     const updateAttendance = (id: number, status: string) => {
         setAttendanceData(attendanceData.map((student) => (student.id === id ? { ...student, status } : student)))
     }
 
+    // {
+    //     "user_id": 29,
+    //     "student_name": "Joshua Campbell",
+    //     "assistance": true,
+    //     "lesson_id": 17
+    // }
+
     const saveAttendance = () => {
         // In a real app, you would save the attendance data to your backend here
-        console.log("Saving attendance for", format(date, "PPP"), attendanceData)
+
+        const formatedToUsePost = attendanceData.map(e=> {
+            return {
+                student_id: e.id,
+                student_name: e.name,
+                assistance: e.status =="present" ? true : false,
+                lesson_id: lessonId
+            }
+        })
+        executePutAttends(formatedToUsePost)
         setOpen(false)
     }
 
@@ -117,7 +136,7 @@ export default function AttendanceModal({lessonId}) {
                                 <div>Status</div>
                             </div>
 
-                            {attendanceData.map((student) => (
+                            {attendanceData?.map((student) => (
                                 <div
                                     key={student.id}
                                     className="grid grid-cols-[auto_1fr_auto] items-center gap-4 p-3 border-b last:border-0"
