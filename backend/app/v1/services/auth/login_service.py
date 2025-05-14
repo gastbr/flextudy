@@ -4,11 +4,12 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
+import secrets
 
 from app.v1.models.user import User, Token
 from app.config.db import get_session
 from app.v1.services.auth.auth_service import pwd_context, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
-from app.v1.repositories.auth_repository import get_user_by_username
+from app.v1.repositories.auth_repository import get_user_by_username, create_token_session
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -45,9 +46,10 @@ async def auth_login(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    token = secrets.token_hex(32)
+    await create_token_session(db, token, user.id)  # Save the token in the database
     
 
-    print("XXXXXXXXXXXXXX", user)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={
@@ -58,7 +60,7 @@ async def auth_login(
             },
         expires_delta=access_token_expires    
     )
-    return Token(access_token=access_token, token_type="bearer", expires_in=access_token_expires)
+    return Token(access_token=token, token_type="bearer", expires_in=access_token_expires)
 
 """ async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)]

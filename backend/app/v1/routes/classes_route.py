@@ -71,3 +71,17 @@ async def get_class_by_id(
         raise HTTPException(status_code=404, detail="Class not found")
     return example
 
+
+@router.get("/class/test", response_model=dict)
+async def testing_something(
+    # user: Annotated[None, Depends(authorize)],
+    # session: AsyncSession = Depends(get_session),
+    ):
+    
+    print("XXXXXXXXXXXXXXXXXXXXXXXXX:", )
+
+    return {
+        "user": "user",
+        "session": "session"
+    }
+

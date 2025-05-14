@@ -14,7 +14,8 @@ class Session(BaseSession, table=True):
     user: Optional["User"] = Relationship(back_populates="session")
 
 class CreateSession(BaseSession):
-    pass
+    user_id: int
+    token: str
 
 class UpdateSession(BaseSession):
     pass
