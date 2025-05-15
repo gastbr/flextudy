@@ -245,6 +245,7 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
       </div>
 
       <ClassEdit
+        isTeacher={isTeacher}
         showEditClassDialog={showEditClassDialog}
         setShowEditClassDialog={setShowEditClassDialog}
         classDetails={classDetails}

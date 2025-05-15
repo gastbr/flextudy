@@ -27,11 +27,13 @@ import DatePicker from "../ui/DatePicker"
 
 
 export default function ClassEdit({
+    isTeacher,
     classDetails,
     showEditClassDialog,
     setShowEditClassDialog,
     excuteGetClassById
 }: {
+    isTeacher?: boolean;
     classDetails: any;
     showEditClassDialog?: boolean;
     setShowEditClassDialog?: (value: boolean) => void;
@@ -76,7 +78,7 @@ export default function ClassEdit({
 
     }, [classDetails]);
 
-    const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/to_create');
+    const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/to_create', undefined, isTeacher);
 
 
     useEffect(() => {
