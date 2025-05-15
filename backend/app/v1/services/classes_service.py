@@ -6,6 +6,7 @@ from app.v1.models.lesson import Lesson, CreateLesson
 from app.v1.models.attend import Attend
 from app.v1.models.topic import Topic
 from app.v1.models.subject import Subject
+from app.v1.models.user import User
 from datetime import datetime
 from sqlalchemy import func
 from app.v1.repositories.user_type_repository import get_user_type_name_by_id
@@ -28,11 +29,12 @@ async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> 
     await session.refresh(lesson)
     return lesson
 
-async def get_class(session: AsyncSession, class_id: int,  user: Optional[dict] = None) -> dict:
+async def get_class(session: AsyncSession, class_id: int,  user_in: Optional[dict] = None) -> dict:
 
     result = (await session.execute(
-        select(Topic, Lesson, Subject)
+        select(Topic, Lesson, Subject, User)
         .select_from(Topic)
+        .join(User, Topic.teacher_id == User.id)
         .join(Lesson, Topic.id == Lesson.topic_id)
         .join(Subject, Topic.subject_id == Subject.id)
         .where(Lesson.id == class_id)
@@ -40,7 +42,7 @@ async def get_class(session: AsyncSession, class_id: int,  user: Optional[dict] 
     
     if result:
         
-        topic, lesson, subject = result
+        topic, lesson, subject, user = result
         
         enrolled_count = (await session.execute(
         select(func.count())
@@ -69,7 +71,9 @@ async def get_class(session: AsyncSession, class_id: int,  user: Optional[dict] 
                 "date": start_date,
                 "time": time_str,
                 "description": topic.description,
-                "teacher": user.name,
+                "teacher_name": user.name,
+                "teacher_username": user.username,
+                "teacher_avatar": user.profile_pic,
                 "topic_id": topic.id,
                 "location": lesson.lesson_url,
                 "enrolled": enrolled_count,
@@ -78,16 +82,16 @@ async def get_class(session: AsyncSession, class_id: int,  user: Optional[dict] 
             }
         }
 
-        if user:
-            if(user.user_type_name == "teacher"):
-                if(user.id == topic.teacher_id):
+        if user_in:
+            if(user_in.user_type_name == "teacher"):
+                if(user_in.id == topic.teacher_id):
                     class_data["class"]["teacher_owns_lesson"] = True
                 else:
                     class_data["class"]["teacher_owns_lesson"] = False
-            if(user.user_type_name == "student"):
+            if(user_in.user_type_name == "student"):
                 attended = (await session.execute(
                     select(Attend)
-                    .where(Attend.student_id == user.id, Attend.lesson_id == lesson.id)
+                    .where(Attend.student_id == user_in.id, Attend.lesson_id == lesson.id)
                 )).first()
                 if attended:
                     class_data["class"]["student_enrolled"] = True
