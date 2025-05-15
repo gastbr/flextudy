@@ -120,8 +120,8 @@ export default function ClassEdit({
         <>
             {classDetails && (
                 <Dialog open={showEditClassDialog} onOpenChange={setShowEditClassDialog}>
-                    <DialogTitle></DialogTitle>
                     <DialogContent aria-describedby={undefined}>
+                        <DialogTitle></DialogTitle>
                         <div className="space-y-6">
                             <div className="flex items-center gap-2">
                                 <h1 className="text-2xl font-bold tracking-tight">Edit Class</h1>
