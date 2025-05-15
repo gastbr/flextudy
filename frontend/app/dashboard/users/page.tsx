@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Filter, Download, BarChart, BookOpen, CreditCard, Plus, User } from "lucide-react"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog"
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, } from "@/components/ui/pagination"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, PaginationEllipsis } from "@/components/ui/pagination"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useGet, usePut } from "@/hooks/use-fetch"
@@ -272,20 +272,58 @@ export default function UserManagementContent() {
                                     if (currentPage > 1) setCurrentPage(currentPage - 1)
                                 }}
                             />
-                            {Array.from({ length: pageMetadata.total_pages }, (_, i) => i + 1).map((page) => (
-                                <PaginationItem key={page}>
-                                    <PaginationLink
-                                        href="#"
-                                        isActive={page === currentPage}
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            setCurrentPage(page)
-                                        }}
-                                    >
-                                        {page}
-                                    </PaginationLink>
-                                </PaginationItem>
-                            ))}
+                            {/* Condensed pagination logic */}
+                            {pageMetadata.total_pages <= 7 ? (
+                                Array.from({ length: pageMetadata.total_pages }, (_, i) => i + 1).map((page) => (
+                                    <PaginationItem key={page}>
+                                        <PaginationLink
+                                            href="#"
+                                            isActive={page === currentPage}
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                setCurrentPage(page)
+                                            }}
+                                        >
+                                            {page}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                ))
+                            ) : (
+                                <>
+                                    {/* Always show first page */}
+                                    <PaginationItem>
+                                        <PaginationLink
+                                            href="#"
+                                            isActive={1 === currentPage}
+                                            onClick={e => { e.preventDefault(); setCurrentPage(1); }}
+                                        >1</PaginationLink>
+                                    </PaginationItem>
+                                    {/* Show ellipsis if needed */}
+                                    {currentPage > 4 && <PaginationEllipsis />}
+                                    {/* Show up to 2 pages before and after current */}
+                                    {Array.from({ length: 5 }, (_, i) => currentPage - 2 + i)
+                                        .filter(page => page > 1 && page < pageMetadata.total_pages)
+                                        .map(page => (
+                                            <PaginationItem key={page}>
+                                                <PaginationLink
+                                                    href="#"
+                                                    isActive={page === currentPage}
+                                                    onClick={e => { e.preventDefault(); setCurrentPage(page); }}
+                                                >{page}</PaginationLink>
+                                            </PaginationItem>
+                                        ))}
+                                    {/* Show ellipsis if needed */}
+                                    {currentPage < pageMetadata.total_pages - 3 && <PaginationEllipsis />}
+                                    {/* Always show last page */}
+                                    <PaginationItem>
+                                        <PaginationLink
+                                            href="#"
+                                            isActive={pageMetadata.total_pages === currentPage}
+                                            onClick={e => { e.preventDefault(); setCurrentPage(pageMetadata.total_pages); }}
+                                        >{pageMetadata.total_pages}</PaginationLink>
+                                    </PaginationItem>
+                                </>
+                            )}
                             <PaginationNext
                                 href="#"
                                 onClick={(e) => {
