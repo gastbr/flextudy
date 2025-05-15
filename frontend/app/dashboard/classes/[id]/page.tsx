@@ -87,7 +87,9 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
         duration: calculateDuration(c.start_time, c.end_time),
         location: c.location,
         teacher: {
-          name: c.teacher,
+          name: c.teacher_name,
+          avatar: c.teacher_avatar,
+          username: c.teacher_username
         },
         enrolled: c.enrolled,
         capacity: c.capacity,
@@ -172,7 +174,12 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span>{classDetails && classDetails.location}</span>
+                      <Link
+                        href={`${classDetails && classDetails.location}`}
+                        className="hover:underline"
+                      >
+                        <span>{classDetails && classDetails.location}</span>
+                      </Link>
                     </div>
                     {isTeacher && (
                       <div className="flex items-center gap-2 text-sm">
@@ -200,11 +207,19 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
               <CardTitle>Teacher</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center text-center">
-              <Avatar className="h-20 w-20 mb-4">
-                <AvatarImage src={classDetails && classDetails.teacher.avatar} alt={classDetails && classDetails.teacher.name} />
-                <AvatarFallback>{classDetails && classDetails.teacher.name[0]}</AvatarFallback>
-              </Avatar>
-              <h3 className="font-semibold text-lg">{classDetails && classDetails.teacher.name}</h3>
+              <Link href={`/dashboard/profile/${classDetails && classDetails.teacher.username}`}>
+                <Avatar className="h-20 w-20 mb-4">
+                  <AvatarImage src={classDetails && classDetails.teacher.avatar} alt={classDetails && classDetails.teacher.name} />
+                  <AvatarFallback>{classDetails && classDetails.teacher.name[0]}</AvatarFallback>
+                </Avatar>
+              </Link>
+
+              <Link
+                href={`/dashboard/profile/${classDetails && classDetails.teacher.username}`}
+                className="font-semibold text-lg hover:underline"
+              >
+                <h3 className="font-semibold text-lg">{classDetails && classDetails.teacher.name}</h3>
+              </Link>
               {/* <div className="flex items-center gap-1 mt-1">
                 <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
                 <span className="text-sm">
@@ -245,6 +260,7 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
       </div>
 
       <ClassEdit
+        isTeacher={isTeacher}
         showEditClassDialog={showEditClassDialog}
         setShowEditClassDialog={setShowEditClassDialog}
         classDetails={classDetails}
