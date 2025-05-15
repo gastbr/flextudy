@@ -2,6 +2,7 @@ import factory
 from faker import Faker
 from app.v1.models.lesson import Lesson
 import random
+import string
 from datetime import datetime, timedelta, timezone
 
 fake = Faker()
@@ -28,4 +29,7 @@ class LessonFactory(factory.Factory):
         end_dt = start_dt + timedelta(hours=hours_to_add)
         return end_dt.isoformat()
     
-    lesson_url = factory.Faker('image_url')
+    @factory.lazy_attribute
+    def lesson_url(self):
+        meeting_id = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+        return f"https://flextudymeet.com/{meeting_id}"

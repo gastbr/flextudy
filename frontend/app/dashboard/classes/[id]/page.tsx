@@ -174,7 +174,12 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span>{classDetails && classDetails.location}</span>
+                      <Link
+                        href={`${classDetails && classDetails.location}`}
+                        className="hover:underline"
+                      >
+                        <span>{classDetails && classDetails.location}</span>
+                      </Link>
                     </div>
                     {isTeacher && (
                       <div className="flex items-center gap-2 text-sm">
