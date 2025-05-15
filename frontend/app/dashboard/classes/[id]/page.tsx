@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, use, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { useProvider } from "@/app/context/provider"
-import { useGet } from "@/hooks/use-fetch"
+import { useGet, usePost, useDelete } from "@/hooks/use-fetch"
 import ClassEdit from "@/components/organisms/ClassEdit"
 import AttendanceModal from "@/components/organisms/AttendanceModal"
 
@@ -23,17 +22,52 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
   const [classDetails, setClassDetails] = useState(null)
   const [showEditClassDialog, setShowEditClassDialog] = useState(false)
 
-
   const { state } = useProvider()
   const user = useState(state?.currentUser)
   const isTeacher = user[0]?.user_type_name == "teacher" ? true : false
-  const isEnrolled = true
-  const { fetch: data, loading, error, execute: excuteGetClassById } = useGet(`/classes/class/${id}`);
+  const { execute: enrollAPI } = usePost(`/attend/${id}`);
+  const { execute: cancelEnrollmentAPI } = useDelete(`/attend/${id}`);
+  const { fetch: data, error, execute: excuteGetClassById } = useGet(`/classes/class/${id}`);
+
+
+  const handleEnroll = async () => {
+    try {
+      await enrollAPI();
+      setClassDetails((prev) => {
+        const updatedDetails = {
+          ...prev,
+          student_enrolled: true,
+          enrolled: prev.enrolled + 1,
+        };
+        console.log("Updated classDetails after enroll:", updatedDetails);
+        return updatedDetails;
+      });
+    } catch (error) {
+      console.error("Error enrolling in class:", error);
+    }
+  };
+
+  const handleCancelEnrollment = async () => {
+    try {
+      await cancelEnrollmentAPI();
+      await excuteGetClassById();
+      setClassDetails((prev) => {
+        const updatedDetails = {
+          ...prev,
+          student_enrolled: false,
+          enrolled: prev.enrolled - 1,
+        };
+        console.log("Updated classDetails after cancel:", updatedDetails);
+        return updatedDetails;
+      });
+    } catch (error) {
+      console.error("Error canceling enrollment:", error);
+    }
+  };
 
   function toLocaleDateString(date: string) {
     const newDate = new Date(date)
     return newDate
-    // .toString()
   }
 
   useEffect(() => {
@@ -109,11 +143,11 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
               <AttendanceModal lessonId={classDetails.id} />
             </>
           ) : classDetails && classDetails?.student_enrolled ? (
-            <Button variant="outline">Cancel Enrollment</Button>
+            <Button variant="outline" onClick={handleCancelEnrollment}>Cancel Enrollment</Button>
           ) : (
             !isTeacher && (
-              <Button disabled={classDetails?.status === "full"}>
-                Enroll
+              <Button disabled={classDetails?.status === "full"} onClick={handleEnroll}>
+                {classDetails?.status === "full" ? "Class is full" : "Enroll"}
               </Button>
             )
           )}

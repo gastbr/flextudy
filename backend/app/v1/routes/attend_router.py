@@ -1,6 +1,6 @@
 # routes/example_route.py
 from fastapi import APIRouter, Depends,HTTPException
-from app.v1.models.attend import Attend, CreateAttend, ReadAttend
+from app.v1.models.attend import Attend, ReadAttend
 from sqlmodel.ext.asyncio.session import AsyncSession
 from typing import List, Annotated
 from app.v1.services.auth.auth_service import authorize, authorize_roles
@@ -53,6 +53,6 @@ async def delete_authenticated_student_enrollment_from_lesson(
     session: AsyncSession = Depends(get_session)):
     authorize_roles(user, ["student"])  
     attends =  await delete_attendance(session, lesson_id, user)
-    if ValueError:
+    if not attends:
         raise HTTPException(status_code=404, detail="Class not found")
     return attends

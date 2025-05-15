@@ -187,8 +187,8 @@ async def get_my_classes(session: AsyncSession, user):
         )).scalar() or 0
         
         # Convertir el string a datetime primero
-        start_datetime = datetime.fromisoformat(lesson.start_time)
-        end_datetime = datetime.fromisoformat(lesson.end_time)
+        start_datetime = datetime.fromisoformat(lesson.start_time.replace('Z', '+00:00'))
+        end_datetime = datetime.fromisoformat(lesson.end_time.replace('Z', '+00:00'))
         
         # Formatear la fecha
         start_date = start_datetime.strftime("%b %d, %Y")
