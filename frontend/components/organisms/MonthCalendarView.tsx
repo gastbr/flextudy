@@ -7,9 +7,11 @@ interface MonthCalendarViewProps {
     start_time: string
     end_time: string
     lesson_url: string
+    status: string
     topic_id: number
   }[]
 }
+
 import Link from "next/link"
 
 export default function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
@@ -36,7 +38,7 @@ export default function MonthCalendarView({ month, lessons }: MonthCalendarViewP
       title: lesson.title, // O podrías usar otro campo como título
       date: new Date(startDate),
       time: timeString,
-      status: status
+      status: lesson.status
     }
   })
   events.sort((a, b) => a.date.getTime() - b.date.getTime())
