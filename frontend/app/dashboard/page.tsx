@@ -7,30 +7,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ClassListView from "@/components/organisms/ClassListView"
 import MonthCalendarView from "@/components/organisms/MonthCalendarView"
 import Link from "next/link"
-
+import { useGet } from "@/hooks/use-fetch"
 import { useProvider } from '@/app/context/provider'
-
 
 export default function CalendarView() {
 
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [lessons, setLessons] = useState([])
-
-  const { context, setContext, dispatch, state } = useProvider();
+  const { fetch: data, loading, error, execute: getDashboard } = useGet('/dashboard/lessons');
+  const { state } = useProvider();
 
   useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/v1/dashboard/lessons")
-        const data = await response.json()
-        setLessons(data)
-      } catch (error) {
-        console.error("Error fetching lessons:", error)
-      }
-    }
-    fetchLessons()
-  }, [])
+    if (data) setLessons(data)
+  }, [data])
 
   // Function to format date as Month YYYY
   const formatMonth = (date: Date) => {
@@ -73,12 +63,17 @@ export default function CalendarView() {
 
         {/* This button would only be visible to teachers */}
 
-        <Button asChild className="flex items-center gap-2">
-          <Link href="/dashboard/classes/create">
-            <Plus className="h-4 w-4" />
-            <span>Create Class</span>
-          </Link>
-        </Button>
+        {
+          state.currentUser.user_type_name === "teacher" && (
+            <Button asChild className="flex items-center gap-2">
+              <Link href="/dashboard/classes/create">
+                <Plus className="h-4 w-4" />
+                <span>Create Class</span>
+              </Link>
+            </Button>
+          )
+        }
+
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -125,7 +120,7 @@ export default function CalendarView() {
         </div>
       </div>
 
-      {viewMode === "list" ? <ClassListView lessons={lessons} /> : <MonthCalendarView month={currentMonth} lessons={lessons} />}
+      {viewMode === "list" ? <ClassListView lessons={lessons} getDashboard={getDashboard} /> : <MonthCalendarView month={currentMonth} lessons={lessons} />}
     </div>
   )
 }
