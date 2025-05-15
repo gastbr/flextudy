@@ -128,11 +128,11 @@ export default function MyClassesPage() {
                 </div>
             </div>
 
-            <Tabs defaultValue="past">
+            <Tabs defaultValue={userType === "teacher" ? "teaching" : "enrolled"}>
                 <TabsList className="mb-4">
-                    <TabsTrigger value="past">Past Classes</TabsTrigger>
                     {userType === "teacher" && <TabsTrigger value="teaching">Teaching</TabsTrigger>}
                     {userType === "student" && <TabsTrigger value="enrolled">Enrolled</TabsTrigger>}
+                    <TabsTrigger value="past">Past Classes</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="teaching">

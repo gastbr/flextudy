@@ -101,7 +101,7 @@ async def db_seeder(session):
     if not teacher_user_type:
         raise ValueError("Teacher UserType not found")
 
-    for _ in range(10):
+    for _ in range(5):
         user = UserFactory()
         session.add(User(
             name=user.name,
@@ -119,7 +119,7 @@ async def db_seeder(session):
     if not student_user_type:
         raise ValueError("Student UserType not found")
 
-    for _ in range(100):
+    for _ in range(500):
         user = UserFactory()
         session.add(User(
             name=user.name,
@@ -158,7 +158,7 @@ async def db_seeder(session):
     await session.commit()
 
     # # LESSONS
-    for _ in range(20):
+    for _ in range(50):
         lesson = LessonFactory()
         topic = (await session.exec(select(Topic).order_by(func.random()).limit(1))).first()
         
@@ -176,7 +176,7 @@ async def db_seeder(session):
     await session.commit()
 
     # # ATTEND
-    for _ in range(200):
+    for _ in range(300):
         attend = AttendFactory()
         
         lesson = (await session.exec(select(Lesson).order_by(func.random()).limit(1))).first()

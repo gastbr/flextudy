@@ -1,40 +1,24 @@
-# repositories/example_repository.py
-from typing import List, Optional
-from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.v1.models.example import Example, CreateExample, UpdateExample
+from sqlmodel import select
+from app.v1.models.attend import Attend
 
-async def get_all_examples(session: AsyncSession) -> List[Example]:
-    statement = select(Example)
-    results = await session.exec(statement)
-    return results.all()
+async def get_attend(session: AsyncSession, lesson_id: int, user_id: int) -> Attend:
+    result = await session.execute(
+        select(Attend)
+        .where(
+            Attend.lesson_id == lesson_id,
+            Attend.student_id == user_id
+            ))
+    attend_out = result.scalar_one_or_none()
+    return attend_out
 
-async def get_example_by_id(session: AsyncSession, example_id: int) -> Optional[Example]:
-    return await session.get(Example, example_id)
-
-async def create_example(session: AsyncSession, example_in: CreateExample) -> Example:
-    example = Example.from_orm(example_in)
-    session.add(example)
+async def create_attend(session: AsyncSession, attend_in: Attend) -> Attend:
+    session.add(attend_in)
     await session.commit()
-    await session.refresh(example)
-    return example
+    await session.refresh(attend_in)
+    return attend_in
 
-async def update_example(session: AsyncSession, example_id: int, example_in: UpdateExample) -> Optional[Example]:
-    db_example = await session.get(Example, example_id)
-    if not db_example:
-        return None
-    update_data = example_in.dict(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_example, key, value)
-    session.add(db_example)
-    await session.commit()
-    await session.refresh(db_example)
-    return db_example
-
-async def delete_example(session: AsyncSession, example_id: int) -> bool:
-    db_example = await session.get(Example, example_id)
-    if not db_example:
-        return False
-    await session.delete(db_example)
+async def delete_attend(session: AsyncSession, attend_in: Attend) -> bool:
+    await session.delete(attend_in)
     await session.commit()
     return True
