@@ -12,13 +12,29 @@ from app.v1.models.lesson import Lesson
 from app.v1.services.auth.auth_service import get_password_hash
 from app.v1.models.attend import Attend
 import random
+import string
 
 from sqlalchemy.sql.expression import func
+
+async def get_unique_email_and_username(session, base_email, base_username):
+    """Generate unique email and username."""
+    email = base_email
+    username = base_username
+    suffix = 1
+    while True:
+        email_exists = (await session.exec(select(User).where(User.email == email))).first()
+        username_exists = (await session.exec(select(User).where(User.username == username))).first()
+        if not email_exists and not username_exists:
+            return email, username
+        # If exists, append a suffix and try again
+        email_parts = base_email.split('@')
+        email = f"{email_parts[0]}{suffix}@{email_parts[1]}"
+        username = f"{base_username}{suffix}"
+        suffix += 1
 
 async def db_seeder(session):
     usertype_seeder(session)
 
-    
     # # # USER_TYPE
     admin_user_type = UserType(name="admin")
     teacher_user_type = UserType(name="teacher")
@@ -39,10 +55,11 @@ async def db_seeder(session):
     admin_user_type = (await session.exec(select(UserType).where(UserType.name == "admin"))).first()
     if not admin_user_type:
         raise ValueError("Admin UserType not found")
+    email, username = await get_unique_email_and_username(session, user.email, 'admintest')
     session.add(User(
         name=user.name,
-        email=user.email,
-        username='admintest',
+        email=email,
+        username=username,
         profile_pic=user.profile_pic,
         user_type_id = admin_user_type.id,
         hashed_password=get_password_hash('pass'),
@@ -53,10 +70,11 @@ async def db_seeder(session):
     teacher_user_type = (await session.exec(select(UserType).where(UserType.name == "teacher"))).first()
     if not teacher_user_type:
         raise ValueError("Teacher UserType not found")
+    email, username = await get_unique_email_and_username(session, user.email, 'teachertest')
     session.add(User(
         name=user.name,
-        email=user.email,
-        username='teachertest',
+        email=email,
+        username=username,
         profile_pic=user.profile_pic,
         status='active',
         user_type_id = teacher_user_type.id,
@@ -67,10 +85,11 @@ async def db_seeder(session):
     student_user_type = (await session.exec(select(UserType).where(UserType.name == "student"))).first()
     if not student_user_type:
         raise ValueError("Student UserType not found")
+    email, username = await get_unique_email_and_username(session, user.email, 'studenttest')
     session.add(User(
         name=user.name,
-        email=user.email,
-        username='studenttest',
+        email=email,
+        username=username,
         profile_pic=user.profile_pic,
         user_type_id = student_user_type.id,
         status='active',
@@ -86,10 +105,11 @@ async def db_seeder(session):
     
     for _ in range(5):
         user = UserFactory()
+        email, username = await get_unique_email_and_username(session, user.email, user.email)
         session.add(User(
             name=user.name,
-            email=user.email,
-            username=user.email,
+            email=email,
+            username=username,
             profile_pic=user.profile_pic,
             user_type_id=admin_user_type.id,
             hashed_password=user.hashed_password,
@@ -103,10 +123,11 @@ async def db_seeder(session):
 
     for _ in range(5):
         user = UserFactory()
+        email, username = await get_unique_email_and_username(session, user.email, user.email)
         session.add(User(
             name=user.name,
-            email=user.email,
-            username=user.email,
+            email=email,
+            username=username,
             profile_pic=user.profile_pic,
             user_type_id=teacher_user_type.id,
             hashed_password=user.hashed_password,
@@ -121,10 +142,11 @@ async def db_seeder(session):
 
     for _ in range(500):
         user = UserFactory()
+        email, username = await get_unique_email_and_username(session, user.email, user.email)
         session.add(User(
             name=user.name,
-            email=user.email,
-            username=user.email,
+            email=email,
+            username=username,
             profile_pic=user.profile_pic,
             user_type_id=student_user_type.id,
             hashed_password=user.hashed_password,
@@ -180,6 +202,17 @@ async def db_seeder(session):
         attend = AttendFactory()
         
         lesson = (await session.exec(select(Lesson).order_by(func.random()).limit(1))).first()
+        if not lesson:
+            continue
+
+        # Count current attendance for this lesson
+        attend_count = (await session.exec(
+            select(func.count()).where(Attend.lesson_id == lesson.id)
+        )).one()
+
+        if attend_count >= lesson.max_capacity:
+            continue  # Skip if lesson is full
+
         student_type = (await session.exec(select(UserType).where(UserType.name == "student"))).first()
         student = (await session.exec(
             select(User)
@@ -187,6 +220,9 @@ async def db_seeder(session):
             .order_by(func.random())
             .limit(1)
         )).first()
+
+        if not student:
+            continue  # Skip if no student found
 
         already_attended = (await session.exec(
             select(Attend)
@@ -199,8 +235,8 @@ async def db_seeder(session):
                 lesson_id=lesson.id,
                 student_id=student.id
             ))
-        await session.commit()  # Commit inmediato
-        await session.flush()
+            await session.commit()  # Commit inmediato
+            await session.flush()
 
 
     # # FUNCIONA (ejemplos):

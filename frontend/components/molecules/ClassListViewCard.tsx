@@ -4,17 +4,18 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { useGet, usePost, useDelete } from "@/hooks/use-fetch"
-import { useState } from "react"
-import { constructNow } from "date-fns"
+import { usePost, useDelete } from "@/hooks/use-fetch"
+import { AvatarImage } from "@radix-ui/react-avatar"
+import Link from "next/link"
 
 
 interface LessonProp {
   cls: any
   getDashboard: () => void;
+  currentUser?: { username: string; user_type_name: string }; // add currentUser prop
 }
 
-export default function ClassListViewCard({ cls, getDashboard }: LessonProp) {
+export default function ClassListViewCard({ cls, getDashboard, currentUser }: LessonProp) {
   const { execute: cancelEnrollmentAPI } = useDelete(`/attend/${cls.id}`);
   const { execute: enrollAPI } = usePost(`/attend/${cls.id}`);
 
@@ -37,6 +38,8 @@ export default function ClassListViewCard({ cls, getDashboard }: LessonProp) {
     }
   };
 
+  console.log("clsss", cls);
+
   return (
     <Card key={cls.id} className="overflow-hidden">
       <CardContent className="p-0">
@@ -53,10 +56,15 @@ export default function ClassListViewCard({ cls, getDashboard }: LessonProp) {
             </div>
 
             <div className="flex items-center gap-2 mt-4">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback>{cls.teacher[0]}</AvatarFallback>
-              </Avatar>
-              <span className="text-sm">{cls.teacher}</span>
+              <Link href={`/dashboard/profile/${cls.teacher_username}`}>
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={cls.teacher_avatar} alt="Teacher" />
+                  <AvatarFallback>{cls.teacher_name[0]}</AvatarFallback>
+                </Avatar>
+              </Link>
+              <Link href={`/dashboard/profile/${cls.teacher_username}`} className="text-sm hover:underline">
+                {cls.teacher_name}
+              </Link>
             </div>
           </div>
 
@@ -74,10 +82,10 @@ export default function ClassListViewCard({ cls, getDashboard }: LessonProp) {
                 </Button>
               )
             }
-            {cls.status === "available" && (
+            {/* Hide Enroll button for teachers */}
+            {cls.status === "available" && currentUser?.user_type_name !== "teacher" && (
               <Button variant="default"
                 onClick={handleEnrollment}
-
               >Enroll</Button>
             )}
             {
