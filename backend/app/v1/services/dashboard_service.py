@@ -1,19 +1,14 @@
 # services/example_service.py
-from typing import List, Optional
-from sqlmodel import select, func
+from typing import List
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from app.v1.models.lesson import Lesson
 from app.v1.models.topic import Topic
 from app.v1.models.user import User
 from app.v1.models.attend import Attend
 
-import app.v1.repositories.example_repository as repo
-
 async def get_lessons(session: AsyncSession, user) -> List[dict]:
-    from sqlalchemy.orm import aliased
-    from sqlalchemy import func, select as sql_select
-    
-    Student = aliased(User)
+    from sqlalchemy import func, select as sql_select  
     
     # Subconsulta para contar estudiantes
     student_count = (
@@ -63,7 +58,8 @@ async def get_lessons(session: AsyncSession, user) -> List[dict]:
             "title": topic.name,
             "start_time": lesson.start_time,
             "end_time": lesson.end_time,
-            "teacher": teacher.name,
+            "teacher_username": teacher.username,
+            "teacher_name": teacher.name,
             "status": status,
             "spots": f"{student_count}/{lesson.max_capacity}",
         }

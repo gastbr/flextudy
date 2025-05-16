@@ -10,13 +10,38 @@ import Link from "next/link"
 import { useGet } from "@/hooks/use-fetch"
 import { useProvider } from '@/app/context/provider'
 
+export type Lesson = {
+  id: number;
+  title: string;
+  start_time: string;
+  end_time: string;
+  lesson_url: string;
+  status: string;
+  teacher_username: string;
+  teacher_name: string;
+  spots: string;
+  max_capacity: number;
+  topic_id: number;
+}
+
 export default function CalendarView() {
 
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [lessons, setLessons] = useState([])
-  const { fetch: data, loading, error, execute: getDashboard } = useGet('/dashboard/lessons');
+  const [lessons, setLessons] = useState<Lesson[]>([])
+  const { fetch: data, execute: getDashboard } = useGet('/dashboard/lessons');
   const { state } = useProvider();
+  const [filter, setFilter] = useState('all');
+  const filterOptions =
+    state.currentUser?.user_type_name === "teacher"
+      ? [
+        { value: "all", label: "All Classes" },
+        { value: "my", label: "My Classes" },
+      ] : [
+        { value: "all", label: "All Classes" },
+        { value: "enrolled", label: "Enrolled Only" },
+        { value: "available", label: "Available to Join" },
+      ]
 
   useEffect(() => {
     if (data) setLessons(data)
@@ -53,6 +78,23 @@ export default function CalendarView() {
   //   import { useProvider } from "@/app/context/provider"
   //   const {context, setContext, state, dispatch,} = useProvider()
 
+  const filteredLessons = lessons.filter(lesson => {
+    if (state.currentUser?.user_type_name === "teacher") {
+      if (filter === "my") {
+        return lesson?.teacher_username === state.currentUser?.username
+      }
+      return true // "all"
+    } else {
+      if (filter === "enrolled") {
+        return lesson.status === "enrolled"
+      }
+      if (filter === "available") {
+        return lesson.status === "available"
+      }
+      return true // "all"
+    }
+  })
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -88,16 +130,21 @@ export default function CalendarView() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Select defaultValue="all">
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Classes</SelectItem>
-              <SelectItem value="enrolled">Enrolled Only</SelectItem>
-              <SelectItem value="available">Available to Join</SelectItem>
-            </SelectContent>
-          </Select>
+
+          {state.currentUser?.user_type_name !== "admin" && (
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                {filterOptions.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
 
           <div className="flex items-center border rounded-md">
             <Button
@@ -120,7 +167,7 @@ export default function CalendarView() {
         </div>
       </div>
 
-      {viewMode === "list" ? <ClassListView lessons={lessons} getDashboard={getDashboard} /> : <MonthCalendarView month={currentMonth} lessons={lessons} />}
+      {viewMode === "list" ? <ClassListView lessons={filteredLessons} getDashboard={getDashboard} /> : <MonthCalendarView month={currentMonth} lessons={filteredLessons} />}
     </div>
   )
 }

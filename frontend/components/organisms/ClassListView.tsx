@@ -11,7 +11,8 @@ interface LessonProp {
     end_time: string
     lesson_url: string
     spots: string,
-    teacher: string,
+    teacher_username: string,
+    teacher_name: string,
     status?: string,
   }[];
   getDashboard: () => void;
@@ -57,7 +58,7 @@ export default function ClassListView({ lessons, getDashboard }: LessonProp) {
       title: lesson.title,
       date: formatDate(lesson.start_time),
       time: `${formatTime(lesson.start_time)} - ${formatTime(lesson.end_time)}`,
-      teacher: lesson.teacher,
+      teacher: lesson.teacher_name,
       status: status,
       spots: lesson.spots,
     };
