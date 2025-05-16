@@ -60,6 +60,7 @@ async def get_lessons(session: AsyncSession, user) -> List[dict]:
             "end_time": lesson.end_time,
             "teacher_username": teacher.username,
             "teacher_name": teacher.name,
+            "teacher_avatar": teacher.profile_pic,
             "status": status,
             "spots": f"{student_count}/{lesson.max_capacity}",
         }

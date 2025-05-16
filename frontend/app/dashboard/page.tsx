@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, use } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Plus, List, Grid3X3 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Plus, List, Grid3X3, CalendarArrowDown } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ClassListView from "@/components/organisms/ClassListView"
 import MonthCalendarView from "@/components/organisms/MonthCalendarView"
@@ -19,6 +19,7 @@ export type Lesson = {
   status: string;
   teacher_username: string;
   teacher_name: string;
+  teacher_avatar: string;
   spots: string;
   max_capacity: number;
   topic_id: number;
@@ -28,10 +29,15 @@ export default function CalendarView() {
 
   const [viewMode, setViewMode] = useState<"list" | "month">("month")
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const today = new Date();
   const [lessons, setLessons] = useState<Lesson[]>([])
   const { fetch: data, execute: getDashboard } = useGet('/dashboard/lessons');
   const { state } = useProvider();
   const [filter, setFilter] = useState('all');
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const filterOptions =
     state.currentUser?.user_type_name === "teacher"
       ? [
@@ -45,8 +51,12 @@ export default function CalendarView() {
 
   useEffect(() => {
     if (data) setLessons(data)
-    console.log("------------------lessons---", data);
   }, [data])
+
+  // Reset page when filter or month changes
+  useEffect(() => {
+    setPage(1);
+  }, [filter, currentMonth]);
 
   // Function to format date as Month YYYY
   const formatMonth = (date: Date) => {
@@ -96,6 +106,30 @@ export default function CalendarView() {
     }
   })
 
+  // Helper: check if a lesson is in the current month
+  const isLessonInMonth = (lesson: Lesson, month: Date) => {
+    const lessonDate = new Date(lesson.start_time)
+    return (
+      lessonDate.getFullYear() === month.getFullYear() &&
+      lessonDate.getMonth() === month.getMonth()
+    )
+  }
+
+  // Pagination helpers
+  const monthLessons = filteredLessons.filter(lesson => isLessonInMonth(lesson, currentMonth));
+  const totalLessons = monthLessons.length;
+  const totalPages = Math.ceil(totalLessons / pageSize);
+  const paginatedLessons = monthLessons.slice((page - 1) * pageSize, page * pageSize);
+
+  // Helper: check if a date is today
+  const isToday = (date: Date) => {
+    return (
+      date.getFullYear() === today.getFullYear() &&
+      date.getMonth() === today.getMonth() &&
+      date.getDate() === today.getDate()
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -127,6 +161,15 @@ export default function CalendarView() {
           <div className="text-lg font-medium">{formatMonth(currentMonth)}</div>
           <Button variant="outline" size="icon" onClick={nextMonth}>
             <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setCurrentMonth(new Date())}
+            aria-label="Go to today"
+            className="ml-2"
+          >
+            <CalendarArrowDown className="h-4 w-4" />
           </Button>
         </div>
 
@@ -169,12 +212,71 @@ export default function CalendarView() {
       </div>
 
       {viewMode === "list"
-        ? <ClassListView lessons={filteredLessons} getDashboard={getDashboard} currentUser={state.currentUser} />
-        : <MonthCalendarView
-          month={currentMonth}
-          lessons={filteredLessons}
-          currentUser={state.currentUser}
-        />
+        ? (() => {
+          if (monthLessons.length === 0) {
+            return (
+              <div className="text-center text-muted-foreground py-12">
+                No classes found for selected dates
+              </div>
+            );
+          }
+          return (
+            <>
+              <ClassListView
+                lessons={paginatedLessons}
+                getDashboard={getDashboard}
+                currentUser={state.currentUser}
+              />
+              {/* Pagination controls */}
+              <div className="flex items-center justify-between mt-4">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span>
+                    Page {page} of {totalPages || 1}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages || totalPages === 0}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>Rows per page:</span>
+                  <select
+                    className="border rounded px-2 py-1"
+                    value={pageSize}
+                    onChange={e => {
+                      setPageSize(Number(e.target.value));
+                      setPage(1);
+                    }}
+                  >
+                    {[5, 10, 20, 50].map(size => (
+                      <option key={size} value={size}>{size}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </>
+          );
+        })()
+        : (
+          <MonthCalendarView
+            month={currentMonth}
+            lessons={filteredLessons}
+            currentUser={state.currentUser}
+            today={today}
+          />
+        )
       }
     </div>
   )

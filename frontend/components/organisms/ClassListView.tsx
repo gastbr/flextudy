@@ -13,6 +13,7 @@ interface LessonProp {
     spots: string,
     teacher_username: string,
     teacher_name: string,
+    teacher_avatar: string,
     status?: string,
   }[];
   getDashboard: () => void;
@@ -20,6 +21,7 @@ interface LessonProp {
 }
 
 export default function ClassListView({ lessons, getDashboard, currentUser }: LessonProp) {
+  console.log(lessons);
   const [id, setId] = useState<number>(0)
 
   const formatDate = (dateString: string) => {
@@ -59,7 +61,9 @@ export default function ClassListView({ lessons, getDashboard, currentUser }: Le
       title: lesson.title,
       date: formatDate(lesson.start_time),
       time: `${formatTime(lesson.start_time)} - ${formatTime(lesson.end_time)}`,
-      teacher: lesson.teacher_name,
+      teacher_name: lesson.teacher_name,
+      teacher_username: lesson.teacher_username,
+      teacher_avatar: lesson.teacher_avatar,
       status: status,
       spots: lesson.spots,
     };
