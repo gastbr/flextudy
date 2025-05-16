@@ -169,7 +169,7 @@ export default function CalendarView() {
       </div>
 
       {viewMode === "list"
-        ? <ClassListView lessons={filteredLessons} getDashboard={getDashboard} />
+        ? <ClassListView lessons={filteredLessons} getDashboard={getDashboard} currentUser={state.currentUser} />
         : <MonthCalendarView
           month={currentMonth}
           lessons={filteredLessons}

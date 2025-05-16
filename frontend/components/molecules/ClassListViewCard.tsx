@@ -12,9 +12,10 @@ import { constructNow } from "date-fns"
 interface LessonProp {
   cls: any
   getDashboard: () => void;
+  currentUser?: { username: string; user_type_name: string }; // add currentUser prop
 }
 
-export default function ClassListViewCard({ cls, getDashboard }: LessonProp) {
+export default function ClassListViewCard({ cls, getDashboard, currentUser }: LessonProp) {
   const { execute: cancelEnrollmentAPI } = useDelete(`/attend/${cls.id}`);
   const { execute: enrollAPI } = usePost(`/attend/${cls.id}`);
 
@@ -74,10 +75,10 @@ export default function ClassListViewCard({ cls, getDashboard }: LessonProp) {
                 </Button>
               )
             }
-            {cls.status === "available" && (
+            {/* Hide Enroll button for teachers */}
+            {cls.status === "available" && currentUser?.user_type_name !== "teacher" && (
               <Button variant="default"
                 onClick={handleEnrollment}
-
               >Enroll</Button>
             )}
             {

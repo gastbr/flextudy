@@ -16,9 +16,10 @@ interface LessonProp {
     status?: string,
   }[];
   getDashboard: () => void;
+  currentUser?: { username: string; user_type_name: string }; // add currentUser prop
 }
 
-export default function ClassListView({ lessons, getDashboard }: LessonProp) {
+export default function ClassListView({ lessons, getDashboard, currentUser }: LessonProp) {
   const [id, setId] = useState<number>(0)
 
   const formatDate = (dateString: string) => {
@@ -72,6 +73,7 @@ export default function ClassListView({ lessons, getDashboard }: LessonProp) {
           key={cls.id}
           cls={cls}
           getDashboard={getDashboard}
+          currentUser={currentUser} // pass currentUser to card
         />
       ))}
     </div>
