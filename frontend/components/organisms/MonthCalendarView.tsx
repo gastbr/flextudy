@@ -9,12 +9,15 @@ interface MonthCalendarViewProps {
     lesson_url: string
     status: string
     topic_id: number
+    teacher_username?: string // add teacher_username for ownership check
+    spots?: string // add spots for capacity check
   }[]
+  currentUser?: { username: string; user_type_name: string } // add currentUser prop
 }
 
 import Link from "next/link"
 
-export default function MonthCalendarView({ month, lessons }: MonthCalendarViewProps) {
+export default function MonthCalendarView({ month, lessons, currentUser }: MonthCalendarViewProps) {
   // Generate calendar days
   const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
   const firstDayOfMonth = new Date(month.getFullYear(), month.getMonth(), 0).getDay()
@@ -33,12 +36,21 @@ export default function MonthCalendarView({ month, lessons }: MonthCalendarViewP
     let status = "available"
     // Aquí puedes agregar lógica para determinar si está "enrolled" o "full"
 
+    // Determine if the class is full
+    const spots = lesson.spots ? parseInt(lesson.spots, 10) : 0
+    const isFull = spots >= lesson.max_capacity
+
+    // Determine if the current user is the teacher
+    const isMyClass = currentUser?.user_type_name === "teacher" && lesson.teacher_username === currentUser.username
+
     return {
       id: lesson.id,
-      title: lesson.title, // O podrías usar otro campo como título
+      title: lesson.title,
       date: new Date(startDate),
       time: timeString,
-      status: lesson.status
+      status: lesson.status,
+      isMyClass,
+      isFull,
     }
   })
   events.sort((a, b) => a.date.getTime() - b.date.getTime())
@@ -96,11 +108,16 @@ export default function MonthCalendarView({ month, lessons }: MonthCalendarViewP
                     >
                       <div
                         key={`Lesson-${event.id}`}
-                        className={`text-xs p-1 rounded truncate ${event.status === "enrolled"
-                          ? "bg-stone-700 text-accent"
-                          : event.status === "available"
-                            ? "bg-muted hover:bg-muted/80 cursor-pointer"
-                            : "bg-muted/50 text-muted-foreground"
+                        className={`text-xs p-1 rounded truncate
+                          ${event.isMyClass
+                            ? event.isFull
+                              ? "bg-stone-400 text-black" // lighter for full
+                              : "bg-stone-800 text-accent" // black for own class
+                            : event.status === "enrolled"
+                              ? "bg-stone-700 text-accent"
+                              : event.status === "available"
+                                ? "bg-muted hover:bg-muted/80 cursor-pointer"
+                                : "bg-muted/50 text-muted-foreground"
                           }`}
                       >
                         {event.title} - {event.time}

@@ -45,6 +45,7 @@ export default function CalendarView() {
 
   useEffect(() => {
     if (data) setLessons(data)
+    console.log("------------------lessons---", data);
   }, [data])
 
   // Function to format date as Month YYYY
@@ -167,7 +168,14 @@ export default function CalendarView() {
         </div>
       </div>
 
-      {viewMode === "list" ? <ClassListView lessons={filteredLessons} getDashboard={getDashboard} /> : <MonthCalendarView month={currentMonth} lessons={filteredLessons} />}
+      {viewMode === "list"
+        ? <ClassListView lessons={filteredLessons} getDashboard={getDashboard} />
+        : <MonthCalendarView
+          month={currentMonth}
+          lessons={filteredLessons}
+          currentUser={state.currentUser}
+        />
+      }
     </div>
   )
 }
