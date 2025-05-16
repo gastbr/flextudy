@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -9,25 +9,76 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar, Mail, Edit } from "lucide-react"
 import { useGet } from "@/hooks/use-fetch"
+import { useProvider } from '@/app/context/provider'
+import ClassHistoryList from "@/components/molecules/ClassHistoryList"
 
 export default function ProfilePage() {
 
   const { id } = useParams() as { id: string };
   const endpoint = id === "me" ? "/auth/me" : `/user?username=${id}`
   const { fetch: data, loading, error } = useGet(endpoint);
+  const { fetch: fetchClasses, loading: loadingClasses, error: errorClasses, execute: executeGetToCreate } = useGet('/classes/my_classes');
+
+  const { state } = useProvider();
+  const [userData, setUserData] = useState<any>(null);
+  const [userType, setUserType] = useState<string>("");
+  const [userClasses, setUserClasses] = useState<any>(null);
+  const [completedClasses, setCompletedClasses] = useState([])
+  const [enrolledClasses, setEnrolledClasses] = useState([])
 
   useEffect(() => {
-    if (loading) {
-      console.log('Loading user data...');
-    } else {
-      if (data) {
-        console.log('User data:', data);
+    try {
+      if (data && fetchClasses) {
+        setUserData(data.data[0]);
+        setUserType(data.data[0].user_type_name);
+        setUserClasses(fetchClasses.classes);
       }
+    } catch (error) {
       if (error) {
         console.error('Error fetching user:', error);
       }
     }
-  }, [data, error, loading]);
+  }, [data, fetchClasses, error, loading]);
+
+  useEffect(() => {
+    const now = new Date();
+
+    const enrolled = [];
+    const completed = [];
+    if (!userClasses) return;
+    userClasses.forEach(cls => {
+      const start = new Date(cls.start_time);
+      const end = new Date(cls.end_time);
+
+      const dayOfWeek = start.toLocaleDateString("en-US", { weekday: "long" });
+      const formattedDate = start.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+
+      if (end < now) {
+        completed.push({
+          id: cls.id,
+          title: cls.title,
+          teacher: cls.teacher,
+          date: `Completed on ${cls.date}`,
+          // rating: Math.floor(Math.random() * 2) + 4, // Simulado
+        });
+      } else {
+        enrolled.push({
+          id: cls.id,
+          title: cls.title,
+          teacher: cls.teacher,
+          date: `${cls.date}, ${cls.time}`, // ej: "Friday, 14:00 - 15:00"
+          progress: `${cls.enrolled}/${cls.capacity} sessions`,
+        });
+      }
+    });
+
+    setEnrolledClasses(enrolled);
+    setCompletedClasses(completed);
+  }, [userClasses]);
 
   const user = {
     username: data?.data?.[0]?.username ?? '',
@@ -35,16 +86,20 @@ export default function ProfilePage() {
     email: data?.data?.[0]?.email ?? '',
     role: data?.data?.[0]?.user_type_name ?? '',
     avatar: data?.data?.[0]?.profile_pic ?? '',
-    bio: "Student passionate about mathematics and languages.",
-    phone: "+1 (555) 123-4567",
-    location: "New York, NY",
-    github: data?.data?.[0]?.username ?? '',
-    twitter: data?.data?.[0]?.username ?? '',
-    joined: "May 2023",
+    // bio: "Student passionate about mathematics and languages.",
+    // phone: "+1 (555) 123-4567",
+    // location: "New York, NY",
+    // github: data?.data?.[0]?.username ?? '',
+    // twitter: data?.data?.[0]?.username ?? '',
+    // joined: "May 2023",
     classes: {
       enrolled: 5,
       completed: 12,
     },
+  }
+
+  if (loading || loadingClasses) {
+    return <div className="text-center py-8 text-muted-foreground">Loading...</div>
   }
 
   return (
@@ -101,10 +156,10 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <div className="text-sm text-muted-foreground">Bio</div>
                   <div className="bg-white text-sm font-body font-thin text-stone-900 p-3 rounded-sm shadow-[inset_0px_1px_2px_0px_rgba(0,_0,_0,_0.1)]">{user.bio}</div>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -194,124 +249,66 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
+      {/* 
+      const [completedClasses, setCompletedClasses] = useState([])
+      const [enrolledClasses, setEnrolledClasses] = useState([]) */}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Class History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="enrolled">
-            <TabsList className="mb-4">
-              <TabsTrigger value="enrolled">Currently Enrolled</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-            </TabsList>
 
-            <TabsContent value="enrolled">
-              <ClassHistoryList type="enrolled" />
-            </TabsContent>
-            <TabsContent value="completed">
-              <ClassHistoryList type="completed" />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      {
+        userType && userType !== "admin" && userClasses && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Class History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="enrolled">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="enrolled">
+                    {userType === "teacher" ? "Currently Teaching" : "Currently Enrolled"}
+                  </TabsTrigger>
+                  <TabsTrigger value="completed">Completed</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="enrolled">
+                  <ClassHistoryList type="enrolled" classes={enrolledClasses} userType={userType}/>
+                </TabsContent>
+                <TabsContent value="completed">
+                  <ClassHistoryList type="completed" classes={completedClasses} userType={userType} completed={true} />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        )
+      }
+
+      {/* 
+      {
+        userType && userType != "admin" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Class History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="enrolled">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="enrolled">{userType == "teacher" ? "Currently Teaching" : "Currently Enrolled"}</TabsTrigger>
+                  <TabsTrigger value="completed">Completed</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="enrolled">
+                  <ClassHistoryList type="enrolled" />
+                </TabsContent>
+                <TabsContent value="completed">
+                  <ClassHistoryList type="completed" />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        )
+      } */}
+
     </div >
   )
 }
 
-interface ClassHistoryListProps {
-  type: "enrolled" | "completed"
-}
-
-function ClassHistoryList({ type }: ClassHistoryListProps) {
-  // Sample class data
-  const enrolledClasses = [
-    {
-      id: 1,
-      title: "Introduction to Mathematics",
-      teacher: "Dr. Smith",
-      date: "Mondays, 9:00 - 10:30",
-      progress: "3/8 sessions",
-    },
-    {
-      id: 2,
-      title: "Spanish for Beginners",
-      teacher: "Ms. Garcia",
-      date: "Wednesdays, 14:00 - 15:30",
-      progress: "2/10 sessions",
-    },
-  ]
-
-  const completedClasses = [
-    {
-      id: 3,
-      title: "Basic Physics",
-      teacher: "Prof. Johnson",
-      date: "Completed on Apr 30, 2023",
-      rating: 4.5,
-    },
-    {
-      id: 4,
-      title: "Introduction to Literature",
-      teacher: "Dr. Williams",
-      date: "Completed on Mar 15, 2023",
-      rating: 5,
-    },
-  ]
-
-  const classes = type === "enrolled" ? enrolledClasses : completedClasses
-
-  return (
-    <div className="space-y-4">
-      {classes.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">No {type} classes found</div>
-      ) : (
-        classes.map((cls) => (
-          <div
-            key={cls.id}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 border-b last:border-0"
-          >
-            <div>
-              <h3 className="font-medium">{cls.title}</h3>
-              <div className="text-sm text-muted-foreground">Instructor: {cls.teacher}</div>
-              <div className="text-sm text-muted-foreground">{cls.date}</div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              {type === "enrolled" ? (
-                <>
-                  <div className="text-sm">{(cls as any).progress}</div>
-                  <Button variant="outline" size="sm">
-                    View Class
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-1">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="h-4 w-4 text-yellow-500"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>{(cls as any).rating}</span>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    View Certificate
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        ))
-      )}
-    </div>
-  )
-}
 
