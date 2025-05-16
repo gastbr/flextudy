@@ -64,7 +64,7 @@ export default function CalendarView() {
         {/* This button would only be visible to teachers */}
 
         {
-          state.currentUser.user_type_name === "teacher" && (
+          state.currentUser?.user_type_name === "teacher" && (
             <Button asChild className="flex items-center gap-2">
               <Link href="/dashboard/classes/create">
                 <Plus className="h-4 w-4" />
