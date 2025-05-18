@@ -82,6 +82,8 @@ export default function MyClassesPage() {
         ]),
     ].sort()
 
+
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -128,11 +130,11 @@ export default function MyClassesPage() {
                 </div>
             </div>
 
-            <Tabs defaultValue="past">
+            <Tabs defaultValue={userType === "teacher" ? "teaching" : "enrolled"}>
                 <TabsList className="mb-4">
-                    <TabsTrigger value="past">Past Classes</TabsTrigger>
                     {userType === "teacher" && <TabsTrigger value="teaching">Teaching</TabsTrigger>}
                     {userType === "student" && <TabsTrigger value="enrolled">Enrolled</TabsTrigger>}
+                    <TabsTrigger value="past">Past Classes</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="teaching">
@@ -162,6 +164,8 @@ export default function MyClassesPage() {
                         </div>
                     )}
                 </TabsContent>
+
+
 
                 <TabsContent value="past">
                     {filteredPastClasses.length === 0 ? (

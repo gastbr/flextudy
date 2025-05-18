@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const DatePicker = ({selectedDate, setSelectedDate}) => {
+const DatePicker = ({ selectedDate, setSelectedDate }) => {
     const [date, setDate] = useState<Date | null>(null);
     const [showCalendar, setShowCalendar] = useState(false);
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -8,7 +8,7 @@ const DatePicker = ({selectedDate, setSelectedDate}) => {
 
     // Cerrar calendario al hacer clic fuera
     useEffect(() => {
-        if(selectedDate) {
+        if (selectedDate) {
             setDate(selectedDate);
         }
         const handleClickOutside = (event: MouseEvent) => {

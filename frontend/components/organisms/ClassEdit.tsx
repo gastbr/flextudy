@@ -27,16 +27,18 @@ import DatePicker from "../ui/DatePicker"
 
 
 export default function ClassEdit({
+    isTeacher,
     classDetails,
     showEditClassDialog,
     setShowEditClassDialog,
-    executeGetClassById: executeGetClassById
+    excuteGetClassById
 }: {
+    isTeacher?: boolean;
     classDetails: any;
     showEditClassDialog?: boolean;
     setShowEditClassDialog?: (value: boolean) => void;
     propDate?: string
-    executeGetClassById?: () => void
+    excuteGetClassById?: () => void
 }) {
 
     const [date, setDate] = useState<Date>()
@@ -65,7 +67,7 @@ export default function ClassEdit({
     }, [selectedTopicId])
 
     useEffect(() => {
-        if(classDetails){
+        if (classDetails) {
             setCapacity(classDetails.capacity);
             setDate(new Date(classDetails.start_time));
             setStartTime(format(new Date(classDetails.start_time), 'HH:mm'));
@@ -73,10 +75,10 @@ export default function ClassEdit({
             setSelectedTopicId(classDetails.topic_id);
             setUrl(classDetails.location);
         }
-        
+
     }, [classDetails]);
 
-    const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/to_create');
+    const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/to_create', undefined, isTeacher);
 
 
     useEffect(() => {
@@ -111,7 +113,7 @@ export default function ClassEdit({
         };
         console.log("Class data:", classData);
         await putClass(classData);
-        await executeGetClassById();
+        await excuteGetClassById();
         setShowEditClassDialog(false);
     };
 
@@ -120,8 +122,8 @@ export default function ClassEdit({
         <>
             {classDetails && (
                 <Dialog open={showEditClassDialog} onOpenChange={setShowEditClassDialog}>
-                    <DialogTitle></DialogTitle>
                     <DialogContent aria-describedby={undefined}>
+                        <DialogTitle></DialogTitle>
                         <div className="space-y-6">
                             <div className="flex items-center gap-2">
                                 <h1 className="text-2xl font-bold tracking-tight">Edit Class</h1>

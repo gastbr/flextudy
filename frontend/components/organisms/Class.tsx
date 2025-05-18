@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Calendar, Clock, MapPin, Users, Search, Plus, Filter } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 
 export default function Classes({ classData }) {
 
-    
+    console.log(classData)
 
     return (
         <Card>
@@ -31,10 +31,15 @@ export default function Classes({ classData }) {
                         </div>
 
                         <div className="flex items-center gap-2 mt-4">
-                            <Avatar className="h-6 w-6">
-                                <AvatarFallback>{classData.teacher[0]}</AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm">{classData.teacher}</span>
+                            <Link href={`/dashboard/profile/${classData.teacher_username}`}>
+                                <Avatar className="h-6 w-6">
+                                    <AvatarImage src={classData.teacher_avatar} alt="Teacher" />
+                                    <AvatarFallback>{classData.teacher_name[0]}</AvatarFallback>
+                                </Avatar>
+                            </Link>
+                            <Link href={`/dashboard/profile/${classData.teacher_username}`} className="text-sm hover:underline">
+                                {classData.teacher_name}
+                            </Link>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
@@ -65,7 +70,7 @@ export default function Classes({ classData }) {
 
                     <div className="bg-muted p-4 sm:p-6 flex flex-row sm:flex-col justify-between items-center sm:items-end gap-4 sm:w-48">
                         <div className="flex items-center gap-1">
-                        {/* {Array.from({ length: 5 }).map((_, i) => (
+                            {/* {Array.from({ length: 5 }).map((_, i) => (
                             <svg
                                 key={i}
                                 xmlns="http://www.w3.org/2000/svg"
