@@ -5,6 +5,7 @@ from app.v1.repositories.user_type_repository import get_user_type_id_by_name
 from app.v1.services.auth.auth_service import pwd_context
 import secrets
 import string
+from typing import Optional
 
 
 async def get_users(session: AsyncSession, params: dict) -> ReadUserList:
@@ -48,13 +49,13 @@ async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
     return await repo.create_user(session, user)
 
 
-async def update_user(session: AsyncSession, user_id: int, user_in: UpdateUser) -> User:
+async def update_user(session: AsyncSession, user_in: UpdateUser) -> User:
     user_type_id = None
     if user_in.user_type_name:
         user_type_id = await get_user_type_id_by_name(session, user_in.user_type_name)
         if not user_type_id:
             raise ValueError(f"UserType '{user_in.user_type_name}' not found")
-    return await repo.update_user(session, user_in, user_id, user_type_id)
+    return await repo.update_user(session, user_in, user_type_id)
 
 
 async def delete_user(session: AsyncSession, user_id: int) -> bool:

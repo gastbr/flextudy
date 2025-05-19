@@ -27,6 +27,7 @@ export default function ProfilePage() {
     email: fetchMe?.data?.[0]?.email ?? '',
     role: fetchMe?.data?.[0]?.user_type_name ?? '',
     avatar: fetchMe?.data?.[0]?.profile_pic ?? '',
+    status: fetchMe?.data?.[0]?.status ?? '',
     bio: "Student passionate about mathematics and languages.",
     phone: "+1 (555) 123-4567",
     location: "New York, NY",
@@ -47,8 +48,12 @@ export default function ProfilePage() {
   function handleSubmit() {
 
     const post = {
+      username: username,
       name: name,
-      email: email
+      email: email,
+      profile_pic: user.avatar,
+      status: user.status,
+      user_type_name: user.role
     }
 
     patchUser(post)
