@@ -32,7 +32,7 @@ export default function UserEditModal({ user }: EditUserDialogProps) {
         user_type_name: user.role,
     });
 
-    const { execute } = usePut(`/user/${user.id}`);
+    const { execute } = usePut(`/user/`);
 
     const handleInputChange = (field: string, value: string) => {
         setEditedUser((prev) => ({ ...prev, [field]: value }));

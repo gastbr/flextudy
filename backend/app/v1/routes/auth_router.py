@@ -64,7 +64,8 @@ async def update_user_me(
     user_in: UpdateUser,
     session: AsyncSession = Depends(get_session)
 ):
-    user = await update_user(session, auth_user.id, user_in)
+    print("-------------auth_user---", auth_user)
+    user = await update_user(session, user_in)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
