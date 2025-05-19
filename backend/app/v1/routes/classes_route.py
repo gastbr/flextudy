@@ -1,5 +1,5 @@
 # routes/example_route.py
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from app.v1.models.lesson import Lesson, CreateLesson
 from typing import Annotated
 from app.v1.services.auth.auth_service import authorize, authorize_roles
@@ -60,13 +60,14 @@ async def get_my_classes_view(
     return await get_my_classes(session, user)
 
 
-@router.get("/class/{id}", response_model=dict)
-async def get_class_by_id(
-    user: Annotated[None, Depends(authorize)],
-    id: int,
+@router.get("", response_model=dict)
+async def get_classes_by_query_params(
+    _: Annotated[None, Depends(authorize)],
+    request: Request,
     session: AsyncSession = Depends(get_session),
     ):
-    example = await get_class(session, id, user)
+    query_params = dict(request.query_params)
+    example = await get_class(session, query_params)
     if not example:
         raise HTTPException(status_code=404, detail="Class not found")
     return example

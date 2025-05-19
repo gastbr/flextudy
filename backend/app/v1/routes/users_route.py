@@ -38,7 +38,7 @@ async def create_new_user(
     return await create_user(session, user_in)
 
 
-@router.put("/", response_model=User)
+@router.put("", response_model=User)
 async def update_existing_user(
     auth_user: Annotated[None, Depends(authorize)],
     user_in: UpdateUser,

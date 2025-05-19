@@ -17,7 +17,7 @@ export default function ProfilePage() {
   const { id } = useParams() as { id: string };
   const endpoint = id === "me" ? "/auth/me" : `/user?username=${id}`
   const { fetch: data, loading, error } = useGet(endpoint);
-  const { fetch: fetchClasses, loading: loadingClasses, error: errorClasses, execute: executeGetToCreate } = useGet('/classes/my_classes');
+  const { fetch: fetchClasses, loading: loadingClasses } = useGet(`/classes?username=${id}`);
 
   const { state } = useProvider();
   const [userData, setUserData] = useState<any>(null);
@@ -61,7 +61,8 @@ export default function ProfilePage() {
         completed.push({
           id: cls.id,
           title: cls.title,
-          teacher: cls.teacher,
+          teacher_name: cls.teacher_name,
+          teacher_username: cls.teacher_username,
           date: `Completed on ${cls.date}`,
           // rating: Math.floor(Math.random() * 2) + 4, // Simulado
         });
@@ -69,7 +70,8 @@ export default function ProfilePage() {
         enrolled.push({
           id: cls.id,
           title: cls.title,
-          teacher: cls.teacher,
+          teacher_name: cls.teacher_name,
+          teacher_username: cls.teacher_username,
           date: `${cls.date}, ${cls.time}`, // ej: "Friday, 14:00 - 15:00"
           progress: `${cls.enrolled}/${cls.capacity} sessions`,
         });
@@ -270,7 +272,7 @@ export default function ProfilePage() {
                 </TabsList>
 
                 <TabsContent value="enrolled">
-                  <ClassHistoryList type="enrolled" classes={enrolledClasses} userType={userType}/>
+                  <ClassHistoryList type="enrolled" classes={enrolledClasses} userType={userType} />
                 </TabsContent>
                 <TabsContent value="completed">
                   <ClassHistoryList type="completed" classes={completedClasses} userType={userType} completed={true} />
