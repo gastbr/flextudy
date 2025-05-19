@@ -39,8 +39,8 @@ async def get_class(session: AsyncSession, query_params: Optional[dict] = None) 
 
     # Filtering by class_id
     class_id = None
-    if query_params and "class_id" in query_params:
-        class_id = query_params["class_id"]
+    if query_params and "id" in query_params:
+        class_id = int(query_params["id"])
         stmt = stmt.where(Lesson.id == class_id)
 
     # Filtering by username (teacher or student)

@@ -27,7 +27,7 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
   const isTeacher = user[0]?.user_type_name == "teacher" ? true : false
   const { execute: enrollAPI } = usePost(`/attend/${id}`);
   const { execute: cancelEnrollmentAPI } = useDelete(`/attend/${id}`);
-  const { fetch: data, error, execute: excuteGetClassById } = useGet(`/classes/class/${id}`);
+  const { fetch: data, error, execute: excuteGetClassById } = useGet(`/classes?id=${id}`);
 
 
   const handleEnroll = async () => {
@@ -72,30 +72,30 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
 
   useEffect(() => {
     if (data) {
-      const c = data.class
+      const c = data.classes[0]
       setClassDetails({
-        id: c.id,
-        title: c.title,
-        subject: c.subject,
-        topic_id: c.topic_id,
-        description: c.description,
-        longDescription: c.description,
-        start_time: toLocaleDateString(c.start_time),
-        end_time: toLocaleDateString(c.end_time),
-        date: c.date,
-        time: c.time,
-        duration: calculateDuration(c.start_time, c.end_time),
-        location: c.location,
+        id: c?.id,
+        title: c?.title,
+        subject: c?.subject,
+        topic_id: c?.topic_id,
+        description: c?.description,
+        longDescription: c?.description,
+        start_time: toLocaleDateString(c?.start_time),
+        end_time: toLocaleDateString(c?.end_time),
+        date: c?.date,
+        time: c?.time,
+        duration: calculateDuration(c?.start_time, c?.end_time),
+        location: c?.location,
         teacher: {
-          name: c.teacher_name,
-          avatar: c.teacher_avatar,
-          username: c.teacher_username
+          name: c?.teacher_name,
+          avatar: c?.teacher_avatar,
+          username: c?.teacher_username
         },
-        enrolled: c.enrolled,
-        capacity: c.capacity,
-        status: c.status, // or 'available', 'full', 'completed'
-        ...(c.student_enrolled !== undefined && { student_enrolled: c.student_enrolled }),
-        ...(c.teacher_owns_lesson !== undefined && { teacher_owns_lesson: c.teacher_owns_lesson })
+        enrolled: c?.enrolled,
+        capacity: c?.capacity,
+        status: c?.status, // or 'available', 'full', 'completed'
+        ...(c?.student_enrolled !== undefined && { student_enrolled: c?.student_enrolled }),
+        ...(c?.teacher_owns_lesson !== undefined && { teacher_owns_lesson: c?.teacher_owns_lesson })
       })
 
     } else if (error) {
@@ -207,18 +207,25 @@ export default function ClassDetailPage({ params }: { params: { id: string } }) 
               <CardTitle>Teacher</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center text-center">
-              <Link href={`/dashboard/profile/${classDetails && classDetails.teacher.username}`}>
+              <Link href={`/dashboard/profile/${classDetails && classDetails.teacher?.username}`}>
                 <Avatar className="h-20 w-20 mb-4">
-                  <AvatarImage src={classDetails && classDetails.teacher.avatar} alt={classDetails && classDetails.teacher.name} />
-                  <AvatarFallback>{classDetails && classDetails.teacher.name[0]}</AvatarFallback>
+                  <AvatarImage
+                    src={classDetails && classDetails.teacher?.avatar}
+                    alt={classDetails && classDetails.teacher?.name}
+                  />
+                  <AvatarFallback>
+                    {classDetails && classDetails.teacher?.name
+                      ? classDetails.teacher.name[0]
+                      : ""}
+                  </AvatarFallback>
                 </Avatar>
               </Link>
 
               <Link
-                href={`/dashboard/profile/${classDetails && classDetails.teacher.username}`}
+                href={`/dashboard/profile/${classDetails && classDetails.teacher?.username}`}
                 className="font-semibold text-lg hover:underline"
               >
-                <h3 className="font-semibold text-lg">{classDetails && classDetails.teacher.name}</h3>
+                <h3 className="font-semibold text-lg">{classDetails && classDetails.teacher?.name}</h3>
               </Link>
               {/* <div className="flex items-center gap-1 mt-1">
                 <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />

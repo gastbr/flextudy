@@ -17,14 +17,14 @@ export default function ProfilePage() {
   const { id } = useParams() as { id: string };
   const endpoint = id === "me" ? "/auth/me" : `/user?username=${id}`
   const { fetch: data, loading, error } = useGet(endpoint);
-  const { fetch: fetchClasses, loading: loadingClasses } = useGet(`/classes?username=${id}`);
 
   const { state } = useProvider();
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<any>({});
   const [userType, setUserType] = useState<string>("");
   const [userClasses, setUserClasses] = useState<any>(null);
   const [completedClasses, setCompletedClasses] = useState([])
   const [enrolledClasses, setEnrolledClasses] = useState([])
+  const { fetch: fetchClasses, loading: loadingClasses } = useGet(`/classes?username=${userData.username}`);
 
   useEffect(() => {
     try {
