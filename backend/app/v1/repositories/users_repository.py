@@ -82,10 +82,11 @@ async def create_user(session: AsyncSession, user_in: CreateUser) -> User:
 async def update_user(
     session: AsyncSession,
     user_in: UpdateUser,
-    user_id: int,
     user_type_id: Optional[int] = None,
 ) -> Optional[User]:
-    db_user = await session.get(User, user_id)
+    statement = select(User).where(User.username == user_in.username)
+    result = await session.exec(statement)
+    db_user = result.first()
     if not db_user:
         return None
 
