@@ -5,6 +5,7 @@ from app.v1.repositories.user_type_repository import get_user_type_id_by_name
 from app.v1.services.auth.auth_service import pwd_context
 import secrets
 import string
+from typing import Optional
 
 
 async def get_users(session: AsyncSession, params: dict) -> ReadUserList:
