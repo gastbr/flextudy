@@ -28,7 +28,7 @@ export default function MyClassesPage() {
         setDateNow(dateNow.replace("Z", "+00:00"))
     }
 
-    const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/my_classes');
+    const { fetch: data, loading, error, execute: executeGetToCreate } = useGet(`/classes?username=${state?.currentUser?.username}`);
     useEffect(() => {
         if (data) {
             const now = new Date(); // Fecha actual como objeto Date

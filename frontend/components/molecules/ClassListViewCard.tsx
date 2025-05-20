@@ -47,14 +47,15 @@ export default function ClassListViewCard({ cls, getDashboard, currentUser }: Le
           <div className="p-4 sm:p-6 flex-1">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-semibold text-lg">{cls.title}</h3>
+                <Link href={`dashboard/classes/${cls.id}`} className="hover:underline">
+                  <h3 className="font-semibold text-lg">{cls.title}</h3>
+                </Link>
                 <div className="text-sm text-muted-foreground mt-1">
                   {cls.date} • {cls.time}
                 </div>
               </div>
               <StatusBadge status={cls.status as "enrolled" | "available" | "full"} />
             </div>
-
             <div className="flex items-center gap-2 mt-4">
               <Link href={`/dashboard/profile/${cls.teacher_username}`}>
                 <Avatar className="h-6 w-6">
@@ -96,7 +97,7 @@ export default function ClassListViewCard({ cls, getDashboard, currentUser }: Le
           </div>
         </div>
       </CardContent>
-    </Card>
+    </Card >
   )
 }
 

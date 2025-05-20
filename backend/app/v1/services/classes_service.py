@@ -9,8 +9,8 @@ from app.v1.models.subject import Subject
 from app.v1.models.user import User
 from datetime import datetime
 from sqlalchemy import func
-from app.v1.repositories.user_type_repository import get_user_type_name_by_id
-import app.v1.repositories.classes_repository as repo
+from sqlalchemy.orm import selectinload
+from dateutil.parser import parse as parse_datetime
  
 async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> Lesson:
     lesson = Lesson.from_orm(lesson_in)
@@ -29,40 +29,86 @@ async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> 
     await session.refresh(lesson)
     return lesson
  
-async def get_class(session: AsyncSession, class_id: int,  user_in: Optional[dict] = None) -> dict:
- 
-    result = (await session.execute(
+async def get_class(session: AsyncSession, query_params: Optional[dict] = None) -> dict:
+    stmt = (
         select(Topic, Lesson, Subject, User)
         .select_from(Topic)
         .join(User, Topic.teacher_id == User.id)
         .join(Lesson, Topic.id == Lesson.topic_id)
         .join(Subject, Topic.subject_id == Subject.id)
-        .where(Lesson.id == class_id)
-    )).first()
-   
+    )
+
+    # Filtering by class_id
+    class_id = None
+    if query_params and "id" in query_params:
+        class_id = int(query_params["id"])
+        stmt = stmt.where(Lesson.id == class_id)
+
+    # Filtering by username (teacher or student)
+    filter_user = None
+    if query_params and "username" in query_params:
+        username = query_params["username"]
+        filter_user = (
+            (await session.execute(
+                select(User).options(selectinload(User.user_type)).where(User.username == username)
+            )).scalar_one_or_none()
+        )
+        if filter_user:
+            # Check if user is a teacher
+            if hasattr(filter_user, "user_type_name") and filter_user.user_type_name == "teacher":
+                stmt = stmt.where(User.username == username)
+            else:
+                # If not a teacher, check if student and filter lessons where student is enrolled
+                subquery = (
+                    select(Attend.lesson_id)
+                    .where(Attend.student_id == filter_user.id)
+                )
+                stmt = stmt.where(Lesson.id.in_(subquery))
+
+    # Filtering by subject name
+    if query_params and "subject" in query_params:
+        subject_name = query_params["subject"]
+        stmt = stmt.where(Subject.name == subject_name)
+
+    # Filtering by date (ISO format: YYYY-MM-DD)
+    if query_params and "date" in query_params:
+        date_str = query_params["date"]
+        try:
+            date_obj = datetime.fromisoformat(date_str)
+            stmt = stmt.where(
+                func.date(Lesson.start_time) == date_obj.date()
+            )
+        except Exception:
+            pass  # Ignore invalid date format
+
+    result = (await session.execute(stmt)).all()
+
     if result:
-       
-        topic, lesson, subject, user = result
-       
-        enrolled_count = (await session.execute(
-        select(func.count())
-        .select_from(Attend)
-        .where(Attend.lesson_id == lesson.id)
-        )).scalar() or 0
-       
-        # Convertir el string a datetime primero
-        start_datetime = datetime.fromisoformat(lesson.start_time.replace('Z', '+00:00'))
-        end_datetime = datetime.fromisoformat(lesson.end_time.replace('Z', '+00:00'))
-       
-        # Formatear la fecha
-        start_date = start_datetime.strftime("%b %d, %Y")
-        # Formatear la hora
-        start_time = start_datetime.strftime("%H:%M")
-        end_time = end_datetime.strftime("%H:%M")
-        time_str = f"{start_time} - {end_time}"
-       
-        class_data = {
-            "class": {
+        classes = []
+        for topic, lesson, subject, user in result:
+            enrolled_count = (await session.execute(
+                select(func.count())
+                .select_from(Attend)
+                .where(Attend.lesson_id == lesson.id)
+            )).scalar() or 0
+
+            # Robust datetime handling
+            if isinstance(lesson.start_time, str):
+                start_datetime = parse_datetime(lesson.start_time)
+            else:
+                start_datetime = lesson.start_time
+
+            if isinstance(lesson.end_time, str):
+                end_datetime = parse_datetime(lesson.end_time)
+            else:
+                end_datetime = lesson.end_time
+
+            start_date = start_datetime.strftime("%b %d, %Y")
+            start_time = start_datetime.strftime("%H:%M")
+            end_time_str = end_datetime.strftime("%H:%M")
+            time_str = f"{start_time} - {end_time_str}"
+
+            class_data = {
                 "id": lesson.id,
                 "title": topic.name,
                 "subject": subject.name,
@@ -80,24 +126,26 @@ async def get_class(session: AsyncSession, class_id: int,  user_in: Optional[dic
                 "capacity": lesson.max_capacity,
                 "status": "available" if lesson.max_capacity > enrolled_count else "full",
             }
-        }
- 
-        if user_in:
-            if(user_in.user_type_name == "teacher"):
-                if(user_in.id == topic.teacher_id):
-                    class_data["class"]["teacher_owns_lesson"] = True
-                else:
-                    class_data["class"]["teacher_owns_lesson"] = False
-            if(user_in.user_type_name == "student"):
-                attended = (await session.execute(
-                    select(Attend)
-                    .where(Attend.student_id == user_in.id, Attend.lesson_id == lesson.id)
-                )).first()
-                if attended:
-                    class_data["class"]["student_enrolled"] = True
-                else:
-                    class_data["class"]["student_enrolled"] = False
-        return class_data
+
+            # Add user-specific info if username filter was used
+            if filter_user:
+                if hasattr(filter_user, "user_type_name") and filter_user.user_type_name == "teacher":
+                    class_data["teacher_owns_lesson"] = (filter_user.id == topic.teacher_id)
+                elif hasattr(filter_user, "user_type_name") and filter_user.user_type_name == "student":
+                    attended = (await session.execute(
+                        select(Attend)
+                        .where(Attend.student_id == filter_user.id, Attend.lesson_id == lesson.id)
+                    )).first()
+                    class_data["student_enrolled"] = bool(attended)
+
+            classes.append(class_data)
+
+        return {"classes": classes}
+
+    return {
+        "classes": [],
+        "message": "No classes found matching your criteria."
+    }
  
 async def get_topics_by_teacher_id(session: AsyncSession, user) -> dict:
    

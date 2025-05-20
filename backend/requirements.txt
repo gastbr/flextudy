@@ -22,3 +22,4 @@ bcrypt==3.2.2
 
 # Others
 python-multipart
+python-dateutil

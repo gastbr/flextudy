@@ -69,13 +69,23 @@ export default function ClassEdit({
     useEffect(() => {
         if (classDetails) {
             setCapacity(classDetails.capacity);
-            setDate(new Date(classDetails.start_time));
-            setStartTime(format(new Date(classDetails.start_time), 'HH:mm'));
-            setEndTime(format(new Date(classDetails.end_time), 'HH:mm'));
+
+            const normalizeDate = (isoString?: string) => {
+                if (!isoString || typeof isoString !== 'string') return null;
+                // Remove microseconds if present (e.g., .739949)
+                return new Date(isoString.replace(/\.\d{3,6}/, ''));
+            };
+
+            const startDate = normalizeDate(classDetails.start_time);
+            const endDate = normalizeDate(classDetails.end_time);
+
+            setDate(startDate && !isNaN(startDate.getTime()) ? startDate : undefined);
+            setStartTime(startDate && !isNaN(startDate.getTime()) ? format(startDate, 'HH:mm') : '');
+            setEndTime(endDate && !isNaN(endDate.getTime()) ? format(endDate, 'HH:mm') : '');
+
             setSelectedTopicId(classDetails.topic_id);
             setUrl(classDetails.location);
         }
-
     }, [classDetails]);
 
     const { fetch: data, loading, error, execute: executeGetToCreate } = useGet('/classes/to_create', undefined, isTeacher);

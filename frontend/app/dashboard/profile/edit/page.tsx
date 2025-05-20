@@ -19,8 +19,6 @@ export default function ProfilePage() {
 
   const { execute: patchUser } = usePut(`/auth/me`);
 
-  console.log(fetchMe?.data?.[0]?.username);
-
   const user = {
     username: fetchMe?.data?.[0]?.username ?? 'eee',
     name: fetchMe?.data?.[0]?.name ?? '',
@@ -233,7 +231,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <Card>
+      {/*       <Card>
         <CardHeader>
           <CardTitle>Class History</CardTitle>
         </CardHeader>
@@ -252,7 +250,7 @@ export default function ProfilePage() {
             </TabsContent>
           </Tabs>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   )
 }
