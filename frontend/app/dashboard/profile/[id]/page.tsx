@@ -25,7 +25,13 @@ export default function ProfilePage() {
   const [userClasses, setUserClasses] = useState<any>(null);
   const [completedClasses, setCompletedClasses] = useState([])
   const [enrolledClasses, setEnrolledClasses] = useState([])
+  const isTeacher = userType === "teacher" ;
+  const [countedEnroled, setCountedEnroled] = useState([])
+  const [countedCompleted, setCountedCompleted] = useState([])
 
+
+
+// console.log("userType", userClasses)
   useEffect(() => {
     try {
       if (data && fetchClasses) {
@@ -45,6 +51,7 @@ export default function ProfilePage() {
 
     const enrolled = [];
     const completed = [];
+
     if (!userClasses) return;
     userClasses.forEach(cls => {
       const start = new Date(cls.start_time);
@@ -61,7 +68,8 @@ export default function ProfilePage() {
         completed.push({
           id: cls.id,
           title: cls.title,
-          teacher: cls.teacher,
+          teacher: cls.teacher_name,
+          teacherUsername: cls.teacher_username,
           date: `Completed on ${cls.date}`,
           // rating: Math.floor(Math.random() * 2) + 4, // Simulado
         });
@@ -69,15 +77,20 @@ export default function ProfilePage() {
         enrolled.push({
           id: cls.id,
           title: cls.title,
-          teacher: cls.teacher,
+          teacher_name: cls.teacher_name,
+          teacher_username: cls.teacher_username,
           date: `${cls.date}, ${cls.time}`, // ej: "Friday, 14:00 - 15:00"
           progress: `${cls.enrolled}/${cls.capacity} sessions`,
         });
       }
     });
-
+    setCountedEnroled(enrolled.length);
+    setCountedCompleted(completed.length);
     setEnrolledClasses(enrolled);
     setCompletedClasses(completed);
+
+    
+
   }, [userClasses]);
 
   const user = {
@@ -234,16 +247,16 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Enrolled Classes</span>
-                <span className="font-medium">{user.classes.enrolled}</span>
+                <span className="text-muted-foreground">{isTeacher ? "Teaching": "Enrolled"} Classes</span>
+                <span className="font-medium">{countedEnroled}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Completed Classes</span>
-                <span className="font-medium">{user.classes.completed}</span>
+                <span className="font-medium">{countedCompleted}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Total Classes</span>
-                <span className="font-medium">{user.classes.enrolled + user.classes.completed}</span>
+                <span className="font-medium">{countedEnroled + countedCompleted}</span>
               </div>
             </CardContent>
           </Card>

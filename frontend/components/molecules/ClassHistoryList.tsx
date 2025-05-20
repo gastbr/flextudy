@@ -18,7 +18,8 @@ interface ClassHistoryListProps {
 }
 
 export default function ClassHistoryList({ type, classes, completed, userType }: ClassHistoryListProps) {
-
+  
+  console.log(classes)
   return (
     <div className="space-y-4">
       {classes.length === 0 ? (
@@ -30,8 +31,8 @@ export default function ClassHistoryList({ type, classes, completed, userType }:
             className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 border-b last:border-0"
           >
             <div>
-              <h3 className="font-medium">{cls.title}</h3>
-              <div className="text-sm text-muted-foreground">Instructor: {cls.teacher}</div>
+              <Link href={`/dashboard/classes/${cls.id}`}><h3 className="font-medium hover:underline">{cls.title}</h3></Link>
+              <Link href={`${cls.teacher_username}`} className="text-sm text-muted-foreground hover:underline"> {cls.teacher_name}</Link>
               <div className="text-sm text-muted-foreground">{cls.date}</div>
             </div>
 
