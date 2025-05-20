@@ -11,8 +11,8 @@ from app.v1.models.topic import Topic
 from app.v1.models.lesson import Lesson
 from app.v1.services.auth.auth_service import get_password_hash
 from app.v1.models.attend import Attend
+from datetime import datetime, timedelta, timezone
 import random
-import string
 
 from sqlalchemy.sql.expression import func
 
@@ -186,11 +186,23 @@ async def db_seeder(session):
         
         if not topic:
             continue
+
+        # Randomly choose if lesson is in the past or future (50/50)
+        now = datetime.now(timezone.utc)
+        days_offset = random.randint(1, 60)  # up to 2 months in past/future
+        if random.choice([True, False]):
+            start_time = now - timedelta(days=days_offset)
+        else:
+            start_time = now + timedelta(days=days_offset)
+
+        # Randomly choose duration: 1, 2, or 3 hours
+        duration_hours = random.choice([1, 2, 3])
+        end_time = start_time + timedelta(hours=duration_hours)
             
         session.add(Lesson(
             max_capacity=lesson.max_capacity,
-            start_time=lesson.start_time,
-            end_time=lesson.end_time,
+            start_time=start_time,
+            end_time=end_time,
             lesson_url=lesson.lesson_url,
             topic_id=topic.id
         ))

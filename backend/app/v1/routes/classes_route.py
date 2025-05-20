@@ -51,13 +51,13 @@ async def update_existing_example(
     return example
 
 
-@router.get("/my_classes", response_model=dict)
-async def get_my_classes_view(
-    user: Annotated[None, Depends(authorize)],
-    session: AsyncSession = Depends(get_session)
-    ):
-    authorize_roles(user, ['teacher', 'student'])
-    return await get_my_classes(session, user)
+# @router.get("/my_classes", response_model=dict)
+# async def get_my_classes_view(
+#     user: Annotated[None, Depends(authorize)],
+#     session: AsyncSession = Depends(get_session)
+#     ):
+#     authorize_roles(user, ['teacher', 'student'])
+#     return await get_my_classes(session, user)
 
 
 @router.get("", response_model=dict)

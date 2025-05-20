@@ -10,6 +10,7 @@ from app.v1.models.user import User
 from datetime import datetime
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
+from dateutil.parser import parse as parse_datetime
  
 async def create_class(session: AsyncSession, lesson_in: CreateLesson, user) -> Lesson:
     lesson = Lesson.from_orm(lesson_in)
@@ -91,8 +92,17 @@ async def get_class(session: AsyncSession, query_params: Optional[dict] = None) 
                 .where(Attend.lesson_id == lesson.id)
             )).scalar() or 0
 
-            start_datetime = datetime.fromisoformat(lesson.start_time.replace('Z', '+00:00'))
-            end_datetime = datetime.fromisoformat(lesson.end_time.replace('Z', '+00:00'))
+            # Robust datetime handling
+            if isinstance(lesson.start_time, str):
+                start_datetime = parse_datetime(lesson.start_time)
+            else:
+                start_datetime = lesson.start_time
+
+            if isinstance(lesson.end_time, str):
+                end_datetime = parse_datetime(lesson.end_time)
+            else:
+                end_datetime = lesson.end_time
+
             start_date = start_datetime.strftime("%b %d, %Y")
             start_time = start_datetime.strftime("%H:%M")
             end_time_str = end_datetime.strftime("%H:%M")
@@ -132,7 +142,10 @@ async def get_class(session: AsyncSession, query_params: Optional[dict] = None) 
 
         return {"classes": classes}
 
-    return None
+    return {
+        "classes": [],
+        "message": "No classes found matching your criteria."
+    }
  
 async def get_topics_by_teacher_id(session: AsyncSession, user) -> dict:
    
