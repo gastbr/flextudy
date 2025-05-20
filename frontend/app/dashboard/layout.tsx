@@ -54,7 +54,7 @@ function DashboardHeader({ user }: { user: any }) {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon">
+          {/* <Button variant="ghost" size="icon">
             <span className="sr-only">Notifications</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +71,7 @@ function DashboardHeader({ user }: { user: any }) {
               <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
               <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
             </svg>
-          </Button>
+          </Button> */}
 
           <div className="flex items-center gap-2">
             <TooltipProvider>
@@ -137,7 +137,7 @@ function MobileSidebar({ user }: { user: any }) {
 
           {/* <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" /> */}
           <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
-          <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
+          {/* <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" /> */}
 
           {/* Admin-only items */}
           {user?.user_type_name === "admin" && (
@@ -185,8 +185,9 @@ function DashboardSidebar({ user }: { user: any }) {
               <NavItem href="/dashboard/classes" icon={<Users className="h-4 w-4" />} label="My Classes" />)
           }
           {/* <NavItem href="/dashboard/wallet" icon={<Wallet className="h-4 w-4" />} label="Wallet" /> */}
-          <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />
-          <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" />
+          {user?.user_type_name !== 'admin' && (
+            <NavItem href="/dashboard/profile/me" icon={<User className="h-4 w-4" />} label="Profile" />)}
+          {/* <NavItem href="/dashboard/settings" icon={<Settings className="h-4 w-4" />} label="Settings" /> */}
           {/* Admin-only items */}
           {user?.user_type_name === 'admin' && (
             <div className="mt-2 pt-2 border-t">
@@ -201,11 +202,11 @@ function DashboardSidebar({ user }: { user: any }) {
                 icon={<GraduationCap className="h-4 w-4" />}
                 label="Teacher Management"
               /> */}
-              <NavItem
+              {/* <NavItem
                 href="/dashboard/admin/settings"
                 icon={<Settings className="h-4 w-4" />}
                 label="Platform Settings"
-              />
+              /> */}
             </div>
           )}
 

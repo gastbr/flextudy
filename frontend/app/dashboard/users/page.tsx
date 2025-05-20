@@ -138,7 +138,7 @@ export default function UserManagementContent() {
                     <p className="text-muted-foreground">Manage users, roles, and platform settings</p>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                {/* <div className="flex flex-wrap gap-2">
                     <Button variant="outline" className="gap-2" onClick={() => setShowStatsDialog(true)}>
                         <BarChart className="h-4 w-4" />
                         <span>Statistics</span>
@@ -151,7 +151,7 @@ export default function UserManagementContent() {
                         <CreditCard className="h-4 w-4" />
                         <span>Pricing</span>
                     </Button>
-                </div>
+                </div> */}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -196,10 +196,10 @@ export default function UserManagementContent() {
                         </SelectContent>
                     </Select>
                 </div>
-                <Button variant="outline" className="gap-2">
+                {/* <Button variant="outline" className="gap-2">
                     <Download className="h-4 w-4" />
                     <span>Export</span>
-                </Button>
+                </Button> */}
             </div>
 
             <Card>
