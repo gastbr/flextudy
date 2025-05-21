@@ -7,6 +7,12 @@ app = FastAPI(title="FLEXTUDY API")
 origins = [
     "http://localhost:8000",
     "http://localhost:3000",
+    "http://fastapi:8000",
+    "http://frontend:3000",
+    "http://fastapi",
+    "http://frontend",
+    "http://127.0.0.1:3000",
+    "https://guillermo.informaticamajada.es"
 ]
 
 app.add_middleware(

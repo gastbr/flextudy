@@ -1,32 +1,29 @@
 "use server"
 
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
-import { NextResponse, NextRequest } from "next/server"
 import axios from "axios"
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.INTERNAL_API_URL || "http://fastapi:8000/v1";
 
 export async function login(formData: FormData) {
+  console.log("➡️ API URL LOGIN:", apiUrl);
 
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", process.env.NEXT_PUBLIC_API_URL);
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
-  const callbackUrl = (formData.get("callbackUrl") as string) || "/dashboard";
 
   const request = new URLSearchParams({
     grant_type: "password",
-    username: username,
-    password: password,
+    username,
+    password,
   });
-  
+
   await setToken(request);
   // redirect(callbackUrl);
 }
 
 async function setToken(request: URLSearchParams) {
   try {
-    const response = await axios.post("/auth/login", request.toString(), {
+    const response = await axios.post(`${apiUrl}/auth/login`, request.toString(), {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -44,13 +41,7 @@ async function setToken(request: URLSearchParams) {
     return response.data.access_token;
 
   } catch (error) {
-    console.error("Login failed:", error);
+    console.error("❌ Login failed:", error);
     throw error;
   }
 }
-
-export async function logout(request: NextRequest) {
-  (await cookies()).delete("token");
-  return NextResponse.redirect(new URL("/login", request.url));
-}
-

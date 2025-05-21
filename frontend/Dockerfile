@@ -13,6 +13,10 @@ RUN npm install --legacy-peer-deps
 # Copia el resto de archivos del proyecto (incluido .env si es necesario)
 COPY . .
 
+COPY .env .env
+
+RUN cat .env
+
 # Compila el proyecto
 RUN npm run build
 

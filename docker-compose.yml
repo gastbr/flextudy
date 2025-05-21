@@ -23,6 +23,8 @@ services:
       - "3000:3000"
     networks:
       - fastapi-network
+    env_file:
+      - ./frontend/.env
 networks:
   fastapi-network:
     driver: bridge
