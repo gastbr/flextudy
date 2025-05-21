@@ -8,6 +8,8 @@ import axios from "axios"
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function login(formData: FormData) {
+
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", process.env.NEXT_PUBLIC_API_URL);
   const username = formData.get("username") as string;
   const password = formData.get("password") as string;
   const callbackUrl = (formData.get("callbackUrl") as string) || "/dashboard";
@@ -17,7 +19,7 @@ export async function login(formData: FormData) {
     username: username,
     password: password,
   });
-
+  
   await setToken(request);
   // redirect(callbackUrl);
 }

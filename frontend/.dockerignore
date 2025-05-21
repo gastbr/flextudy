@@ -1,0 +1,17 @@
+# Personal documentation
+docs/
+
+# Files unnecessary for the container
+docker-compose.yml
+Dockerfile
+README.md
+node_modules
+.next
+out
+build
+dist
+.git
+.env
+Dockerfile
+docker-compose.yml
+*.log

@@ -27,6 +27,9 @@ export default function LoginPage() {
     redirect("/dashboard");
   };
 
+  console.log("LLLLLLLLLLLLLLLLLLLLLLLL", process.env.NEXT_PUBLIC_API_URL);
+
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/30 px-4">
